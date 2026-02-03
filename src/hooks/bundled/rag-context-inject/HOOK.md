@@ -7,7 +7,7 @@ metadata:
     "openclaw":
       {
         "emoji": "🧠",
-        "events": ["session:start", "message:first"],
+        "events": ["agent:bootstrap"],
         "requires":
           {
             "config":
@@ -129,12 +129,7 @@ The hook integrates with three RAG services:
 
 ## When Context Is Injected
 
-The hook triggers on these events:
-
-- **Session Start**: When a new agent session is created
-- **First Message**: When the first user message arrives in a session
-
-This ensures context is available before the agent starts processing, while avoiding redundant retrieval on every message.
+The hook triggers on the `agent:bootstrap` event, which fires when the agent is initializing and loading its bootstrap files. This ensures RAG context is available from the very beginning of the agent session, before any user messages are processed.
 
 ## Disabling
 
