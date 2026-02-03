@@ -504,3 +504,55 @@ export const ProviderCommandsSchema = z
   })
   .strict()
   .optional();
+
+// RAG (Retrieval-Augmented Generation) Configuration Schemas
+
+export const LightRAGModeSchema = z.enum(["naive", "local", "global", "hybrid"]);
+
+export const GraphitiConfigSchema = z
+  .object({
+    enabled: z.boolean().optional(),
+    endpoint: z.string().optional(),
+    timeout: z.number().int().positive().optional(),
+  })
+  .strict()
+  .optional();
+
+export const LightRAGConfigSchema = z
+  .object({
+    enabled: z.boolean().optional(),
+    endpoint: z.string().optional(),
+    timeout: z.number().int().positive().optional(),
+    defaultMode: LightRAGModeSchema.optional(),
+  })
+  .strict()
+  .optional();
+
+export const MemoryServiceConfigSchema = z
+  .object({
+    enabled: z.boolean().optional(),
+    endpoint: z.string().optional(),
+    timeout: z.number().int().positive().optional(),
+  })
+  .strict()
+  .optional();
+
+export const RAGServiceConfigSchema = z
+  .object({
+    graphiti: GraphitiConfigSchema,
+    lightrag: LightRAGConfigSchema,
+    memoryService: MemoryServiceConfigSchema,
+  })
+  .strict()
+  .optional();
+
+export const RAGContextInjectHookConfigSchema = z
+  .object({
+    enabled: z.boolean().optional(),
+    maxEntities: z.number().int().positive().optional(),
+    maxRelations: z.number().int().positive().optional(),
+    maxMemories: z.number().int().positive().optional(),
+    maxDocuments: z.number().int().positive().optional(),
+  })
+  .strict()
+  .optional();
