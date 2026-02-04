@@ -6,7 +6,7 @@ import {
   DEFAULT_MEMORY_SERVICE_ENDPOINT,
   DEFAULT_MEMORY_SERVICE_TIMEOUT_MS,
 } from "../../memory/memory-service-client.js";
-import { resolveSessionAgentId } from "../agent-scope.js";
+import { resolveAgentConfig, resolveSessionAgentId } from "../agent-scope.js";
 import { resolveMemorySearchConfig } from "../memory-search.js";
 import type { AnyAgentTool } from "./common.js";
 import { jsonResult, readNumberParam, readStringParam } from "./common.js";
@@ -34,7 +34,8 @@ export function createMemoryServiceQueryTool(options: {
   }
 
   const defaults = cfg.agents?.defaults?.memorySearch;
-  const overrides = cfg.agents?.agents?.[agentId]?.memorySearch;
+  const agentConfig = resolveAgentConfig(cfg, agentId);
+  const overrides = agentConfig?.memorySearch;
   const memoryServiceConfig = overrides?.memoryService ?? defaults?.memoryService;
 
   if (!memoryServiceConfig?.enabled) {

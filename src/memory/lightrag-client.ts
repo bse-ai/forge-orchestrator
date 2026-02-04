@@ -5,6 +5,7 @@
 
 export const DEFAULT_LIGHTRAG_ENDPOINT = "http://localhost:8001";
 export const DEFAULT_LIGHTRAG_TIMEOUT_MS = 30_000;
+export const DEFAULT_LIGHTRAG_MODE = "hybrid" as const;
 
 export type LightRAGMode = "naive" | "local" | "global" | "hybrid";
 

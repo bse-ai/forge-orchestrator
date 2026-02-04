@@ -6,7 +6,7 @@ import {
   DEFAULT_GRAPHITI_ENDPOINT,
   DEFAULT_GRAPHITI_TIMEOUT_MS,
 } from "../../memory/graphiti-client.js";
-import { resolveSessionAgentId } from "../agent-scope.js";
+import { resolveAgentConfig, resolveSessionAgentId } from "../agent-scope.js";
 import { resolveMemorySearchConfig } from "../memory-search.js";
 import type { AnyAgentTool } from "./common.js";
 import { jsonResult, readNumberParam, readStringParam } from "./common.js";
@@ -41,7 +41,8 @@ export function createGraphitiSearchTool(options: {
   }
 
   const defaults = cfg.agents?.defaults?.memorySearch;
-  const overrides = cfg.agents?.agents?.[agentId]?.memorySearch;
+  const agentConfig = resolveAgentConfig(cfg, agentId);
+  const overrides = agentConfig?.memorySearch;
   const graphitiConfig = overrides?.graphiti ?? defaults?.graphiti;
 
   if (!graphitiConfig?.enabled) {

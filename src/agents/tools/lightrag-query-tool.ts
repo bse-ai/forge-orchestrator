@@ -6,7 +6,7 @@ import {
   DEFAULT_LIGHTRAG_ENDPOINT,
   DEFAULT_LIGHTRAG_TIMEOUT_MS,
 } from "../../memory/lightrag-client.js";
-import { resolveSessionAgentId } from "../agent-scope.js";
+import { resolveAgentConfig, resolveSessionAgentId } from "../agent-scope.js";
 import { resolveMemorySearchConfig } from "../memory-search.js";
 import type { AnyAgentTool } from "./common.js";
 import { jsonResult, readNumberParam, readStringParam } from "./common.js";
@@ -36,7 +36,8 @@ export function createLightRAGQueryTool(options: {
   }
 
   const defaults = cfg.agents?.defaults?.memorySearch;
-  const overrides = cfg.agents?.agents?.[agentId]?.memorySearch;
+  const agentConfig = resolveAgentConfig(cfg, agentId);
+  const overrides = agentConfig?.memorySearch;
   const lightragConfig = overrides?.lightrag ?? defaults?.lightrag;
 
   if (!lightragConfig?.enabled) {
@@ -55,14 +56,12 @@ export function createLightRAGQueryTool(options: {
 
       const modeRaw = params.mode as unknown;
       const mode =
-        typeof modeRaw === "string" &&
-        ["naive", "local", "global", "hybrid"].includes(modeRaw)
+        typeof modeRaw === "string" && ["naive", "local", "global", "hybrid"].includes(modeRaw)
           ? (modeRaw as "naive" | "local" | "global" | "hybrid")
           : undefined;
 
       const includeSourcesRaw = params.includeSources as unknown;
-      const includeSources =
-        typeof includeSourcesRaw === "boolean" ? includeSourcesRaw : undefined;
+      const includeSources = typeof includeSourcesRaw === "boolean" ? includeSourcesRaw : undefined;
 
       const client = createLightRAGClient({
         endpoint: lightragConfig.endpoint ?? DEFAULT_LIGHTRAG_ENDPOINT,
