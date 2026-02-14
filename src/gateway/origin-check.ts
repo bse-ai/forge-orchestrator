@@ -23,7 +23,7 @@ function resolveHostName(hostHeader?: string): string {
 
 function parseOrigin(
   originRaw?: string,
-): { origin: string; host: string; hostname: string } | null {
+): { origin: string; host: string; hostname: string; port: string } | null {
   const trimmed = (originRaw ?? "").trim();
   if (!trimmed || trimmed === "null") {
     return null;
@@ -34,6 +34,7 @@ function parseOrigin(
       origin: url.origin.toLowerCase(),
       host: url.host.toLowerCase(),
       hostname: url.hostname.toLowerCase(),
+      port: url.port,
     };
   } catch {
     return null;
@@ -44,6 +45,10 @@ export function checkBrowserOrigin(params: {
   requestHost?: string;
   origin?: string;
   allowedOrigins?: string[];
+  /** The port the gateway is listening on. When provided, loopback origin
+   *  checks also verify that the origin port matches the gateway port (or
+   *  both are standard HTTP/HTTPS ports). */
+  gatewayPort?: number;
 }): OriginCheckResult {
   const parsedOrigin = parseOrigin(params.origin);
   if (!parsedOrigin) {
@@ -64,8 +69,29 @@ export function checkBrowserOrigin(params: {
 
   const requestHostname = resolveHostName(requestHost);
   if (isLoopbackHost(parsedOrigin.hostname) && isLoopbackHost(requestHostname)) {
+    // When the gateway is bound to a specific port, require the origin port
+    // to match the gateway port so that other localhost services cannot
+    // make cross-port requests masquerading as same-origin.
+    if (params.gatewayPort != null) {
+      const originPort = parsedOrigin.port || inferDefaultPort(parsedOrigin.origin);
+      const gwPort = String(params.gatewayPort);
+      if (originPort && gwPort && originPort !== gwPort) {
+        return { ok: false, reason: "loopback origin port mismatch" };
+      }
+    }
     return { ok: true };
   }
 
   return { ok: false, reason: "origin not allowed" };
+}
+
+/** Infer the default port from the origin's protocol when no explicit port is present. */
+function inferDefaultPort(origin: string): string {
+  if (origin.startsWith("https:")) {
+    return "443";
+  }
+  if (origin.startsWith("http:")) {
+    return "80";
+  }
+  return "";
 }

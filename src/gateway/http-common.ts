@@ -89,3 +89,36 @@ export function setSseHeaders(res: ServerResponse) {
   res.setHeader("Connection", "keep-alive");
   res.flushHeaders?.();
 }
+
+/**
+ * Set restrictive default CORS headers on a response.
+ *
+ * By default cross-origin requests are denied.  Callers may pass an explicit
+ * `allowOrigin` to permit a specific origin (for example the Control UI host).
+ */
+export function setDefaultCorsHeaders(res: ServerResponse, opts?: { allowOrigin?: string }) {
+  const origin = opts?.allowOrigin ?? "null";
+  res.setHeader("Access-Control-Allow-Origin", origin);
+  res.setHeader("Vary", "Origin");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Authorization, Content-Type");
+  res.setHeader("Access-Control-Max-Age", "600");
+}
+
+/**
+ * Handle a CORS preflight (OPTIONS) request.  Returns `true` if the request
+ * was a preflight and has been fully handled, `false` otherwise.
+ */
+export function handleCorsPreflightIfNeeded(
+  req: IncomingMessage,
+  res: ServerResponse,
+  opts?: { allowOrigin?: string },
+): boolean {
+  if (req.method !== "OPTIONS") {
+    return false;
+  }
+  setDefaultCorsHeaders(res, opts);
+  res.statusCode = 204;
+  res.end();
+  return true;
+}

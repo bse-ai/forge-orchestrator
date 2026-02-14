@@ -250,6 +250,18 @@ export async function startGatewayServer(
   ) as Record<ChannelId, RuntimeEnv>;
   const channelMethods = listChannelPlugins().flatMap((plugin) => plugin.gatewayMethods ?? []);
   const gatewayMethods = Array.from(new Set([...baseGatewayMethods, ...channelMethods]));
+
+  // Warn at startup if any channel has a wildcard allowFrom entry.
+  for (const plugin of listChannelPlugins()) {
+    const allowFrom = plugin.config?.resolveAllowFrom?.({ cfg: cfgAtStart });
+    if (Array.isArray(allowFrom) && allowFrom.some((entry) => String(entry).trim() === "*")) {
+      log.warn(
+        `channel "${plugin.id}" has a wildcard ("*") in its allowFrom list – ` +
+          "this permits all senders and should only be used intentionally.",
+      );
+    }
+  }
+
   let pluginServices: PluginServicesHandle | null = null;
   const runtimeConfig = await resolveGatewayRuntimeConfig({
     cfg: cfgAtStart,
@@ -277,11 +289,10 @@ export async function startGatewayServer(
   let hooksConfig = runtimeConfig.hooksConfig;
   const canvasHostEnabled = runtimeConfig.canvasHostEnabled;
 
-  // Create auth rate limiter only when explicitly configured.
+  // Create auth rate limiter – use explicit config when provided, otherwise
+  // fall back to secure defaults (10 failed attempts / 1 min window / 5 min lockout).
   const rateLimitConfig = cfgAtStart.gateway?.auth?.rateLimit;
-  const authRateLimiter: AuthRateLimiter | undefined = rateLimitConfig
-    ? createAuthRateLimiter(rateLimitConfig)
-    : undefined;
+  const authRateLimiter: AuthRateLimiter = createAuthRateLimiter(rateLimitConfig);
 
   let controlUiRootState: ControlUiRootState | undefined;
   if (controlUiRootOverride) {

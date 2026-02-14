@@ -86,6 +86,28 @@ const BASE_RELOAD_RULES_TAIL: ReloadRule[] = [
   { prefix: "canvasHost", kind: "restart" },
 ];
 
+/** Config key prefixes whose changes have security implications. */
+const SECURITY_SENSITIVE_PREFIXES = [
+  "gateway.auth",
+  "gateway.bind",
+  "gateway.controlUi.allowInsecureAuth",
+  "gateway.controlUi.dangerouslyDisableDeviceAuth",
+  "gateway.tailscale",
+  "gateway.trustedProxies",
+  "tools.elevated",
+];
+
+/**
+ * Return the subset of `changedPaths` that touch security-sensitive config
+ * keys.  Used to emit warnings during hot-reload so operators notice
+ * potentially risky changes.
+ */
+export function filterSecuritySensitiveChanges(changedPaths: string[]): string[] {
+  return changedPaths.filter((p) =>
+    SECURITY_SENSITIVE_PREFIXES.some((prefix) => p === prefix || p.startsWith(`${prefix}.`)),
+  );
+}
+
 let cachedReloadRules: ReloadRule[] | null = null;
 let cachedRegistry: ReturnType<typeof getActivePluginRegistry> | null = null;
 
@@ -308,6 +330,15 @@ export function startGatewayConfigReloader(opts: {
       }
 
       opts.log.info(`config change detected; evaluating reload (${changedPaths.join(", ")})`);
+
+      const securityChanges = filterSecuritySensitiveChanges(changedPaths);
+      if (securityChanges.length > 0) {
+        opts.log.warn(
+          `security-sensitive config keys changed during hot-reload: ${securityChanges.join(", ")}. ` +
+            "Verify that these changes are intentional.",
+        );
+      }
+
       const plan = buildGatewayReloadPlan(changedPaths);
       if (settings.mode === "off") {
         opts.log.info("config reload disabled (gateway.reload.mode=off)");

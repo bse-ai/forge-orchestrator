@@ -47,6 +47,14 @@ export async function startTelegramWebhook(opts: {
     config: opts.config,
     accountId: opts.accountId,
   });
+  if (!opts.secret) {
+    runtime.log?.(
+      "WARNING: Telegram webhook is running without a secret token. " +
+        "Anyone who discovers the webhook URL can send fake updates. " +
+        "Set a secret token via the --secret flag or TELEGRAM_WEBHOOK_SECRET env var.",
+    );
+  }
+
   const handler = webhookCallback(bot, "http", {
     secretToken: opts.secret,
   });
