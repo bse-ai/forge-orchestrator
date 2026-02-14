@@ -71,7 +71,8 @@ export function resolveSessionKey(params: {
   const explicit = getHeader(params.req, "x-openclaw-session-key")?.trim();
   if (explicit) {
     // Validate session key format: must be printable ASCII, max 256 chars, no control chars.
-    if (explicit.length > 256 || /[\x00-\x1f\x7f]/.test(explicit)) {
+    // eslint-disable-next-line no-control-regex -- intentional control character detection
+    if (explicit.length > 256 || /[\u0000-\u001f\u007f]/.test(explicit)) {
       throw new Error("Invalid session key: must be printable ASCII, max 256 characters.");
     }
     return explicit;
