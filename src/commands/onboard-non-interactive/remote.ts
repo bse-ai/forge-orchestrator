@@ -9,7 +9,7 @@ import type { OnboardOptions } from "../onboard-types.js";
 export async function runNonInteractiveOnboardingRemote(params: {
   opts: OnboardOptions;
   runtime: RuntimeEnv;
-  baseConfig: ForgeOrchestratorConfig;
+  baseConfig: OpenClawConfig;
 }) {
   const { opts, runtime, baseConfig } = params;
   const mode = "remote" as const;
@@ -21,7 +21,7 @@ export async function runNonInteractiveOnboardingRemote(params: {
     return;
   }
 
-  let nextConfig: ForgeOrchestratorConfig = {
+  let nextConfig: OpenClawConfig = {
     ...baseConfig,
     gateway: {
       ...baseConfig.gateway,
@@ -47,7 +47,7 @@ export async function runNonInteractiveOnboardingRemote(params: {
     runtime.log(`Remote gateway: ${remoteUrl}`);
     runtime.log(`Auth: ${payload.auth}`);
     runtime.log(
-      `Tip: run \`${formatCliCommand("forge-orchestrator configure --section web")}\` to store your Brave API key for web_search. Docs: https://docs.forge-orchestrator.ai/tools/web`,
+      `Tip: run \`${formatCliCommand("openclaw configure --section web")}\` to store your Brave API key for web_search. Docs: https://docs.openclaw.ai/tools/web`,
     );
   }
 }

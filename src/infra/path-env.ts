@@ -4,7 +4,7 @@ import path from "node:path";
 import { resolveBrewPathDirs } from "./brew.js";
 import { isTruthyEnvValue } from "./env.js";
 
-type EnsureForgeOrchestratorPathOpts = {
+type EnsureOpenClawPathOpts = {
   execPath?: string;
   cwd?: string;
   homeDir?: string;
@@ -58,10 +58,10 @@ function candidateBinDirs(opts: EnsureOpenClawPathOpts): { prepend: string[]; ap
   const prepend: string[] = [];
   const append: string[] = [];
 
-  // Bundled macOS app: `forge-orchestrator` lives next to the executable (process.execPath).
+  // Bundled macOS app: `openclaw` lives next to the executable (process.execPath).
   try {
     const execDir = path.dirname(execPath);
-    const siblingCli = path.join(execDir, "forge-orchestrator");
+    const siblingCli = path.join(execDir, "openclaw");
     if (isExecutable(siblingCli)) {
       prepend.push(execDir);
     }
@@ -106,14 +106,14 @@ function candidateBinDirs(opts: EnsureOpenClawPathOpts): { prepend: string[]; ap
 }
 
 /**
- * Best-effort PATH bootstrap so skills that require the `forge-orchestrator` CLI can run
+ * Best-effort PATH bootstrap so skills that require the `openclaw` CLI can run
  * under launchd/minimal environments (and inside the macOS app bundle).
  */
-export function ensureForgeOrchestratorCliOnPath(opts: EnsureForgeOrchestratorPathOpts = {}) {
-  if (isTruthyEnvValue(process.env.FORGE_ORCH_PATH_BOOTSTRAPPED)) {
+export function ensureOpenClawCliOnPath(opts: EnsureOpenClawPathOpts = {}) {
+  if (isTruthyEnvValue(process.env.OPENCLAW_PATH_BOOTSTRAPPED)) {
     return;
   }
-  process.env.FORGE_ORCH_PATH_BOOTSTRAPPED = "1";
+  process.env.OPENCLAW_PATH_BOOTSTRAPPED = "1";
 
   const existing = opts.pathEnv ?? process.env.PATH ?? "";
   const { prepend, append } = candidateBinDirs(opts);

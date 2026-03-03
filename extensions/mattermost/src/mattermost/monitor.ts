@@ -1,10 +1,10 @@
 import type {
   ChannelAccountSnapshot,
   ChatType,
-  ForgeOrchestratorConfig,
+  OpenClawConfig,
   ReplyPayload,
   RuntimeEnv,
-} from "forge-orchestrator/plugin-sdk";
+} from "openclaw/plugin-sdk";
 import {
   buildAgentMediaPayload,
   DM_GROUP_ACCESS_REASON,
@@ -59,7 +59,7 @@ export type MonitorMattermostOpts = {
   botToken?: string;
   baseUrl?: string;
   accountId?: string;
-  config?: ForgeOrchestratorConfig;
+  config?: OpenClawConfig;
   runtime?: RuntimeEnv;
   abortSignal?: AbortSignal;
   statusSink?: (patch: Partial<ChannelAccountSnapshot>) => void;

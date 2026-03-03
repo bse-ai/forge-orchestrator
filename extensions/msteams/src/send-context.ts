@@ -1,8 +1,8 @@
 import {
   resolveChannelMediaMaxBytes,
-  type ForgeOrchestratorConfig,
+  type OpenClawConfig,
   type PluginRuntime,
-} from "forge-orchestrator/plugin-sdk";
+} from "openclaw/plugin-sdk";
 import type { MSTeamsAccessTokenProvider } from "./attachments/types.js";
 import { createMSTeamsConversationStoreFs } from "./conversation-store-fs.js";
 import type {
@@ -92,7 +92,7 @@ async function findConversationReference(recipient: {
 }
 
 export async function resolveMSTeamsSendContext(params: {
-  cfg: ForgeOrchestratorConfig;
+  cfg: OpenClawConfig;
   to: string;
 }): Promise<MSTeamsProactiveContext> {
   const msteamsCfg = params.cfg.channels?.msteams;

@@ -30,7 +30,7 @@ import {
   type ResolvedProviderAuth,
 } from "../model-auth.js";
 import { normalizeProviderId } from "../model-selection.js";
-import { ensureForgeOrchestratorModelsJson } from "../models-config.js";
+import { ensureOpenClawModelsJson } from "../models-config.js";
 import {
   formatBillingErrorMessage,
   classifyFailoverReason,
@@ -175,7 +175,7 @@ const toNormalizedUsage = (usage: UsageAccumulator) => {
   // The accumulated cacheRead/cacheWrite inflate context size because each tool-call
   // round-trip reports cacheRead ≈ current_context_size, and summing N calls gives
   // N × context_size which gets clamped to contextWindow (e.g. 200k).
-  // See: https://github.com/forge-orchestrator/forge-orchestrator/issues/13698
+  // See: https://github.com/openclaw/openclaw/issues/13698
   //
   // We use lastInput/lastCacheRead/lastCacheWrite (from the most recent API call) for
   // cache-related fields, but keep accumulated output (total generated text this turn).
@@ -371,12 +371,7 @@ export async function runEmbeddedPiAgent(
           : [undefined];
       let profileIndex = 0;
 
-      const rawThinkLevel = params.thinkLevel ?? "off";
-      // Clamp xhigh to high for models that don't support it (avoids a wasted API call).
-      const initialThinkLevel =
-        rawThinkLevel === "xhigh" && !supportsXHighThinking(provider, modelId)
-          ? "high"
-          : rawThinkLevel;
+      const initialThinkLevel = params.thinkLevel ?? "off";
       let thinkLevel = initialThinkLevel;
       const attemptedThinking = new Set<ThinkLevel>();
       let apiKeyInfo: ApiKeyInfo | null = null;
@@ -743,8 +738,6 @@ export async function runEmbeddedPiAgent(
             prompt,
             images: params.images,
             disableTools: params.disableTools,
-            disableMessageTool:
-              params.disableMessageTool ?? isInternalMessageChannel(channelHint),
             provider,
             modelId,
             model,

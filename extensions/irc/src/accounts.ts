@@ -217,12 +217,12 @@ export function resolveIrcAccount(params: {
       merged.username?.trim() ||
       (accountId === DEFAULT_ACCOUNT_ID ? process.env.IRC_USERNAME?.trim() : "") ||
       nick ||
-      "forge-orchestrator"
+      "openclaw"
     ).trim();
     const realname = (
       merged.realname?.trim() ||
       (accountId === DEFAULT_ACCOUNT_ID ? process.env.IRC_REALNAME?.trim() : "") ||
-      "ForgeOrchestrator"
+      "OpenClaw"
     ).trim();
 
     const passwordResolution = resolvePassword(accountId, merged);

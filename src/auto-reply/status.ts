@@ -67,7 +67,7 @@ type QueueStatus = {
 };
 
 type StatusArgs = {
-  config?: ForgeOrchestratorConfig;
+  config?: OpenClawConfig;
   agent: AgentConfig;
   agentId?: string;
   sessionEntry?: SessionEntry;
@@ -222,7 +222,7 @@ const readUsageFromSessionLog = (
       model?: string;
     }
   | undefined => {
-  // Transcripts are stored at the session file path (fallback: ~/.forge-orchestrator/sessions/<SessionId>.jsonl)
+  // Transcripts are stored at the session file path (fallback: ~/.openclaw/sessions/<SessionId>.jsonl)
   if (!sessionId) {
     return undefined;
   }
@@ -386,7 +386,7 @@ const formatMediaUnderstandingLine = (decisions?: ReadonlyArray<MediaUnderstandi
 };
 
 const formatVoiceModeLine = (
-  config?: ForgeOrchestratorConfig,
+  config?: OpenClawConfig,
   sessionEntry?: SessionEntry,
 ): string | null => {
   if (!config) {
@@ -656,7 +656,7 @@ export function buildStatusMessage(args: StatusArgs): string {
       } (${fallbackState.reason ?? "selected model unavailable"})`
     : null;
   const commit = resolveCommitHash();
-  const versionLine = `🦞 ForgeOrchestrator ${VERSION}${commit ? ` (${commit})` : ""}`;
+  const versionLine = `🦞 OpenClaw ${VERSION}${commit ? ` (${commit})` : ""}`;
   const usagePair = formatUsagePair(inputTokens, outputTokens);
   const cacheLine = formatCacheLine(inputTokens, cacheRead, cacheWrite);
   const costLine = costLabel ? `💵 Cost: ${costLabel}` : null;
@@ -721,7 +721,7 @@ function groupCommandsByCategory(
   return grouped;
 }
 
-export function buildHelpMessage(cfg?: ForgeOrchestratorConfig): string {
+export function buildHelpMessage(cfg?: OpenClawConfig): string {
   const lines = ["ℹ️ Help", ""];
 
   lines.push("Session");
@@ -842,7 +842,7 @@ function formatCommandList(items: CommandsListItem[]): string {
 }
 
 export function buildCommandsMessage(
-  cfg?: ForgeOrchestratorConfig,
+  cfg?: OpenClawConfig,
   skillCommands?: SkillCommandSpec[],
   options?: CommandsMessageOptions,
 ): string {
@@ -851,7 +851,7 @@ export function buildCommandsMessage(
 }
 
 export function buildCommandsMessagePaginated(
-  cfg?: ForgeOrchestratorConfig,
+  cfg?: OpenClawConfig,
   skillCommands?: SkillCommandSpec[],
   options?: CommandsMessageOptions,
 ): CommandsMessageResult {

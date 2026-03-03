@@ -181,7 +181,7 @@ const saveSessionToMemory: HookHandler = async (event) => {
     log.debug("Hook triggered for reset/new command", { action: event.action });
 
     const context = event.context || {};
-    const cfg = context.cfg as ForgeOrchestratorConfig | undefined;
+    const cfg = context.cfg as OpenClawConfig | undefined;
     const agentId = resolveAgentIdFromSessionKey(event.sessionKey);
     const workspaceDir = cfg
       ? resolveAgentWorkspaceDir(cfg, agentId)
@@ -253,7 +253,7 @@ const saveSessionToMemory: HookHandler = async (event) => {
 
       // Avoid calling the model provider in unit tests; keep hooks fast and deterministic.
       const isTestEnv =
-        process.env.FORGE_ORCH_TEST_FAST === "1" ||
+        process.env.OPENCLAW_TEST_FAST === "1" ||
         process.env.VITEST === "true" ||
         process.env.VITEST === "1" ||
         process.env.NODE_ENV === "test";

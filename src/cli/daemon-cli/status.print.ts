@@ -99,7 +99,7 @@ export function printDaemonStatus(status: DaemonStatus, opts: { json: boolean })
     }
     defaultRuntime.error(
       warnText(
-        `Recommendation: run "${formatCliCommand("forge-orchestrator doctor")}" (or "${formatCliCommand("forge-orchestrator doctor --repair")}").`,
+        `Recommendation: run "${formatCliCommand("openclaw doctor")}" (or "${formatCliCommand("openclaw doctor --repair")}").`,
       ),
     );
   }
@@ -133,7 +133,7 @@ export function printDaemonStatus(status: DaemonStatus, opts: { json: boolean })
       );
       defaultRuntime.error(
         errorText(
-          `Fix: rerun \`${formatCliCommand("forge-orchestrator gateway install --force")}\` from the same --profile / FORGE_ORCH_STATE_DIR you expect.`,
+          `Fix: rerun \`${formatCliCommand("openclaw gateway install --force")}\` from the same --profile / OPENCLAW_STATE_DIR you expect.`,
         ),
       );
     }
@@ -230,7 +230,7 @@ export function printDaemonStatus(status: DaemonStatus, opts: { json: boolean })
       ),
     );
     defaultRuntime.error(
-      errorText(`Then reinstall: ${formatCliCommand("forge-orchestrator gateway install")}`),
+      errorText(`Then reinstall: ${formatCliCommand("openclaw gateway install")}`),
     );
     spacer();
   }
@@ -303,6 +303,6 @@ export function printDaemonStatus(status: DaemonStatus, opts: { json: boolean })
     spacer();
   }
 
-  defaultRuntime.log(`${label("Troubles:")} run ${formatCliCommand("forge-orchestrator status")}`);
-  defaultRuntime.log(`${label("Troubleshooting:")} https://docs.forge-orchestrator.ai/troubleshooting`);
+  defaultRuntime.log(`${label("Troubles:")} run ${formatCliCommand("openclaw status")}`);
+  defaultRuntime.log(`${label("Troubleshooting:")} https://docs.openclaw.ai/troubleshooting`);
 }

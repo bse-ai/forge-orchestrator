@@ -1,5 +1,5 @@
-import type { ForgeOrchestratorPluginApi } from "forge-orchestrator/plugin-sdk";
-import { emptyPluginConfigSchema } from "forge-orchestrator/plugin-sdk";
+import type { OpenClawPluginApi } from "openclaw/plugin-sdk";
+import { emptyPluginConfigSchema } from "openclaw/plugin-sdk";
 import { zaloDock, zaloPlugin } from "./src/channel.js";
 import { setZaloRuntime } from "./src/runtime.js";
 
@@ -8,7 +8,7 @@ const plugin = {
   name: "Zalo",
   description: "Zalo channel plugin (Bot API)",
   configSchema: emptyPluginConfigSchema(),
-  register(api: ForgeOrchestratorPluginApi) {
+  register(api: OpenClawPluginApi) {
     setZaloRuntime(api.runtime);
     api.registerChannel({ plugin: zaloPlugin, dock: zaloDock });
   },

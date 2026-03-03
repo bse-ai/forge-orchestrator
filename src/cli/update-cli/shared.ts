@@ -55,7 +55,7 @@ export function parseTimeoutMsOrExit(timeout?: string): number | undefined | nul
 const OPENCLAW_REPO_URL = "https://github.com/openclaw/openclaw.git";
 const MAX_LOG_CHARS = 8000;
 
-export const DEFAULT_PACKAGE_NAME = "forge-orchestrator";
+export const DEFAULT_PACKAGE_NAME = "openclaw";
 const CORE_PACKAGE_NAMES = new Set([DEFAULT_PACKAGE_NAME]);
 
 export function normalizeTag(value?: string | null): string | null {
@@ -109,7 +109,7 @@ export async function isEmptyDir(targetPath: string): Promise<boolean> {
 }
 
 export function resolveGitInstallDir(): string {
-  const override = process.env.FORGE_ORCH_GIT_DIR?.trim();
+  const override = process.env.OPENCLAW_GIT_DIR?.trim();
   if (override) {
     return path.resolve(override);
   }
@@ -130,7 +130,7 @@ export function resolveNodeRunner(): string {
 
 export async function resolveUpdateRoot(): Promise<string> {
   return (
-    (await resolveForgeOrchestratorPackageRoot({
+    (await resolveOpenClawPackageRoot({
       moduleUrl: import.meta.url,
       argv1: process.argv[1],
       cwd: process.cwd(),
@@ -191,7 +191,7 @@ export async function ensureGitCheckout(params: {
   if (!dirExists) {
     return await runUpdateStep({
       name: "git clone",
-      argv: ["git", "clone", FORGE_ORCH_REPO_URL, params.dir],
+      argv: ["git", "clone", OPENCLAW_REPO_URL, params.dir],
       timeoutMs: params.timeoutMs,
       progress: params.progress,
     });
@@ -201,13 +201,13 @@ export async function ensureGitCheckout(params: {
     const empty = await isEmptyDir(params.dir);
     if (!empty) {
       throw new Error(
-        `FORGE_ORCH_GIT_DIR points at a non-git directory: ${params.dir}. Set FORGE_ORCH_GIT_DIR to an empty folder or an forge-orchestrator checkout.`,
+        `OPENCLAW_GIT_DIR points at a non-git directory: ${params.dir}. Set OPENCLAW_GIT_DIR to an empty folder or an openclaw checkout.`,
       );
     }
 
     return await runUpdateStep({
       name: "git clone",
-      argv: ["git", "clone", FORGE_ORCH_REPO_URL, params.dir],
+      argv: ["git", "clone", OPENCLAW_REPO_URL, params.dir],
       cwd: params.dir,
       timeoutMs: params.timeoutMs,
       progress: params.progress,
@@ -215,7 +215,7 @@ export async function ensureGitCheckout(params: {
   }
 
   if (!(await isCorePackage(params.dir))) {
-    throw new Error(`FORGE_ORCH_GIT_DIR does not look like a core checkout: ${params.dir}.`);
+    throw new Error(`OPENCLAW_GIT_DIR does not look like a core checkout: ${params.dir}.`);
   }
 
   return null;
@@ -244,7 +244,7 @@ export async function resolveGlobalManager(params: {
 }
 
 export async function tryWriteCompletionCache(root: string, jsonMode: boolean): Promise<void> {
-  const binPath = path.join(root, "forge-orchestrator.mjs");
+  const binPath = path.join(root, "openclaw.mjs");
   if (!(await pathExists(binPath))) {
     return;
   }

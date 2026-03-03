@@ -222,11 +222,11 @@ export async function gatherDaemonStatus(
         url: probeUrl,
         token:
           opts.rpc.token ||
-          mergedDaemonEnv.FORGE_ORCH_GATEWAY_TOKEN ||
+          mergedDaemonEnv.OPENCLAW_GATEWAY_TOKEN ||
           daemonCfg.gateway?.auth?.token,
         password:
           opts.rpc.password ||
-          mergedDaemonEnv.FORGE_ORCH_GATEWAY_PASSWORD ||
+          mergedDaemonEnv.OPENCLAW_GATEWAY_PASSWORD ||
           daemonCfg.gateway?.auth?.password,
         tlsFingerprint:
           shouldUseLocalTlsRuntime && tlsRuntime?.enabled

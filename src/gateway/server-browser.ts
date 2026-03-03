@@ -5,7 +5,7 @@ export type BrowserControlServer = {
 };
 
 export async function startBrowserControlServerIfEnabled(): Promise<BrowserControlServer | null> {
-  if (isTruthyEnvValue(process.env.FORGE_ORCH_SKIP_BROWSER_CONTROL_SERVER)) {
+  if (isTruthyEnvValue(process.env.OPENCLAW_SKIP_BROWSER_CONTROL_SERVER)) {
     return null;
   }
   // Lazy import: keeps startup fast, but still bundles for the embedded

@@ -23,7 +23,7 @@ function resolveTaskName(env: GatewayServiceEnv): string {
   if (override) {
     return override;
   }
-  return resolveGatewayWindowsTaskName(env.FORGE_ORCH_PROFILE);
+  return resolveGatewayWindowsTaskName(env.OPENCLAW_PROFILE);
 }
 
 export function resolveTaskScriptPath(env: GatewayServiceEnv): string {
@@ -31,7 +31,7 @@ export function resolveTaskScriptPath(env: GatewayServiceEnv): string {
   if (override) {
     return override;
   }
-  const scriptName = env.FORGE_ORCH_TASK_SCRIPT_NAME?.trim() || "gateway.cmd";
+  const scriptName = env.OPENCLAW_TASK_SCRIPT_NAME?.trim() || "gateway.cmd";
   const stateDir = resolveGatewayStateDir(env);
   return path.join(stateDir, scriptName);
 }

@@ -17,7 +17,7 @@
       "order": 65
     },
     "install": {
-      "npmSpec": "@forge-orchestrator/mattermost",
+      "npmSpec": "@openclaw/mattermost",
       "localPath": "extensions/mattermost",
       "defaultChoice": "npm"
     }

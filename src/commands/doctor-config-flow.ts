@@ -94,11 +94,11 @@ function resolvePathTarget(root: unknown, path: Array<string | number>): unknown
   return current;
 }
 
-function stripUnknownConfigKeys(config: ForgeOrchestratorConfig): {
-  config: ForgeOrchestratorConfig;
+function stripUnknownConfigKeys(config: OpenClawConfig): {
+  config: OpenClawConfig;
   removed: string[];
 } {
-  const parsed = ForgeOrchestratorSchema.safeParse(config);
+  const parsed = OpenClawSchema.safeParse(config);
   if (parsed.success) {
     return { config, removed: [] };
   }
@@ -130,7 +130,7 @@ function stripUnknownConfigKeys(config: ForgeOrchestratorConfig): {
   return { config: next, removed };
 }
 
-function noteOpencodeProviderOverrides(cfg: ForgeOrchestratorConfig) {
+function noteOpencodeProviderOverrides(cfg: OpenClawConfig) {
   const providers = cfg.models?.providers;
   if (!providers) {
     return;
@@ -1682,8 +1682,8 @@ async function maybeMigrateLegacyConfig(): Promise<string[]> {
     return changes;
   }
 
-  const targetDir = path.join(home, ".forge-orchestrator");
-  const targetPath = path.join(targetDir, "forge-orchestrator.json");
+  const targetDir = path.join(home, ".openclaw");
+  const targetPath = path.join(targetDir, "openclaw.json");
   try {
     await fs.access(targetPath);
     return changes;
@@ -1742,7 +1742,7 @@ export async function loadAndMaybeMigrateDoctorConfig(params: {
 
   let snapshot = await readConfigFileSnapshot();
   const baseCfg = snapshot.config ?? {};
-  let cfg: ForgeOrchestratorConfig = baseCfg;
+  let cfg: OpenClawConfig = baseCfg;
   let candidate = structuredClone(baseCfg);
   let pendingChanges = false;
   let shouldWriteConfig = false;
@@ -1790,7 +1790,7 @@ export async function loadAndMaybeMigrateDoctorConfig(params: {
     if (shouldRepair) {
       cfg = normalized.config;
     } else {
-      fixHints.push(`Run "${formatCliCommand("forge-orchestrator doctor --fix")}" to apply these changes.`);
+      fixHints.push(`Run "${formatCliCommand("openclaw doctor --fix")}" to apply these changes.`);
     }
   }
 
@@ -1802,7 +1802,7 @@ export async function loadAndMaybeMigrateDoctorConfig(params: {
     if (shouldRepair) {
       cfg = autoEnable.config;
     } else {
-      fixHints.push(`Run "${formatCliCommand("forge-orchestrator doctor --fix")}" to apply these changes.`);
+      fixHints.push(`Run "${formatCliCommand("openclaw doctor --fix")}" to apply these changes.`);
     }
   }
 
@@ -2014,7 +2014,7 @@ export async function loadAndMaybeMigrateDoctorConfig(params: {
       note(lines, "Doctor changes");
     } else {
       note(lines, "Unknown config keys");
-      fixHints.push('Run "forge-orchestrator doctor --fix" to remove these keys.');
+      fixHints.push('Run "openclaw doctor --fix" to remove these keys.');
     }
   }
 

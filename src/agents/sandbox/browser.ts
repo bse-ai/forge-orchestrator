@@ -3,8 +3,8 @@ import { startBrowserBridgeServer, stopBrowserBridgeServer } from "../../browser
 import { type ResolvedBrowserConfig, resolveProfile } from "../../browser/config.js";
 import {
   DEFAULT_BROWSER_EVALUATE_ENABLED,
-  DEFAULT_FORGE_ORCH_BROWSER_COLOR,
-  DEFAULT_FORGE_ORCH_BROWSER_PROFILE_NAME,
+  DEFAULT_OPENCLAW_BROWSER_COLOR,
+  DEFAULT_OPENCLAW_BROWSER_PROFILE_NAME,
 } from "../../browser/constants.js";
 import { deriveDefaultBrowserCdpPortRange } from "../../config/port-defaults.js";
 import { defaultRuntime } from "../../runtime.js";
@@ -80,7 +80,7 @@ function buildSandboxBrowserResolvedConfig(params: {
     cdpPortRangeEnd: cdpPortRange.end,
     remoteCdpTimeoutMs: 1500,
     remoteCdpHandshakeTimeoutMs: 3000,
-    color: DEFAULT_FORGE_ORCH_BROWSER_COLOR,
+    color: DEFAULT_OPENCLAW_BROWSER_COLOR,
     executablePath: undefined,
     headless: params.headless,
     noSandbox: false,
@@ -88,9 +88,9 @@ function buildSandboxBrowserResolvedConfig(params: {
     defaultProfile: DEFAULT_OPENCLAW_BROWSER_PROFILE_NAME,
     extraArgs: [],
     profiles: {
-      [DEFAULT_FORGE_ORCH_BROWSER_PROFILE_NAME]: {
+      [DEFAULT_OPENCLAW_BROWSER_PROFILE_NAME]: {
         cdpPort: params.cdpPort,
-        color: DEFAULT_FORGE_ORCH_BROWSER_COLOR,
+        color: DEFAULT_OPENCLAW_BROWSER_COLOR,
       },
     },
   };
@@ -287,7 +287,7 @@ export async function ensureSandboxBrowser(params: {
 
   const existing = BROWSER_BRIDGES.get(params.scopeKey);
   const existingProfile = existing
-    ? resolveProfile(existing.bridge.state.resolved, DEFAULT_FORGE_ORCH_BROWSER_PROFILE_NAME)
+    ? resolveProfile(existing.bridge.state.resolved, DEFAULT_OPENCLAW_BROWSER_PROFILE_NAME)
     : null;
 
   let desiredAuthToken = params.bridgeAuth?.token?.trim() || undefined;

@@ -6,8 +6,8 @@ import type { OpenClawConfig } from "../../config/config.js";
 import { log } from "./logger.js";
 
 const OPENROUTER_APP_HEADERS: Record<string, string> = {
-  "HTTP-Referer": "https://forge-orchestrator.ai",
-  "X-Title": "ForgeOrchestrator",
+  "HTTP-Referer": "https://openclaw.ai",
+  "X-Title": "OpenClaw",
 };
 const ANTHROPIC_CONTEXT_1M_BETA = "context-1m-2025-08-07";
 const ANTHROPIC_1M_MODEL_PREFIXES = ["claude-opus-4", "claude-sonnet-4"] as const;
@@ -23,7 +23,7 @@ const OPENAI_RESPONSES_PROVIDERS = new Set(["openai", "azure-openai-responses"])
  * @internal Exported for testing only
  */
 export function resolveExtraParams(params: {
-  cfg: ForgeOrchestratorConfig | undefined;
+  cfg: OpenClawConfig | undefined;
   provider: string;
   modelId: string;
   agentId?: string;
@@ -759,7 +759,7 @@ function createZaiToolStreamWrapper(
  */
 export function applyExtraParamsToAgent(
   agent: { streamFn?: StreamFn },
-  cfg: ForgeOrchestratorConfig | undefined,
+  cfg: OpenClawConfig | undefined,
   provider: string,
   modelId: string,
   extraParamsOverride?: Record<string, unknown>,

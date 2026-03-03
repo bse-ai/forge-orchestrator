@@ -25,8 +25,8 @@ export function getBearerToken(req: IncomingMessage): string | undefined {
 
 export function resolveAgentIdFromHeader(req: IncomingMessage): string | undefined {
   const raw =
-    getHeader(req, "x-forge-orchestrator-agent-id")?.trim() ||
-    getHeader(req, "x-forge-orchestrator-agent")?.trim() ||
+    getHeader(req, "x-openclaw-agent-id")?.trim() ||
+    getHeader(req, "x-openclaw-agent")?.trim() ||
     "";
   if (!raw) {
     return undefined;
@@ -41,7 +41,7 @@ export function resolveAgentIdFromModel(model: string | undefined): string | und
   }
 
   const m =
-    raw.match(/^forge-orchestrator[:/](?<agentId>[a-z0-9][a-z0-9_-]{0,63})$/i) ??
+    raw.match(/^openclaw[:/](?<agentId>[a-z0-9][a-z0-9_-]{0,63})$/i) ??
     raw.match(/^agent:(?<agentId>[a-z0-9][a-z0-9_-]{0,63})$/i);
   const agentId = m?.groups?.agentId;
   if (!agentId) {
@@ -69,13 +69,8 @@ export function resolveSessionKey(params: {
   user?: string | undefined;
   prefix: string;
 }): string {
-  const explicit = getHeader(params.req, "x-forge-orchestrator-session-key")?.trim();
+  const explicit = getHeader(params.req, "x-openclaw-session-key")?.trim();
   if (explicit) {
-    // Validate session key format: must be printable ASCII, max 256 chars, no control chars.
-    // eslint-disable-next-line no-control-regex -- intentional control character detection
-    if (explicit.length > 256 || /[\u0000-\u001f\u007f]/.test(explicit)) {
-      throw new Error("Invalid session key: must be printable ASCII, max 256 characters.");
-    }
     return explicit;
   }
 

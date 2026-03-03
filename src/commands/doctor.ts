@@ -62,7 +62,7 @@ import { ensureSystemdUserLingerInteractive } from "./systemd-linger.js";
 const intro = (message: string) => clackIntro(stylePromptTitle(message) ?? message);
 const outro = (message: string) => clackOutro(stylePromptTitle(message) ?? message);
 
-function resolveMode(cfg: ForgeOrchestratorConfig): "local" | "remote" {
+function resolveMode(cfg: OpenClawConfig): "local" | "remote" {
   return cfg.gateway?.mode === "remote" ? "remote" : "local";
 }
 
@@ -72,9 +72,9 @@ export async function doctorCommand(
 ) {
   const prompter = createDoctorPrompter({ runtime, options });
   printWizardHeader(runtime);
-  intro("ForgeOrchestrator doctor");
+  intro("OpenClaw doctor");
 
-  const root = await resolveForgeOrchestratorPackageRoot({
+  const root = await resolveOpenClawPackageRoot({
     moduleUrl: import.meta.url,
     argv1: process.argv[1],
     cwd: process.cwd(),
@@ -108,11 +108,11 @@ export async function doctorCommand(
   if (!cfg.gateway?.mode) {
     const lines = [
       "gateway.mode is unset; gateway start will be blocked.",
-      `Fix: run ${formatCliCommand("forge-orchestrator configure")} and set Gateway mode (local/remote).`,
-      `Or set directly: ${formatCliCommand("forge-orchestrator config set gateway.mode local")}`,
+      `Fix: run ${formatCliCommand("openclaw configure")} and set Gateway mode (local/remote).`,
+      `Or set directly: ${formatCliCommand("openclaw config set gateway.mode local")}`,
     ];
     if (!fs.existsSync(configPath)) {
-      lines.push(`Missing config: run ${formatCliCommand("forge-orchestrator setup")} first.`);
+      lines.push(`Missing config: run ${formatCliCommand("openclaw setup")} first.`);
     }
     note(lines.join("\n"), "Gateway");
   }

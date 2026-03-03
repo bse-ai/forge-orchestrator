@@ -3,10 +3,10 @@ import {
   createTypingCallbacks,
   logTypingFailure,
   resolveChannelMediaMaxBytes,
-  type ForgeOrchestratorConfig,
+  type OpenClawConfig,
   type MSTeamsReplyStyle,
   type RuntimeEnv,
-} from "forge-orchestrator/plugin-sdk";
+} from "openclaw/plugin-sdk";
 import type { MSTeamsAccessTokenProvider } from "./attachments/types.js";
 import type { StoredConversationReference } from "./conversation-store.js";
 import {
@@ -26,7 +26,7 @@ import { getMSTeamsRuntime } from "./runtime.js";
 import type { MSTeamsTurnContext } from "./sdk-types.js";
 
 export function createMSTeamsReplyDispatcher(params: {
-  cfg: ForgeOrchestratorConfig;
+  cfg: OpenClawConfig;
   agentId: string;
   accountId?: string;
   runtime: RuntimeEnv;

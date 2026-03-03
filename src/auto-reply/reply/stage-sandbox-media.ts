@@ -22,7 +22,7 @@ const STAGED_MEDIA_MAX_BYTES = MEDIA_MAX_BYTES;
 export async function stageSandboxMedia(params: {
   ctx: MsgContext;
   sessionCtx: TemplateContext;
-  cfg: ForgeOrchestratorConfig;
+  cfg: OpenClawConfig;
   sessionKey?: string;
   workspaceDir: string;
 }) {
@@ -39,7 +39,7 @@ export async function stageSandboxMedia(params: {
     workspaceDir,
   });
 
-  // For remote attachments without sandbox, use ~/.forge-orchestrator/media (not agent workspace for privacy)
+  // For remote attachments without sandbox, use ~/.openclaw/media (not agent workspace for privacy)
   const remoteMediaCacheDir = ctx.MediaRemoteHost
     ? path.join(CONFIG_DIR, "media", "remote-cache", sessionKey)
     : null;

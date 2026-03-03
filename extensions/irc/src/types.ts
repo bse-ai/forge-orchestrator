@@ -7,8 +7,8 @@ import type {
   GroupToolPolicyBySenderConfig,
   GroupToolPolicyConfig,
   MarkdownConfig,
-  ForgeOrchestratorConfig,
-} from "forge-orchestrator/plugin-sdk";
+  OpenClawConfig,
+} from "openclaw/plugin-sdk";
 
 export type IrcChannelConfig = {
   requireMention?: boolean;
@@ -71,8 +71,8 @@ export type IrcConfig = IrcAccountConfig & {
   defaultAccount?: string;
 };
 
-export type CoreConfig = ForgeOrchestratorConfig & {
-  channels?: ForgeOrchestratorConfig["channels"] & {
+export type CoreConfig = OpenClawConfig & {
+  channels?: OpenClawConfig["channels"] & {
     irc?: IrcConfig;
   };
 };

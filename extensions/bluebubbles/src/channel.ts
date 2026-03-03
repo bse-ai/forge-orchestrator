@@ -1,4 +1,4 @@
-import type { ChannelAccountSnapshot, ChannelPlugin, ForgeOrchestratorConfig } from "forge-orchestrator/plugin-sdk";
+import type { ChannelAccountSnapshot, ChannelPlugin, OpenClawConfig } from "openclaw/plugin-sdk";
 import {
   applyAccountNameToChannelSection,
   buildChannelConfigSchema,
@@ -13,7 +13,7 @@ import {
   resolveBlueBubblesGroupRequireMention,
   resolveBlueBubblesGroupToolPolicy,
   setAccountEnabledInConfigSection,
-} from "forge-orchestrator/plugin-sdk";
+} from "openclaw/plugin-sdk";
 import {
   listBlueBubblesAccountIds,
   type ResolvedBlueBubblesAccount,
@@ -263,7 +263,7 @@ export const bluebubblesPlugin: ChannelPlugin<ResolvedBlueBubblesAccount> = {
               ...(input.webhookPath ? { webhookPath: input.webhookPath } : {}),
             },
           },
-        } as ForgeOrchestratorConfig;
+        } as OpenClawConfig;
       }
       return {
         ...next,
@@ -284,7 +284,7 @@ export const bluebubblesPlugin: ChannelPlugin<ResolvedBlueBubblesAccount> = {
             },
           },
         },
-      } as ForgeOrchestratorConfig;
+      } as OpenClawConfig;
     },
   },
   pairing: {

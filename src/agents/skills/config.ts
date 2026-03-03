@@ -21,7 +21,7 @@ export function isConfigPathTruthy(config: OpenClawConfig | undefined, pathStr: 
 }
 
 export function resolveSkillConfig(
-  config: ForgeOrchestratorConfig | undefined,
+  config: OpenClawConfig | undefined,
   skillKey: string,
 ): SkillConfig | undefined {
   const skills = config?.skills?.entries;
@@ -46,13 +46,13 @@ function normalizeAllowlist(input: unknown): string[] | undefined {
   return normalized.length > 0 ? normalized : undefined;
 }
 
-const BUNDLED_SOURCES = new Set(["forge-orchestrator-bundled"]);
+const BUNDLED_SOURCES = new Set(["openclaw-bundled"]);
 
 function isBundledSkill(entry: SkillEntry): boolean {
   return BUNDLED_SOURCES.has(entry.skill.source);
 }
 
-export function resolveBundledAllowlist(config?: ForgeOrchestratorConfig): string[] | undefined {
+export function resolveBundledAllowlist(config?: OpenClawConfig): string[] | undefined {
   return normalizeAllowlist(config?.skills?.allowBundled);
 }
 
@@ -69,7 +69,7 @@ export function isBundledSkillAllowed(entry: SkillEntry, allowlist?: string[]): 
 
 export function shouldIncludeSkill(params: {
   entry: SkillEntry;
-  config?: ForgeOrchestratorConfig;
+  config?: OpenClawConfig;
   eligibility?: SkillEligibilityContext;
 }): boolean {
   const { entry, config, eligibility } = params;

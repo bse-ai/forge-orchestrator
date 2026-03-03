@@ -6,10 +6,10 @@ import type { RuntimeEnv } from "../runtime.js";
 import type { WizardPrompter } from "../wizard/prompts.js";
 
 export async function setupInternalHooks(
-  cfg: ForgeOrchestratorConfig,
+  cfg: OpenClawConfig,
   runtime: RuntimeEnv,
   prompter: WizardPrompter,
-): Promise<ForgeOrchestratorConfig> {
+): Promise<OpenClawConfig> {
   await prompter.note(
     [
       "Hooks let you automate actions when agent commands are issued.",
@@ -58,7 +58,7 @@ export async function setupInternalHooks(
     entries[name] = { enabled: true };
   }
 
-  const next: ForgeOrchestratorConfig = {
+  const next: OpenClawConfig = {
     ...cfg,
     hooks: {
       ...cfg.hooks,
@@ -74,9 +74,9 @@ export async function setupInternalHooks(
       `Enabled ${selected.length} hook${selected.length > 1 ? "s" : ""}: ${selected.join(", ")}`,
       "",
       "You can manage hooks later with:",
-      `  ${formatCliCommand("forge-orchestrator hooks list")}`,
-      `  ${formatCliCommand("forge-orchestrator hooks enable <name>")}`,
-      `  ${formatCliCommand("forge-orchestrator hooks disable <name>")}`,
+      `  ${formatCliCommand("openclaw hooks list")}`,
+      `  ${formatCliCommand("openclaw hooks enable <name>")}`,
+      `  ${formatCliCommand("openclaw hooks disable <name>")}`,
     ].join("\n"),
     "Hooks Configured",
   );

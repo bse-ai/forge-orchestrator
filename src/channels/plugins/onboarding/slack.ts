@@ -27,11 +27,11 @@ import {
 const channel = "slack" as const;
 
 function buildSlackManifest(botName: string) {
-  const safeName = botName.trim() || "ForgeOrchestrator";
+  const safeName = botName.trim() || "OpenClaw";
   const manifest = {
     display_information: {
       name: safeName,
-      description: `${safeName} connector for ForgeOrchestrator`,
+      description: `${safeName} connector for OpenClaw`,
     },
     features: {
       bot_user: {
@@ -44,8 +44,8 @@ function buildSlackManifest(botName: string) {
       },
       slash_commands: [
         {
-          command: "/forge-orchestrator",
-          description: "Send a message to ForgeOrchestrator",
+          command: "/openclaw",
+          description: "Send a message to OpenClaw",
           should_escape: false,
         },
       ],
@@ -134,10 +134,10 @@ async function promptSlackTokens(prompter: WizardPrompter): Promise<{
 }
 
 function setSlackChannelAllowlist(
-  cfg: ForgeOrchestratorConfig,
+  cfg: OpenClawConfig,
   accountId: string,
   channelKeys: string[],
-): ForgeOrchestratorConfig {
+): OpenClawConfig {
   const channels = Object.fromEntries(channelKeys.map((key) => [key, { allow: true }]));
   return patchChannelConfigForAccount({
     cfg,
@@ -148,7 +148,7 @@ function setSlackChannelAllowlist(
 }
 
 async function promptSlackAllowFrom(params: {
-  cfg: ForgeOrchestratorConfig;
+  cfg: OpenClawConfig;
   prompter: WizardPrompter;
   accountId?: string;
 }): Promise<OpenClawConfig> {
@@ -259,7 +259,7 @@ export const slackOnboardingAdapter: ChannelOnboardingAdapter = {
     const slackBotName = String(
       await prompter.text({
         message: "Slack bot display name (used for manifest)",
-        initialValue: "ForgeOrchestrator",
+        initialValue: "OpenClaw",
       }),
     ).trim();
     if (!accountConfigured) {

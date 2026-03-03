@@ -33,7 +33,7 @@ export type HookSessionPolicyResolved = {
   allowedSessionKeyPrefixes?: string[];
 };
 
-export function resolveHooksConfig(cfg: ForgeOrchestratorConfig): HooksConfigResolved | null {
+export function resolveHooksConfig(cfg: OpenClawConfig): HooksConfigResolved | null {
   if (cfg.hooks?.enabled !== true) {
     return null;
   }
@@ -93,7 +93,7 @@ export function resolveHooksConfig(cfg: ForgeOrchestratorConfig): HooksConfigRes
   };
 }
 
-function resolveKnownAgentIds(cfg: ForgeOrchestratorConfig, defaultAgentId: string): Set<string> {
+function resolveKnownAgentIds(cfg: OpenClawConfig, defaultAgentId: string): Set<string> {
   const known = new Set(listAgentIds(cfg));
   known.add(defaultAgentId);
   return known;
@@ -165,8 +165,8 @@ export function extractHookToken(req: IncomingMessage): string | undefined {
     }
   }
   const headerToken =
-    typeof req.headers["x-forge-orchestrator-token"] === "string"
-      ? req.headers["x-forge-orchestrator-token"].trim()
+    typeof req.headers["x-openclaw-token"] === "string"
+      ? req.headers["x-openclaw-token"].trim()
       : "";
   if (headerToken) {
     return headerToken;

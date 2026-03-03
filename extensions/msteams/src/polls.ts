@@ -102,13 +102,13 @@ export function extractMSTeamsPollVote(
     return null;
   }
   const pollId =
-    readNestedString(value, ["forgeOrchPollId"]) ??
+    readNestedString(value, ["openclawPollId"]) ??
     readNestedString(value, ["pollId"]) ??
-    readNestedString(value, ["forge-orchestrator", "pollId"]) ??
-    readNestedString(value, ["forge-orchestrator", "poll", "id"]) ??
-    readNestedString(value, ["data", "forgeOrchPollId"]) ??
+    readNestedString(value, ["openclaw", "pollId"]) ??
+    readNestedString(value, ["openclaw", "poll", "id"]) ??
+    readNestedString(value, ["data", "openclawPollId"]) ??
     readNestedString(value, ["data", "pollId"]) ??
-    readNestedString(value, ["data", "forge-orchestrator", "pollId"]);
+    readNestedString(value, ["data", "openclaw", "pollId"]);
   if (!pollId) {
     return null;
   }
@@ -185,14 +185,14 @@ export function buildMSTeamsPollCard(params: {
         type: "Action.Submit",
         title: "Vote",
         data: {
-          forgeOrchPollId: pollId,
+          openclawPollId: pollId,
           pollId,
         },
         msteams: {
           type: "messageBack",
-          text: "forge-orchestrator poll vote",
+          text: "openclaw poll vote",
           displayText: "Vote recorded",
-          value: { forgeOrchPollId: pollId, pollId },
+          value: { openclawPollId: pollId, pollId },
         },
       },
     ],

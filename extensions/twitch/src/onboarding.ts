@@ -2,7 +2,7 @@
  * Twitch onboarding adapter for CLI setup wizard.
  */
 
-import type { ForgeOrchestratorConfig } from "forge-orchestrator/plugin-sdk";
+import type { OpenClawConfig } from "openclaw/plugin-sdk";
 import {
   formatDocsLink,
   promptChannelAccessConfig,
@@ -20,9 +20,9 @@ const channel = "twitch" as const;
  * Set Twitch account configuration
  */
 function setTwitchAccount(
-  cfg: ForgeOrchestratorConfig,
+  cfg: OpenClawConfig,
   account: Partial<TwitchAccountConfig>,
-): ForgeOrchestratorConfig {
+): OpenClawConfig {
   const existing = getAccountConfig(cfg, DEFAULT_ACCOUNT_ID);
   const merged: TwitchAccountConfig = {
     username: account.username ?? existing?.username ?? "",
@@ -70,7 +70,7 @@ async function noteTwitchSetupHelp(prompter: WizardPrompter): Promise<void> {
       "2. Generate a token with scopes: chat:read and chat:write",
       "   Use https://twitchtokengenerator.com/ or https://twitchapps.com/tmi/",
       "3. Copy the token (starts with 'oauth:') and Client ID",
-      "Env vars supported: FORGE_ORCH_TWITCH_ACCESS_TOKEN",
+      "Env vars supported: OPENCLAW_TWITCH_ACCESS_TOKEN",
       `Docs: ${formatDocsLink("/channels/twitch", "channels/twitch")}`,
     ].join("\n"),
     "Twitch setup",
@@ -207,15 +207,15 @@ async function promptRefreshTokenSetup(
  * Configure with env token path (returns early if user chooses env token).
  */
 async function configureWithEnvToken(
-  cfg: ForgeOrchestratorConfig,
+  cfg: OpenClawConfig,
   prompter: WizardPrompter,
   account: TwitchAccountConfig | null,
   envToken: string,
   forceAllowFrom: boolean,
   dmPolicy: ChannelOnboardingDmPolicy,
-): Promise<{ cfg: ForgeOrchestratorConfig } | null> {
+): Promise<{ cfg: OpenClawConfig } | null> {
   const useEnv = await prompter.confirm({
-    message: "Twitch env var FORGE_ORCH_TWITCH_ACCESS_TOKEN detected. Use env token?",
+    message: "Twitch env var OPENCLAW_TWITCH_ACCESS_TOKEN detected. Use env token?",
     initialValue: true,
   });
   if (!useEnv) {
@@ -243,10 +243,10 @@ async function configureWithEnvToken(
  * Set Twitch access control (role-based)
  */
 function setTwitchAccessControl(
-  cfg: ForgeOrchestratorConfig,
+  cfg: OpenClawConfig,
   allowedRoles: TwitchRole[],
   requireMention: boolean,
-): ForgeOrchestratorConfig {
+): OpenClawConfig {
   const account = getAccountConfig(cfg, DEFAULT_ACCOUNT_ID);
   if (!account) {
     return cfg;
@@ -322,7 +322,7 @@ export const twitchOnboardingAdapter: ChannelOnboardingAdapter = {
       await noteTwitchSetupHelp(prompter);
     }
 
-    const envToken = process.env.FORGE_ORCH_TWITCH_ACCESS_TOKEN?.trim();
+    const envToken = process.env.OPENCLAW_TWITCH_ACCESS_TOKEN?.trim();
 
     // Check if env var is set and config is empty
     if (envToken && !account?.accessToken) {

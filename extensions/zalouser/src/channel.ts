@@ -7,9 +7,9 @@ import type {
   ChannelGroupContext,
   ChannelMessageActionAdapter,
   ChannelPlugin,
-  ForgeOrchestratorConfig,
+  OpenClawConfig,
   GroupToolPolicyConfig,
-} from "forge-orchestrator/plugin-sdk";
+} from "openclaw/plugin-sdk";
 import {
   applyAccountNameToChannelSection,
   buildChannelConfigSchema,
@@ -365,7 +365,7 @@ export const zalouserPlugin: ChannelPlugin<ResolvedZalouserAccount> = {
               enabled: true,
             },
           },
-        } as ForgeOrchestratorConfig;
+        } as OpenClawConfig;
       }
       return {
         ...next,
@@ -383,7 +383,7 @@ export const zalouserPlugin: ChannelPlugin<ResolvedZalouserAccount> = {
             },
           },
         },
-      } as ForgeOrchestratorConfig;
+      } as OpenClawConfig;
     },
   },
   messaging: {

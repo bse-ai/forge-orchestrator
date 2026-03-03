@@ -1,18 +1,18 @@
 import type {
   ChannelOnboardingAdapter,
   ChannelOnboardingDmPolicy,
-  ForgeOrchestratorConfig,
+  OpenClawConfig,
   DmPolicy,
   WizardPrompter,
   MSTeamsTeamConfig,
-} from "forge-orchestrator/plugin-sdk";
+} from "openclaw/plugin-sdk";
 import {
   addWildcardAllowFrom,
   DEFAULT_ACCOUNT_ID,
   formatDocsLink,
   mergeAllowFromEntries,
   promptChannelAccessConfig,
-} from "forge-orchestrator/plugin-sdk";
+} from "openclaw/plugin-sdk";
 import {
   parseMSTeamsTeamEntry,
   resolveMSTeamsChannelAllowlist,
@@ -22,7 +22,7 @@ import { resolveMSTeamsCredentials } from "./token.js";
 
 const channel = "msteams" as const;
 
-function setMSTeamsDmPolicy(cfg: ForgeOrchestratorConfig, dmPolicy: DmPolicy) {
+function setMSTeamsDmPolicy(cfg: OpenClawConfig, dmPolicy: DmPolicy) {
   const allowFrom =
     dmPolicy === "open"
       ? addWildcardAllowFrom(cfg.channels?.msteams?.allowFrom)?.map((entry) => String(entry))
@@ -40,7 +40,7 @@ function setMSTeamsDmPolicy(cfg: ForgeOrchestratorConfig, dmPolicy: DmPolicy) {
   };
 }
 
-function setMSTeamsAllowFrom(cfg: ForgeOrchestratorConfig, allowFrom: string[]): ForgeOrchestratorConfig {
+function setMSTeamsAllowFrom(cfg: OpenClawConfig, allowFrom: string[]): OpenClawConfig {
   return {
     ...cfg,
     channels: {
@@ -91,9 +91,9 @@ async function promptMSTeamsCredentials(prompter: WizardPrompter): Promise<{
 }
 
 async function promptMSTeamsAllowFrom(params: {
-  cfg: ForgeOrchestratorConfig;
+  cfg: OpenClawConfig;
   prompter: WizardPrompter;
-}): Promise<ForgeOrchestratorConfig> {
+}): Promise<OpenClawConfig> {
   const existing = params.cfg.channels?.msteams?.allowFrom ?? [];
   await params.prompter.note(
     [
@@ -167,9 +167,9 @@ async function noteMSTeamsCredentialHelp(prompter: WizardPrompter): Promise<void
 }
 
 function setMSTeamsGroupPolicy(
-  cfg: ForgeOrchestratorConfig,
+  cfg: OpenClawConfig,
   groupPolicy: "open" | "allowlist" | "disabled",
-): ForgeOrchestratorConfig {
+): OpenClawConfig {
   return {
     ...cfg,
     channels: {
@@ -184,9 +184,9 @@ function setMSTeamsGroupPolicy(
 }
 
 function setMSTeamsTeamsAllowlist(
-  cfg: ForgeOrchestratorConfig,
+  cfg: OpenClawConfig,
   entries: Array<{ teamKey: string; channelKey?: string }>,
-): ForgeOrchestratorConfig {
+): OpenClawConfig {
   const baseTeams = cfg.channels?.msteams?.teams ?? {};
   const teams: Record<string, { channels?: Record<string, unknown> }> = { ...baseTeams };
   for (const entry of entries) {

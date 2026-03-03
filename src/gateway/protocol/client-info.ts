@@ -1,16 +1,16 @@
 export const GATEWAY_CLIENT_IDS = {
   WEBCHAT_UI: "webchat-ui",
-  CONTROL_UI: "forge-orchestrator-control-ui",
+  CONTROL_UI: "openclaw-control-ui",
   WEBCHAT: "webchat",
   CLI: "cli",
   GATEWAY_CLIENT: "gateway-client",
-  MACOS_APP: "forge-orchestrator-macos",
-  IOS_APP: "forge-orchestrator-ios",
-  ANDROID_APP: "forge-orchestrator-android",
+  MACOS_APP: "openclaw-macos",
+  IOS_APP: "openclaw-ios",
+  ANDROID_APP: "openclaw-android",
   NODE_HOST: "node-host",
   TEST: "test",
   FINGERPRINT: "fingerprint",
-  PROBE: "forge-orchestrator-probe",
+  PROBE: "openclaw-probe",
 } as const;
 
 export type GatewayClientId = (typeof GATEWAY_CLIENT_IDS)[keyof typeof GATEWAY_CLIENT_IDS];

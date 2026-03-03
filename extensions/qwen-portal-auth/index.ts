@@ -1,8 +1,8 @@
 import {
   emptyPluginConfigSchema,
-  type ForgeOrchestratorPluginApi,
+  type OpenClawPluginApi,
   type ProviderAuthContext,
-} from "forge-orchestrator/plugin-sdk";
+} from "openclaw/plugin-sdk";
 import { loginQwenPortalOAuth } from "./oauth.js";
 
 const PROVIDER_ID = "qwen-portal";
@@ -40,7 +40,7 @@ const qwenPortalPlugin = {
   name: "Qwen OAuth",
   description: "OAuth flow for Qwen (free-tier) models",
   configSchema: emptyPluginConfigSchema(),
-  register(api: ForgeOrchestratorPluginApi) {
+  register(api: OpenClawPluginApi) {
     api.registerProvider({
       id: PROVIDER_ID,
       label: PROVIDER_LABEL,

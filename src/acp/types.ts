@@ -28,7 +28,7 @@ export type AcpServerOptions = {
 };
 
 export const ACP_AGENT_INFO = {
-  name: "forge-orchestrator-acp",
-  title: "ForgeOrchestrator ACP Gateway",
+  name: "openclaw-acp",
+  title: "OpenClaw ACP Gateway",
   version: VERSION,
 };

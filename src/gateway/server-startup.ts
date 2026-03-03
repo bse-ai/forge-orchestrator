@@ -33,7 +33,7 @@ const SESSION_LOCK_STALE_MS = 30 * 60 * 1000;
 
 export async function startGatewaySidecars(params: {
   cfg: ReturnType<typeof loadConfig>;
-  pluginRegistry: ReturnType<typeof loadForgeOrchestratorPlugins>;
+  pluginRegistry: ReturnType<typeof loadOpenClawPlugins>;
   defaultWorkspaceDir: string;
   deps: CliDeps;
   startChannels: () => Promise<void>;
@@ -123,10 +123,10 @@ export async function startGatewaySidecars(params: {
   }
 
   // Launch configured channels so gateway replies via the surface the message came from.
-  // Tests can opt out via FORGE_ORCH_SKIP_CHANNELS (or legacy FORGE_ORCH_SKIP_PROVIDERS).
+  // Tests can opt out via OPENCLAW_SKIP_CHANNELS (or legacy OPENCLAW_SKIP_PROVIDERS).
   const skipChannels =
-    isTruthyEnvValue(process.env.FORGE_ORCH_SKIP_CHANNELS) ||
-    isTruthyEnvValue(process.env.FORGE_ORCH_SKIP_PROVIDERS);
+    isTruthyEnvValue(process.env.OPENCLAW_SKIP_CHANNELS) ||
+    isTruthyEnvValue(process.env.OPENCLAW_SKIP_PROVIDERS);
   if (!skipChannels) {
     try {
       await params.startChannels();
@@ -135,7 +135,7 @@ export async function startGatewaySidecars(params: {
     }
   } else {
     params.logChannels.info(
-      "skipping channel start (FORGE_ORCH_SKIP_CHANNELS=1 or FORGE_ORCH_SKIP_PROVIDERS=1)",
+      "skipping channel start (OPENCLAW_SKIP_CHANNELS=1 or OPENCLAW_SKIP_PROVIDERS=1)",
     );
   }
 

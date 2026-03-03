@@ -1,4 +1,4 @@
-import type { ForgeOrchestratorConfig } from "forge-orchestrator/plugin-sdk";
+import type { OpenClawConfig } from "openclaw/plugin-sdk";
 import {
   formatDocsLink,
   promptAccountId,
@@ -19,7 +19,7 @@ function isConfigured(account: TlonResolvedAccount): boolean {
 }
 
 function applyAccountConfig(params: {
-  cfg: ForgeOrchestratorConfig;
+  cfg: OpenClawConfig;
   accountId: string;
   input: {
     name?: string;
@@ -31,7 +31,7 @@ function applyAccountConfig(params: {
     dmAllowlist?: string[];
     autoDiscoverChannels?: boolean;
   };
-}): ForgeOrchestratorConfig {
+}): OpenClawConfig {
   const { cfg, accountId, input } = params;
   const useDefault = accountId === DEFAULT_ACCOUNT_ID;
   const base = cfg.channels?.tlon ?? {};

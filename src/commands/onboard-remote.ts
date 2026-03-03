@@ -49,9 +49,9 @@ function validateGatewayWebSocketUrl(value: string): string | undefined {
 }
 
 export async function promptRemoteGatewayConfig(
-  cfg: ForgeOrchestratorConfig,
+  cfg: OpenClawConfig,
   prompter: WizardPrompter,
-): Promise<ForgeOrchestratorConfig> {
+): Promise<OpenClawConfig> {
   let selectedBeacon: GatewayBonjourBeacon | null = null;
   let suggestedUrl = cfg.gateway?.remote?.url ?? DEFAULT_GATEWAY_URL;
 
@@ -67,7 +67,7 @@ export async function promptRemoteGatewayConfig(
     await prompter.note(
       [
         "Bonjour discovery requires dns-sd (macOS) or avahi-browse (Linux).",
-        "Docs: https://docs.forge-orchestrator.ai/gateway/discovery",
+        "Docs: https://docs.openclaw.ai/gateway/discovery",
       ].join("\n"),
       "Discovery",
     );
@@ -131,7 +131,7 @@ export async function promptRemoteGatewayConfig(
             `ssh -N -L 18789:127.0.0.1:18789 <user>@${host}${
               selectedBeacon.sshPort ? ` -p ${selectedBeacon.sshPort}` : ""
             }`,
-            "Docs: https://docs.forge-orchestrator.ai/gateway/remote",
+            "Docs: https://docs.openclaw.ai/gateway/remote",
           ].join("\n"),
           "SSH tunnel",
         );

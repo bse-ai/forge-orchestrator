@@ -7,7 +7,7 @@ import {
   ReplyRuntimeConfigSchemaShape,
   ToolPolicySchema,
   requireOpenAllowFrom,
-} from "forge-orchestrator/plugin-sdk";
+} from "openclaw/plugin-sdk";
 import { z } from "zod";
 
 const IrcGroupSchema = z

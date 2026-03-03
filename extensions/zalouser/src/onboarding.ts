@@ -3,9 +3,9 @@ import path from "node:path";
 import type {
   ChannelOnboardingAdapter,
   ChannelOnboardingDmPolicy,
-  ForgeOrchestratorConfig,
+  OpenClawConfig,
   WizardPrompter,
-} from "forge-orchestrator/plugin-sdk";
+} from "openclaw/plugin-sdk";
 import {
   addWildcardAllowFrom,
   DEFAULT_ACCOUNT_ID,
@@ -72,9 +72,9 @@ function setZalouserAccountScopedConfig(
 }
 
 function setZalouserDmPolicy(
-  cfg: ForgeOrchestratorConfig,
+  cfg: OpenClawConfig,
   dmPolicy: "pairing" | "allowlist" | "open" | "disabled",
-): ForgeOrchestratorConfig {
+): OpenClawConfig {
   const allowFrom =
     dmPolicy === "open" ? addWildcardAllowFrom(cfg.channels?.zalouser?.allowFrom) : undefined;
   return {
@@ -87,7 +87,7 @@ function setZalouserDmPolicy(
         ...(allowFrom ? { allowFrom } : {}),
       },
     },
-  } as ForgeOrchestratorConfig;
+  } as OpenClawConfig;
 }
 
 async function noteZalouserHelp(prompter: WizardPrompter): Promise<void> {
@@ -97,7 +97,7 @@ async function noteZalouserHelp(prompter: WizardPrompter): Promise<void> {
       "",
       "This plugin uses zca-js directly (no external CLI dependency).",
       "",
-      "Docs: https://docs.forge-orchestrator.ai/channels/zalouser",
+      "Docs: https://docs.openclaw.ai/channels/zalouser",
     ].join("\n"),
     "Zalo Personal Setup",
   );
@@ -123,10 +123,10 @@ async function writeQrDataUrlToTempFile(
 }
 
 async function promptZalouserAllowFrom(params: {
-  cfg: ForgeOrchestratorConfig;
+  cfg: OpenClawConfig;
   prompter: WizardPrompter;
   accountId: string;
-}): Promise<ForgeOrchestratorConfig> {
+}): Promise<OpenClawConfig> {
   const { cfg, prompter, accountId } = params;
   const resolved = resolveZalouserAccountSync({ cfg, accountId });
   const existingAllowFrom = resolved.config.allowFrom ?? [];
@@ -178,7 +178,7 @@ async function promptZalouserAllowFrom(params: {
 }
 
 function setZalouserGroupPolicy(
-  cfg: ForgeOrchestratorConfig,
+  cfg: OpenClawConfig,
   accountId: string,
   groupPolicy: "open" | "allowlist" | "disabled",
 ): OpenClawConfig {
@@ -188,10 +188,10 @@ function setZalouserGroupPolicy(
 }
 
 function setZalouserGroupAllowlist(
-  cfg: ForgeOrchestratorConfig,
+  cfg: OpenClawConfig,
   accountId: string,
   groupKeys: string[],
-): ForgeOrchestratorConfig {
+): OpenClawConfig {
   const groups = Object.fromEntries(groupKeys.map((key) => [key, { allow: true }]));
   return setZalouserAccountScopedConfig(cfg, accountId, {
     groups,

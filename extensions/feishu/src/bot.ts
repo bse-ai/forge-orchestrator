@@ -1,4 +1,4 @@
-import type { ForgeOrchestratorConfig, RuntimeEnv } from "forge-orchestrator/plugin-sdk";
+import type { ClawdbotConfig, RuntimeEnv } from "openclaw/plugin-sdk";
 import {
   buildAgentMediaPayload,
   buildPendingHistoryContextFromMap,
@@ -535,7 +535,7 @@ function inferPlaceholder(messageType: string): string {
  * Similar to Discord's resolveMediaList().
  */
 async function resolveFeishuMediaList(params: {
-  cfg: ForgeOrchestratorConfig;
+  cfg: ClawdbotConfig;
   messageId: string;
   messageType: string;
   content: string;
@@ -778,7 +778,7 @@ export function buildFeishuAgentBody(params: {
 }
 
 export async function handleFeishuMessage(params: {
-  cfg: ForgeOrchestratorConfig;
+  cfg: ClawdbotConfig;
   event: FeishuMessageEvent;
   botOpenId?: string;
   runtime?: RuntimeEnv;

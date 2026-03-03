@@ -1,4 +1,4 @@
-import type { DmPolicy } from "forge-orchestrator/plugin-sdk";
+import type { DmPolicy } from "openclaw/plugin-sdk";
 import {
   addWildcardAllowFrom,
   formatResolvedUnresolvedNote,
@@ -334,7 +334,7 @@ export const matrixOnboardingAdapter: ChannelOnboardingAdapter = {
     const deviceName = String(
       await prompter.text({
         message: "Matrix device name (optional)",
-        initialValue: existing.deviceName ?? "ForgeOrchestrator Gateway",
+        initialValue: existing.deviceName ?? "OpenClaw Gateway",
       }),
     ).trim();
 

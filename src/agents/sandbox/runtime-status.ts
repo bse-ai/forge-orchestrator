@@ -18,7 +18,7 @@ function shouldSandboxSession(cfg: SandboxConfig, sessionKey: string, mainSessio
 }
 
 function resolveMainSessionKeyForSandbox(params: {
-  cfg?: ForgeOrchestratorConfig;
+  cfg?: OpenClawConfig;
   agentId: string;
 }): string {
   if (params.cfg?.session?.scope === "global") {
@@ -31,7 +31,7 @@ function resolveMainSessionKeyForSandbox(params: {
 }
 
 function resolveComparableSessionKeyForSandbox(params: {
-  cfg?: ForgeOrchestratorConfig;
+  cfg?: OpenClawConfig;
   agentId: string;
   sessionKey: string;
 }): string {
@@ -43,7 +43,7 @@ function resolveComparableSessionKeyForSandbox(params: {
 }
 
 export function resolveSandboxRuntimeStatus(params: {
-  cfg?: ForgeOrchestratorConfig;
+  cfg?: OpenClawConfig;
   sessionKey?: string;
 }): {
   agentId: string;
@@ -79,7 +79,7 @@ export function resolveSandboxRuntimeStatus(params: {
 }
 
 export function formatSandboxToolPolicyBlockedMessage(params: {
-  cfg?: ForgeOrchestratorConfig;
+  cfg?: OpenClawConfig;
   sessionKey?: string;
   toolName: string;
 }): string | undefined {
@@ -131,7 +131,7 @@ export function formatSandboxToolPolicyBlockedMessage(params: {
     lines.push(`- Use main session key (direct): ${runtime.mainSessionKey}`);
   }
   lines.push(
-    `- See: ${formatCliCommand(`forge-orchestrator sandbox explain --session ${runtime.sessionKey}`)}`,
+    `- See: ${formatCliCommand(`openclaw sandbox explain --session ${runtime.sessionKey}`)}`,
   );
 
   return lines.join("\n");

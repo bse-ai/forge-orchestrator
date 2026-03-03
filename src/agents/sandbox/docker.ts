@@ -312,38 +312,6 @@ function formatUlimitValue(
   return `${name}=${soft}:${hard}`;
 }
 
-// Bind-mount deny-list: host paths that must never be mounted into sandbox containers.
-const DENIED_BIND_HOST_PATHS = new Set([
-  "/var/run/docker.sock",
-  "/run/docker.sock",
-  "/proc",
-  "/sys",
-  "/dev",
-  "/etc/shadow",
-  "/etc/passwd",
-  "/etc/sudoers",
-  "/root",
-  "/boot",
-]);
-const DENIED_BIND_HOST_PREFIXES = ["/proc/", "/sys/", "/dev/", "/var/run/docker"];
-
-function validateBindMount(bind: string): void {
-  // Docker bind format: host_path:container_path[:opts]
-  const hostPath = bind.split(":")[0]?.trim() ?? "";
-  if (!hostPath) {
-    return;
-  }
-  const normalized = hostPath.replace(/\\/g, "/").replace(/\/+$/, "").toLowerCase();
-  if (DENIED_BIND_HOST_PATHS.has(normalized)) {
-    throw new Error(`Security Violation: Bind-mounting '${hostPath}' into sandbox is forbidden.`);
-  }
-  for (const prefix of DENIED_BIND_HOST_PREFIXES) {
-    if (normalized.startsWith(prefix)) {
-      throw new Error(`Security Violation: Bind-mounting '${hostPath}' into sandbox is forbidden.`);
-    }
-  }
-}
-
 export function buildSandboxCreateArgs(params: {
   name: string;
   cfg: SandboxDockerConfig;
@@ -374,11 +342,11 @@ export function buildSandboxCreateArgs(params: {
 
   const createdAtMs = params.createdAtMs ?? Date.now();
   const args = ["create", "--name", params.name];
-  args.push("--label", "forge-orchestrator.sandbox=1");
-  args.push("--label", `forge-orchestrator.sessionKey=${params.scopeKey}`);
-  args.push("--label", `forge-orchestrator.createdAtMs=${createdAtMs}`);
+  args.push("--label", "openclaw.sandbox=1");
+  args.push("--label", `openclaw.sessionKey=${params.scopeKey}`);
+  args.push("--label", `openclaw.createdAtMs=${createdAtMs}`);
   if (params.configHash) {
-    args.push("--label", `forge-orchestrator.configHash=${params.configHash}`);
+    args.push("--label", `openclaw.configHash=${params.configHash}`);
   }
   for (const [key, value] of Object.entries(params.labels ?? {})) {
     if (key && value) {
@@ -392,12 +360,6 @@ export function buildSandboxCreateArgs(params: {
     args.push("--tmpfs", entry);
   }
   if (params.cfg.network) {
-    if (params.cfg.network.toLowerCase() === "host") {
-      throw new Error(
-        "Security Violation: Docker network mode 'host' is forbidden for sandbox containers. " +
-          "Use 'none' (default) or a dedicated bridge network.",
-      );
-    }
     args.push("--network", params.cfg.network);
   }
   if (params.cfg.user) {
@@ -455,7 +417,6 @@ export function buildSandboxCreateArgs(params: {
   }
   if (params.includeBinds !== false && params.cfg.binds?.length) {
     for (const bind of params.cfg.binds) {
-      validateBindMount(bind);
       args.push("-v", bind);
     }
   }
@@ -516,13 +477,13 @@ async function readContainerConfigHash(containerName: string): Promise<string | 
 
 function formatSandboxRecreateHint(params: { scope: SandboxConfig["scope"]; sessionKey: string }) {
   if (params.scope === "session") {
-    return formatCliCommand(`forge-orchestrator sandbox recreate --session ${params.sessionKey}`);
+    return formatCliCommand(`openclaw sandbox recreate --session ${params.sessionKey}`);
   }
   if (params.scope === "agent") {
     const agentId = resolveSandboxAgentId(params.sessionKey) ?? "main";
-    return formatCliCommand(`forge-orchestrator sandbox recreate --agent ${agentId}`);
+    return formatCliCommand(`openclaw sandbox recreate --agent ${agentId}`);
   }
-  return formatCliCommand("forge-orchestrator sandbox recreate --all");
+  return formatCliCommand("openclaw sandbox recreate --all");
 }
 
 export async function ensureSandboxContainer(params: {

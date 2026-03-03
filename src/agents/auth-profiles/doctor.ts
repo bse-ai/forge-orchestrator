@@ -6,7 +6,7 @@ import { suggestOAuthProfileIdForLegacyDefault } from "./repair.js";
 import type { AuthProfileStore } from "./types.js";
 
 export function formatAuthDoctorHint(params: {
-  cfg?: ForgeOrchestratorConfig;
+  cfg?: OpenClawConfig;
   store: AuthProfileStore;
   provider: string;
   profileId?: string;
@@ -42,6 +42,6 @@ export function formatAuthDoctorHint(params: {
     }`,
     `- auth store oauth profiles: ${storeOauthProfiles || "(none)"}`,
     `- suggested profile: ${suggested}`,
-    `Fix: run "${formatCliCommand("forge-orchestrator doctor --yes")}"`,
+    `Fix: run "${formatCliCommand("openclaw doctor --yes")}"`,
   ].join("\n");
 }

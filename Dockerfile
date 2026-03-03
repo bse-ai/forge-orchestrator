@@ -19,17 +19,13 @@ ENV PATH="/root/.bun/bin:${PATH}"
 
 RUN corepack enable
 
-# Install gogcli (Google Gmail/Calendar/Drive CLI)
-RUN curl -fsSL https://github.com/steipete/gogcli/releases/download/v0.10.0/gogcli_0.10.0_linux_amd64.tar.gz \
-    | tar -xz -C /usr/local/bin gog && chmod +x /usr/local/bin/gog
-
 WORKDIR /app
 RUN chown node:node /app
 
-ARG FORGE_ORCH_DOCKER_APT_PACKAGES=""
-RUN if [ -n "$FORGE_ORCH_DOCKER_APT_PACKAGES" ]; then \
+ARG OPENCLAW_DOCKER_APT_PACKAGES=""
+RUN if [ -n "$OPENCLAW_DOCKER_APT_PACKAGES" ]; then \
       apt-get update && \
-      DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends $FORGE_ORCH_DOCKER_APT_PACKAGES && \
+      DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends $OPENCLAW_DOCKER_APT_PACKAGES && \
       apt-get clean && \
       rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*; \
     fi
@@ -105,7 +101,7 @@ RUN for dir in /app/extensions /app/.agent /app/.agents; do \
     done
 RUN pnpm build
 # Force pnpm for UI build (Bun may fail on ARM/Synology architectures)
-ENV FORGE_ORCH_PREFER_PNPM=1
+ENV OPENCLAW_PREFER_PNPM=1
 RUN pnpm ui:build
 
 # Expose the CLI binary without requiring npm global writes as non-root.

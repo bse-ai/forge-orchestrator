@@ -3,7 +3,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-const CORE_PACKAGE_NAMES = new Set(["forge-orchestrator"]);
+const CORE_PACKAGE_NAMES = new Set(["openclaw"]);
 
 async function readPackageName(dir: string): Promise<string | null> {
   try {
@@ -82,7 +82,7 @@ function candidateDirsFromArgv1(argv1: string): string[] {
   return candidates;
 }
 
-export async function resolveForgeOrchestratorPackageRoot(opts: {
+export async function resolveOpenClawPackageRoot(opts: {
   cwd?: string;
   argv1?: string;
   moduleUrl?: string;
@@ -97,7 +97,7 @@ export async function resolveForgeOrchestratorPackageRoot(opts: {
   return null;
 }
 
-export function resolveForgeOrchestratorPackageRootSync(opts: {
+export function resolveOpenClawPackageRootSync(opts: {
   cwd?: string;
   argv1?: string;
   moduleUrl?: string;

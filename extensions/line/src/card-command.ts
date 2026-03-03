@@ -1,4 +1,4 @@
-import type { LineChannelData, ForgeOrchestratorPluginApi, ReplyPayload } from "forge-orchestrator/plugin-sdk";
+import type { LineChannelData, OpenClawPluginApi, ReplyPayload } from "openclaw/plugin-sdk";
 import {
   createActionCard,
   createImageCard,
@@ -7,7 +7,7 @@ import {
   createReceiptCard,
   type CardAction,
   type ListItem,
-} from "forge-orchestrator/plugin-sdk";
+} from "openclaw/plugin-sdk";
 
 const CARD_USAGE = `Usage: /card <type> "title" "body" [options]
 
@@ -154,7 +154,7 @@ function parseCardArgs(argsStr: string): {
   return result;
 }
 
-export function registerLineCardCommand(api: ForgeOrchestratorPluginApi): void {
+export function registerLineCardCommand(api: OpenClawPluginApi): void {
   api.registerCommand({
     name: "card",
     description: "Send a rich card message (LINE).",

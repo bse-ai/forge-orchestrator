@@ -42,7 +42,7 @@ const SMALL_MODEL_PARAM_B_MAX = 300;
 // Helpers
 // --------------------------------------------------------------------------
 
-function summarizeGroupPolicy(cfg: ForgeOrchestratorConfig): {
+function summarizeGroupPolicy(cfg: OpenClawConfig): {
   open: number;
   allowlist: number;
   other: number;
@@ -87,7 +87,7 @@ function looksLikeEnvRef(value: string): boolean {
   return v.startsWith("${") && v.endsWith("}");
 }
 
-function isGatewayRemotelyExposed(cfg: ForgeOrchestratorConfig): boolean {
+function isGatewayRemotelyExposed(cfg: OpenClawConfig): boolean {
   const bind = typeof cfg.gateway?.bind === "string" ? cfg.gateway.bind : "loopback";
   if (bind !== "loopback") {
     return true;
@@ -109,7 +109,7 @@ function addModel(models: ModelRef[], raw: unknown, source: string) {
   models.push({ id, source });
 }
 
-function collectModels(cfg: ForgeOrchestratorConfig): ModelRef[] {
+function collectModels(cfg: OpenClawConfig): ModelRef[] {
   const out: ModelRef[] = [];
   addModel(
     out,
@@ -198,8 +198,8 @@ function normalizeNodeCommand(value: unknown): string {
   return typeof value === "string" ? value.trim() : "";
 }
 
-function listKnownNodeCommands(cfg: ForgeOrchestratorConfig): Set<string> {
-  const baseCfg: ForgeOrchestratorConfig = {
+function listKnownNodeCommands(cfg: OpenClawConfig): Set<string> {
+  const baseCfg: OpenClawConfig = {
     ...cfg,
     gateway: {
       ...cfg.gateway,
@@ -241,7 +241,7 @@ function looksLikeNodeCommandPattern(value: string): boolean {
 }
 
 function resolveToolPolicies(params: {
-  cfg: ForgeOrchestratorConfig;
+  cfg: OpenClawConfig;
   agentTools?: AgentToolsConfig;
   sandboxMode?: "off" | "non-main" | "all";
   agentId?: string | null;
@@ -271,7 +271,7 @@ function resolveToolPolicies(params: {
   return policies;
 }
 
-function hasWebSearchKey(cfg: ForgeOrchestratorConfig, env: NodeJS.ProcessEnv): boolean {
+function hasWebSearchKey(cfg: OpenClawConfig, env: NodeJS.ProcessEnv): boolean {
   const search = cfg.tools?.web?.search;
   return Boolean(
     search?.apiKey ||
@@ -282,7 +282,7 @@ function hasWebSearchKey(cfg: ForgeOrchestratorConfig, env: NodeJS.ProcessEnv): 
   );
 }
 
-function isWebSearchEnabled(cfg: ForgeOrchestratorConfig, env: NodeJS.ProcessEnv): boolean {
+function isWebSearchEnabled(cfg: OpenClawConfig, env: NodeJS.ProcessEnv): boolean {
   const enabled = cfg.tools?.web?.search?.enabled;
   if (enabled === false) {
     return false;
@@ -293,7 +293,7 @@ function isWebSearchEnabled(cfg: ForgeOrchestratorConfig, env: NodeJS.ProcessEnv
   return hasWebSearchKey(cfg, env);
 }
 
-function isWebFetchEnabled(cfg: ForgeOrchestratorConfig): boolean {
+function isWebFetchEnabled(cfg: OpenClawConfig): boolean {
   const enabled = cfg.tools?.web?.fetch?.enabled;
   if (enabled === false) {
     return false;
@@ -301,7 +301,7 @@ function isWebFetchEnabled(cfg: ForgeOrchestratorConfig): boolean {
   return true;
 }
 
-function isBrowserEnabled(cfg: ForgeOrchestratorConfig): boolean {
+function isBrowserEnabled(cfg: OpenClawConfig): boolean {
   try {
     return resolveBrowserConfig(cfg.browser, cfg).enabled;
   } catch {
@@ -309,7 +309,7 @@ function isBrowserEnabled(cfg: ForgeOrchestratorConfig): boolean {
   }
 }
 
-function listGroupPolicyOpen(cfg: ForgeOrchestratorConfig): string[] {
+function listGroupPolicyOpen(cfg: OpenClawConfig): string[] {
   const out: string[] = [];
   const channels = cfg.channels as Record<string, unknown> | undefined;
   if (!channels || typeof channels !== "object") {
@@ -474,7 +474,7 @@ function collectRiskyToolExposureContexts(cfg: OpenClawConfig): {
 // Exported collectors
 // --------------------------------------------------------------------------
 
-export function collectAttackSurfaceSummaryFindings(cfg: ForgeOrchestratorConfig): SecurityAuditFinding[] {
+export function collectAttackSurfaceSummaryFindings(cfg: OpenClawConfig): SecurityAuditFinding[] {
   const group = summarizeGroupPolicy(cfg);
   const elevated = cfg.tools?.elevated?.enabled !== false;
   const webhooksEnabled = cfg.hooks?.enabled === true;
@@ -515,13 +515,13 @@ export function collectSyncedFolderFindings(params: {
       severity: "warn",
       title: "State/config path looks like a synced folder",
       detail: `stateDir=${params.stateDir}, configPath=${params.configPath}. Synced folders (iCloud/Dropbox/OneDrive/Google Drive) can leak tokens and transcripts onto other devices.`,
-      remediation: `Keep FORGE_ORCH_STATE_DIR on a local-only volume and re-run "${formatCliCommand("forge-orchestrator security audit --fix")}".`,
+      remediation: `Keep OPENCLAW_STATE_DIR on a local-only volume and re-run "${formatCliCommand("openclaw security audit --fix")}".`,
     });
   }
   return findings;
 }
 
-export function collectSecretsInConfigFindings(cfg: ForgeOrchestratorConfig): SecurityAuditFinding[] {
+export function collectSecretsInConfigFindings(cfg: OpenClawConfig): SecurityAuditFinding[] {
   const findings: SecurityAuditFinding[] = [];
   const password =
     typeof cfg.gateway?.auth?.password === "string" ? cfg.gateway.auth.password.trim() : "";
@@ -533,7 +533,7 @@ export function collectSecretsInConfigFindings(cfg: ForgeOrchestratorConfig): Se
       detail:
         "gateway.auth.password is set in the config file; prefer environment variables for secrets when possible.",
       remediation:
-        "Prefer FORGE_ORCH_GATEWAY_PASSWORD (env) and remove gateway.auth.password from disk.",
+        "Prefer OPENCLAW_GATEWAY_PASSWORD (env) and remove gateway.auth.password from disk.",
     });
   }
 
@@ -1002,7 +1002,7 @@ export function collectNodeDangerousAllowCommandFindings(
   return findings;
 }
 
-export function collectMinimalProfileOverrideFindings(cfg: ForgeOrchestratorConfig): SecurityAuditFinding[] {
+export function collectMinimalProfileOverrideFindings(cfg: OpenClawConfig): SecurityAuditFinding[] {
   const findings: SecurityAuditFinding[] = [];
   if (cfg.tools?.profile !== "minimal") {
     return findings;
@@ -1038,7 +1038,7 @@ export function collectMinimalProfileOverrideFindings(cfg: ForgeOrchestratorConf
   return findings;
 }
 
-export function collectModelHygieneFindings(cfg: ForgeOrchestratorConfig): SecurityAuditFinding[] {
+export function collectModelHygieneFindings(cfg: OpenClawConfig): SecurityAuditFinding[] {
   const findings: SecurityAuditFinding[] = [];
   const models = collectModels(cfg);
   if (models.length === 0) {
@@ -1124,7 +1124,7 @@ export function collectModelHygieneFindings(cfg: ForgeOrchestratorConfig): Secur
 }
 
 export function collectSmallModelRiskFindings(params: {
-  cfg: ForgeOrchestratorConfig;
+  cfg: OpenClawConfig;
   env: NodeJS.ProcessEnv;
 }): SecurityAuditFinding[] {
   const findings: SecurityAuditFinding[] = [];
@@ -1218,7 +1218,7 @@ export function collectSmallModelRiskFindings(params: {
   return findings;
 }
 
-export function collectExposureMatrixFindings(cfg: ForgeOrchestratorConfig): SecurityAuditFinding[] {
+export function collectExposureMatrixFindings(cfg: OpenClawConfig): SecurityAuditFinding[] {
   const findings: SecurityAuditFinding[] = [];
   const openGroups = listGroupPolicyOpen(cfg);
   if (openGroups.length === 0) {

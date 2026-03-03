@@ -9,7 +9,7 @@
     "https-proxy-agent": "^7.0.6",
     "zod": "^4.3.6"
   },
-  "forge-orchestrator": {
+  "openclaw": {
     "extensions": [
       "./index.ts"
     ],
@@ -27,7 +27,7 @@
       "quickstartAllowFrom": true
     },
     "install": {
-      "npmSpec": "@forge-orchestrator/feishu",
+      "npmSpec": "@openclaw/feishu",
       "localPath": "extensions/feishu",
       "defaultChoice": "npm"
     }

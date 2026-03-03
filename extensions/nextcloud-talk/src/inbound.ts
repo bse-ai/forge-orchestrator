@@ -14,7 +14,7 @@ import {
   type OutboundReplyPayload,
   type OpenClawConfig,
   type RuntimeEnv,
-} from "forge-orchestrator/plugin-sdk";
+} from "openclaw/plugin-sdk";
 import type { ResolvedNextcloudTalkAccount } from "./accounts.js";
 import {
   normalizeNextcloudTalkAllowlist,
@@ -129,7 +129,7 @@ export async function handleNextcloudTalkInbound(params: {
   const roomAllowFrom = normalizeNextcloudTalkAllowlist(roomConfig?.allowFrom);
 
   const allowTextCommands = core.channel.commands.shouldHandleTextCommands({
-    cfg: config as ForgeOrchestratorConfig,
+    cfg: config as OpenClawConfig,
     surface: CHANNEL_ID,
   });
   const useAccessGroups =
@@ -210,7 +210,7 @@ export async function handleNextcloudTalkInbound(params: {
     return;
   }
 
-  const mentionRegexes = core.channel.mentions.buildMentionRegexes(config as ForgeOrchestratorConfig);
+  const mentionRegexes = core.channel.mentions.buildMentionRegexes(config as OpenClawConfig);
   const wasMentioned = mentionRegexes.length
     ? core.channel.mentions.matchesMentionPatterns(rawBody, mentionRegexes)
     : false;
@@ -234,7 +234,7 @@ export async function handleNextcloudTalkInbound(params: {
   }
 
   const route = core.channel.routing.resolveAgentRoute({
-    cfg: config as ForgeOrchestratorConfig,
+    cfg: config as OpenClawConfig,
     channel: CHANNEL_ID,
     accountId: account.accountId,
     peer: {
@@ -250,7 +250,7 @@ export async function handleNextcloudTalkInbound(params: {
       agentId: route.agentId,
     },
   );
-  const envelopeOptions = core.channel.reply.resolveEnvelopeFormatOptions(config as ForgeOrchestratorConfig);
+  const envelopeOptions = core.channel.reply.resolveEnvelopeFormatOptions(config as OpenClawConfig);
   const previousTimestamp = core.channel.session.readSessionUpdatedAt({
     storePath,
     sessionKey: route.sessionKey,
@@ -301,7 +301,7 @@ export async function handleNextcloudTalkInbound(params: {
   });
 
   const { onModelSelected, ...prefixOptions } = createReplyPrefixOptions({
-    cfg: config as ForgeOrchestratorConfig,
+    cfg: config as OpenClawConfig,
     agentId: route.agentId,
     channel: CHANNEL_ID,
     accountId: account.accountId,
@@ -317,7 +317,7 @@ export async function handleNextcloudTalkInbound(params: {
 
   await core.channel.reply.dispatchReplyWithBufferedBlockDispatcher({
     ctx: ctxPayload,
-    cfg: config as ForgeOrchestratorConfig,
+    cfg: config as OpenClawConfig,
     dispatcherOptions: {
       ...prefixOptions,
       deliver: deliverReply,

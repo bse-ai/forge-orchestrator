@@ -9,9 +9,9 @@ import { confirm, select } from "./configure.shared.js";
 import { guardCancel } from "./onboard-helpers.js";
 
 export async function removeChannelConfigWizard(
-  cfg: ForgeOrchestratorConfig,
+  cfg: OpenClawConfig,
   runtime: RuntimeEnv,
-): Promise<ForgeOrchestratorConfig> {
+): Promise<OpenClawConfig> {
   let next = { ...cfg };
 
   const listConfiguredChannels = () =>
@@ -24,8 +24,8 @@ export async function removeChannelConfigWizard(
     if (configured.length === 0) {
       note(
         [
-          "No channel config found in forge-orchestrator.json.",
-          `Tip: \`${formatCliCommand("forge-orchestrator channels status")}\` shows what is configured and enabled.`,
+          "No channel config found in openclaw.json.",
+          `Tip: \`${formatCliCommand("openclaw channels status")}\` shows what is configured and enabled.`,
         ].join("\n"),
         "Remove channel",
       );
@@ -68,7 +68,7 @@ export async function removeChannelConfigWizard(
     next = {
       ...next,
       channels: Object.keys(nextChannels).length
-        ? (nextChannels as ForgeOrchestratorConfig["channels"])
+        ? (nextChannels as OpenClawConfig["channels"])
         : undefined,
     };
 

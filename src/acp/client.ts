@@ -497,7 +497,7 @@ export async function createAcpClient(opts: AcpClientOptions = {}): Promise<AcpC
       fs: { readTextFile: true, writeTextFile: true },
       terminal: true,
     },
-    clientInfo: { name: "forge-orchestrator-acp-client", version: "1.0.0" },
+    clientInfo: { name: "openclaw-acp-client", version: "1.0.0" },
   });
 
   log("creating session");
@@ -521,7 +521,7 @@ export async function runAcpClientInteractive(opts: AcpClientOptions = {}): Prom
     output: process.stdout,
   });
 
-  console.log("ForgeOrchestrator ACP client");
+  console.log("OpenClaw ACP client");
   console.log(`Session: ${sessionId}`);
   console.log('Type a prompt, or "exit" to quit.\n');
 

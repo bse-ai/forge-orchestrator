@@ -113,11 +113,11 @@ export function createGatewayReloadHandlers(params: {
 
     if (plan.restartChannels.size > 0) {
       if (
-        isTruthyEnvValue(process.env.FORGE_ORCH_SKIP_CHANNELS) ||
-        isTruthyEnvValue(process.env.FORGE_ORCH_SKIP_PROVIDERS)
+        isTruthyEnvValue(process.env.OPENCLAW_SKIP_CHANNELS) ||
+        isTruthyEnvValue(process.env.OPENCLAW_SKIP_PROVIDERS)
       ) {
         params.logChannels.info(
-          "skipping channel reload (FORGE_ORCH_SKIP_CHANNELS=1 or FORGE_ORCH_SKIP_PROVIDERS=1)",
+          "skipping channel reload (OPENCLAW_SKIP_CHANNELS=1 or OPENCLAW_SKIP_PROVIDERS=1)",
         );
       } else {
         const restartChannel = async (name: ChannelKind) => {

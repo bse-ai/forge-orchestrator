@@ -7,7 +7,7 @@
     "@sinclair/typebox": "0.34.48",
     "zca-js": "2.1.1"
   },
-  "forge-orchestrator": {
+  "openclaw": {
     "extensions": [
       "./index.ts"
     ],
@@ -25,7 +25,7 @@
       "quickstartAllowFrom": true
     },
     "install": {
-      "npmSpec": "@forge-orchestrator/zalouser",
+      "npmSpec": "@openclaw/zalouser",
       "localPath": "extensions/zalouser",
       "defaultChoice": "npm"
     }

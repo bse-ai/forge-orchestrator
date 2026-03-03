@@ -8,7 +8,7 @@ import {
 } from "../../agents/model-selection.js";
 import { formatCliCommand } from "../../cli/command-format.js";
 import {
-  type ForgeOrchestratorConfig,
+  type OpenClawConfig,
   readConfigFileSnapshot,
   writeConfigFile,
 } from "../../config/config.js";
@@ -79,7 +79,7 @@ export async function updateConfig(
   return next;
 }
 
-export function resolveModelTarget(params: { raw: string; cfg: ForgeOrchestratorConfig }): {
+export function resolveModelTarget(params: { raw: string; cfg: OpenClawConfig }): {
   provider: string;
   model: string;
 } {
@@ -143,7 +143,7 @@ export function normalizeAlias(alias: string): string {
 }
 
 export function resolveKnownAgentId(params: {
-  cfg: ForgeOrchestratorConfig;
+  cfg: OpenClawConfig;
   rawAgentId?: string | null;
 }): string | undefined {
   const raw = params.rawAgentId?.trim();
@@ -154,7 +154,7 @@ export function resolveKnownAgentId(params: {
   const knownAgents = listAgentIds(params.cfg);
   if (!knownAgents.includes(agentId)) {
     throw new Error(
-      `Unknown agent id "${raw}". Use "${formatCliCommand("forge-orchestrator agents list")}" to see configured agents.`,
+      `Unknown agent id "${raw}". Use "${formatCliCommand("openclaw agents list")}" to see configured agents.`,
     );
   }
   return agentId;

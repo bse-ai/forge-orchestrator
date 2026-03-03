@@ -6,7 +6,7 @@ import type { ChannelPlugin } from "./types.js";
 // Channel docking helper: use this when selecting the default account for a plugin.
 export function resolveChannelDefaultAccountId<ResolvedAccount>(params: {
   plugin: ChannelPlugin<ResolvedAccount>;
-  cfg: ForgeOrchestratorConfig;
+  cfg: OpenClawConfig;
   accountIds?: string[];
 }): string {
   const accountIds = params.accountIds ?? params.plugin.config.listAccountIds(params.cfg);
@@ -14,7 +14,7 @@ export function resolveChannelDefaultAccountId<ResolvedAccount>(params: {
 }
 
 export function formatPairingApproveHint(channelId: string): string {
-  const listCmd = formatCliCommand(`forge-orchestrator pairing list ${channelId}`);
-  const approveCmd = formatCliCommand(`forge-orchestrator pairing approve ${channelId} <code>`);
+  const listCmd = formatCliCommand(`openclaw pairing list ${channelId}`);
+  const approveCmd = formatCliCommand(`openclaw pairing approve ${channelId} <code>`);
   return `Approve via: ${listCmd} / ${approveCmd}`;
 }

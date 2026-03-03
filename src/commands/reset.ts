@@ -65,7 +65,7 @@ export async function resetCommand(runtime: RuntimeEnv, opts: ResetOptions) {
         {
           value: "config",
           label: "Config only",
-          hint: "forge-orchestrator.json",
+          hint: "openclaw.json",
         },
         {
           value: "config+creds+sessions",
@@ -129,7 +129,7 @@ export async function resetCommand(runtime: RuntimeEnv, opts: ResetOptions) {
     for (const dir of sessionDirs) {
       await removePath(dir, runtime, { dryRun, label: dir });
     }
-    runtime.log(`Next: ${formatCliCommand("forge-orchestrator onboard --install-daemon")}`);
+    runtime.log(`Next: ${formatCliCommand("openclaw onboard --install-daemon")}`);
     return;
   }
 

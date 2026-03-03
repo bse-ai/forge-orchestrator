@@ -8,9 +8,9 @@ import { resolveDmAllowState } from "../security/dm-policy-shared.js";
 import { note } from "../terminal/note.js";
 import { resolveDefaultChannelAccountContext } from "./channel-account-context.js";
 
-export async function noteSecurityWarnings(cfg: ForgeOrchestratorConfig) {
+export async function noteSecurityWarnings(cfg: OpenClawConfig) {
   const warnings: string[] = [];
-  const auditHint = `- Run: ${formatCliCommand("forge-orchestrator security audit --deep")}`;
+  const auditHint = `- Run: ${formatCliCommand("openclaw security audit --deep")}`;
 
   if (cfg.approvals?.exec?.enabled === false) {
     warnings.push(
@@ -61,13 +61,13 @@ export async function noteSecurityWarnings(cfg: ForgeOrchestratorConfig) {
       const authFixLines =
         resolvedAuth.mode === "password"
           ? [
-              `  Fix: ${formatCliCommand("forge-orchestrator configure")} to set a password`,
-              `  Or switch to token: ${formatCliCommand("forge-orchestrator config set gateway.auth.mode token")}`,
+              `  Fix: ${formatCliCommand("openclaw configure")} to set a password`,
+              `  Or switch to token: ${formatCliCommand("openclaw config set gateway.auth.mode token")}`,
             ]
           : [
-              `  Fix: ${formatCliCommand("forge-orchestrator doctor --fix")} to generate a token`,
+              `  Fix: ${formatCliCommand("openclaw doctor --fix")} to generate a token`,
               `  Or set token directly: ${formatCliCommand(
-                "forge-orchestrator config set gateway.auth.mode token",
+                "openclaw config set gateway.auth.mode token",
               )}`,
             ];
       warnings.push(
@@ -133,7 +133,7 @@ export async function noteSecurityWarnings(cfg: ForgeOrchestratorConfig) {
     if (dmScope === "main" && isMultiUserDm) {
       warnings.push(
         `- ${params.label} DMs: multiple senders share the main session; run: ` +
-          formatCliCommand('forge-orchestrator config set session.dmScope "per-channel-peer"') +
+          formatCliCommand('openclaw config set session.dmScope "per-channel-peer"') +
           ' (or "per-account-channel-peer" for multi-account channels) to isolate sessions.',
       );
     }

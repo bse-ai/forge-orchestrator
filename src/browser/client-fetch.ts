@@ -42,7 +42,7 @@ function withLoopbackBrowserAuthImpl(
   deps: LoopbackBrowserAuthDeps,
 ): RequestInit & { timeoutMs?: number } {
   const headers = new Headers(init?.headers ?? {});
-  if (headers.has("authorization") || headers.has("x-forge-orchestrator-password")) {
+  if (headers.has("authorization") || headers.has("x-openclaw-password")) {
     return { ...init, headers };
   }
   if (!isLoopbackHttpUrl(url)) {

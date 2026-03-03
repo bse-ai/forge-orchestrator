@@ -1,4 +1,4 @@
-import type { ForgeOrchestratorConfig } from "forge-orchestrator/plugin-sdk";
+import type { OpenClawConfig } from "openclaw/plugin-sdk";
 import {
   DM_GROUP_ACCESS_REASON,
   createScopedPairingAccess,
@@ -219,7 +219,7 @@ function logGroupAllowlistHint(params: {
 }
 
 function resolveBlueBubblesAckReaction(params: {
-  cfg: ForgeOrchestratorConfig;
+  cfg: OpenClawConfig;
   agentId: string;
   core: BlueBubblesCoreRuntime;
   runtime: BlueBubblesRuntimeEnv;

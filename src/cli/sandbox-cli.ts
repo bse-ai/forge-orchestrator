@@ -14,30 +14,30 @@ type CommandOptions = Record<string, unknown>;
 
 const SANDBOX_EXAMPLES = {
   main: [
-    ["forge-orchestrator sandbox list", "List all sandbox containers."],
-    ["forge-orchestrator sandbox list --browser", "List only browser containers."],
-    ["forge-orchestrator sandbox recreate --all", "Recreate all containers."],
-    ["forge-orchestrator sandbox recreate --session main", "Recreate a specific session."],
-    ["forge-orchestrator sandbox recreate --agent mybot", "Recreate agent containers."],
-    ["forge-orchestrator sandbox explain", "Explain effective sandbox config."],
+    ["openclaw sandbox list", "List all sandbox containers."],
+    ["openclaw sandbox list --browser", "List only browser containers."],
+    ["openclaw sandbox recreate --all", "Recreate all containers."],
+    ["openclaw sandbox recreate --session main", "Recreate a specific session."],
+    ["openclaw sandbox recreate --agent mybot", "Recreate agent containers."],
+    ["openclaw sandbox explain", "Explain effective sandbox config."],
   ],
   list: [
-    ["forge-orchestrator sandbox list", "List all sandbox containers."],
-    ["forge-orchestrator sandbox list --browser", "List only browser containers."],
-    ["forge-orchestrator sandbox list --json", "JSON output."],
+    ["openclaw sandbox list", "List all sandbox containers."],
+    ["openclaw sandbox list --browser", "List only browser containers."],
+    ["openclaw sandbox list --json", "JSON output."],
   ],
   recreate: [
-    ["forge-orchestrator sandbox recreate --all", "Recreate all containers."],
-    ["forge-orchestrator sandbox recreate --session main", "Recreate a specific session."],
-    ["forge-orchestrator sandbox recreate --agent mybot", "Recreate a specific agent (includes sub-agents)."],
-    ["forge-orchestrator sandbox recreate --browser --all", "Recreate only browser containers."],
-    ["forge-orchestrator sandbox recreate --all --force", "Skip confirmation."],
+    ["openclaw sandbox recreate --all", "Recreate all containers."],
+    ["openclaw sandbox recreate --session main", "Recreate a specific session."],
+    ["openclaw sandbox recreate --agent mybot", "Recreate a specific agent (includes sub-agents)."],
+    ["openclaw sandbox recreate --browser --all", "Recreate only browser containers."],
+    ["openclaw sandbox recreate --all --force", "Skip confirmation."],
   ],
   explain: [
-    ["forge-orchestrator sandbox explain", "Show effective sandbox config."],
-    ["forge-orchestrator sandbox explain --session agent:main:main", "Explain a specific session."],
-    ["forge-orchestrator sandbox explain --agent work", "Explain an agent sandbox."],
-    ["forge-orchestrator sandbox explain --json", "JSON output."],
+    ["openclaw sandbox explain", "Show effective sandbox config."],
+    ["openclaw sandbox explain --session agent:main:main", "Explain a specific session."],
+    ["openclaw sandbox explain --agent work", "Explain an agent sandbox."],
+    ["openclaw sandbox explain --json", "JSON output."],
   ],
 } as const;
 
@@ -67,7 +67,7 @@ export function registerSandboxCli(program: Command) {
     .addHelpText(
       "after",
       () =>
-        `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/sandbox", "docs.forge-orchestrator.ai/cli/sandbox")}\n`,
+        `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/sandbox", "docs.openclaw.ai/cli/sandbox")}\n`,
     )
     .action(() => {
       sandbox.help({ error: true });

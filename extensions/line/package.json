@@ -2,7 +2,7 @@
   "name": "@openclaw/line",
   "version": "2026.3.2",
   "private": true,
-  "description": "ForgeOrchestrator LINE channel plugin",
+  "description": "OpenClaw LINE channel plugin",
   "type": "module",
   "openclaw": {
     "extensions": [
@@ -19,7 +19,7 @@
       "quickstartAllowFrom": true
     },
     "install": {
-      "npmSpec": "@forge-orchestrator/line",
+      "npmSpec": "@openclaw/line",
       "localPath": "extensions/line",
       "defaultChoice": "npm"
     }

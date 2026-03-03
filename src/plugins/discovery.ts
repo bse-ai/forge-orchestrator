@@ -25,7 +25,7 @@ export type PluginCandidate = {
   packageVersion?: string;
   packageDescription?: string;
   packageDir?: string;
-  packageManifest?: ForgeOrchestratorPackageManifest;
+  packageManifest?: OpenClawPackageManifest;
 };
 
 export type PluginDiscoveryResult = {
@@ -258,7 +258,7 @@ function deriveIdHint(params: {
   }
 
   // Prefer the unscoped name so config keys stay stable even when the npm
-  // package is scoped (example: @forge-orchestrator/voice-call -> voice-call).
+  // package is scoped (example: @openclaw/voice-call -> voice-call).
   const unscoped = rawPackageName.includes("/")
     ? (rawPackageName.split("/").pop() ?? rawPackageName)
     : rawPackageName;
@@ -565,7 +565,7 @@ function discoverFromPath(params: {
   }
 }
 
-export function discoverForgeOrchestratorPlugins(params: {
+export function discoverOpenClawPlugins(params: {
   workspaceDir?: string;
   extraPaths?: string[];
   ownershipUid?: number | null;
@@ -596,7 +596,7 @@ export function discoverForgeOrchestratorPlugins(params: {
   }
   if (workspaceDir) {
     const workspaceRoot = resolveUserPath(workspaceDir);
-    const workspaceExtDirs = [path.join(workspaceRoot, ".forge-orchestrator", "extensions")];
+    const workspaceExtDirs = [path.join(workspaceRoot, ".openclaw", "extensions")];
     for (const dir of workspaceExtDirs) {
       discoverInDirectory({
         dir,

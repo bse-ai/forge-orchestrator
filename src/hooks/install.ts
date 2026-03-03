@@ -91,11 +91,11 @@ export function resolveHookInstallDir(hookId: string, hooksDir?: string): string
 async function ensureOpenClawHooks(manifest: HookPackageManifest) {
   const hooks = manifest[MANIFEST_KEY]?.hooks;
   if (!Array.isArray(hooks)) {
-    throw new Error("package.json missing forge-orchestrator.hooks");
+    throw new Error("package.json missing openclaw.hooks");
   }
   const list = hooks.map((e) => (typeof e === "string" ? e.trim() : "")).filter(Boolean);
   if (list.length === 0) {
-    throw new Error("package.json forge-orchestrator.hooks is empty");
+    throw new Error("package.json openclaw.hooks is empty");
   }
   return list;
 }
@@ -164,7 +164,7 @@ async function installHookPackageFromDir(params: {
 
   let hookEntries: string[];
   try {
-    hookEntries = await ensureForgeOrchestratorHooks(manifest);
+    hookEntries = await ensureOpenClawHooks(manifest);
   } catch (err) {
     return { ok: false, error: String(err) };
   }

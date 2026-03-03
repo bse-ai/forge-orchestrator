@@ -171,10 +171,7 @@ function buildAgentPrompt(messagesUnknown: unknown): {
 
   return {
     message,
-    extraSystemPrompt:
-      systemParts.length > 0
-        ? wrapExternalContent(systemParts.join("\n\n"), { source: "api" })
-        : undefined,
+    extraSystemPrompt: systemParts.length > 0 ? systemParts.join("\n\n") : undefined,
   };
 }
 
@@ -219,7 +216,7 @@ export async function handleOpenAiHttpRequest(
 
   const payload = coerceRequest(handled.body);
   const stream = Boolean(payload.stream);
-  const model = typeof payload.model === "string" ? payload.model : "forge-orchestrator";
+  const model = typeof payload.model === "string" ? payload.model : "openclaw";
   const user = typeof payload.user === "string" ? payload.user : undefined;
 
   const { sessionKey, messageChannel } = resolveGatewayRequestContext({

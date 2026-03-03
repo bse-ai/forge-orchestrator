@@ -27,7 +27,7 @@
     },
     "dbPath": {
       "label": "Database Path",
-      "placeholder": "~/.forge-orchestrator/memory/lancedb",
+      "placeholder": "~/.openclaw/memory/lancedb",
       "advanced": true
     },
     "autoCapture": {

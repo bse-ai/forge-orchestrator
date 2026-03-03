@@ -1,4 +1,4 @@
-import type { ForgeOrchestratorConfig, RuntimeEnv } from "forge-orchestrator/plugin-sdk";
+import type { OpenClawConfig, RuntimeEnv } from "openclaw/plugin-sdk";
 import type { MSTeamsConversationStore } from "./conversation-store.js";
 import { buildFileInfoCard, parseFileConsentInvoke, uploadToConsentUrl } from "./file-consent.js";
 import { normalizeMSTeamsConversationId } from "./inbound.js";
@@ -25,7 +25,7 @@ export type MSTeamsActivityHandler = {
 };
 
 export type MSTeamsMessageHandlerDeps = {
-  cfg: ForgeOrchestratorConfig;
+  cfg: OpenClawConfig;
   runtime: RuntimeEnv;
   appId: string;
   adapter: MSTeamsAdapter;

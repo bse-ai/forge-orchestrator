@@ -37,7 +37,7 @@ export function guardCancel<T>(value: T | symbol, runtime: RuntimeEnv): T {
   return value;
 }
 
-export function summarizeExistingConfig(config: ForgeOrchestratorConfig): string {
+export function summarizeExistingConfig(config: OpenClawConfig): string {
   const rows: string[] = [];
   const defaults = config.agents?.defaults;
   if (defaults?.workspace) {
@@ -105,16 +105,16 @@ export function printWizardHeader(runtime: RuntimeEnv) {
     "██░███░██░▀▀░██░▄▄▄██░█░█░██░█████░████░▀▀░██░█░█░██",
     "██░▀▀▀░██░█████░▀▀▀██░██▄░██░▀▀▄██░▀▀░█░██░██▄▀▄▀▄██",
     "▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀",
-    "              🔥 FORGE ORCHESTRATOR 🔥               ",
+    "                  🦞 OPENCLAW 🦞                    ",
     " ",
   ].join("\n");
   runtime.log(header);
 }
 
 export function applyWizardMetadata(
-  cfg: ForgeOrchestratorConfig,
+  cfg: OpenClawConfig,
   params: { command: string; mode: OnboardMode },
-): ForgeOrchestratorConfig {
+): OpenClawConfig {
   const commit = process.env.GIT_COMMIT?.trim() || process.env.GIT_SHA?.trim() || undefined;
   return {
     ...cfg,
@@ -221,8 +221,8 @@ export function formatControlUiSshHint(params: {
     localUrl,
     authedUrl,
     "Docs:",
-    "https://docs.forge-orchestrator.ai/gateway/remote",
-    "https://docs.forge-orchestrator.ai/web/control-ui",
+    "https://docs.openclaw.ai/gateway/remote",
+    "https://docs.openclaw.ai/web/control-ui",
   ]
     .filter(Boolean)
     .join("\n");

@@ -4,8 +4,8 @@ import type {
   ChannelOutboundAdapter,
   ChannelPlugin,
   ChannelSetupInput,
-  ForgeOrchestratorConfig,
-} from "forge-orchestrator/plugin-sdk";
+  OpenClawConfig,
+} from "openclaw/plugin-sdk";
 import {
   applyAccountNameToChannelSection,
   DEFAULT_ACCOUNT_ID,
@@ -101,10 +101,10 @@ type TlonSetupInput = ChannelSetupInput & {
 };
 
 function applyTlonSetupConfig(params: {
-  cfg: ForgeOrchestratorConfig;
+  cfg: OpenClawConfig;
   accountId: string;
   input: TlonSetupInput;
-}): ForgeOrchestratorConfig {
+}): OpenClawConfig {
   const { cfg, accountId, input } = params;
   const useDefault = accountId === DEFAULT_ACCOUNT_ID;
   const namedConfig = applyAccountNameToChannelSection({
@@ -311,7 +311,7 @@ export const tlonPlugin: ChannelPlugin = {
               enabled,
             },
           },
-        } as ForgeOrchestratorConfig;
+        } as OpenClawConfig;
       }
       return {
         ...cfg,
@@ -328,7 +328,7 @@ export const tlonPlugin: ChannelPlugin = {
             },
           },
         },
-      } as ForgeOrchestratorConfig;
+      } as OpenClawConfig;
     },
     deleteAccount: ({ cfg, accountId }) => {
       const useDefault = !accountId || accountId === "default";
@@ -346,7 +346,7 @@ export const tlonPlugin: ChannelPlugin = {
             ...cfg.channels,
             tlon: rest,
           },
-        } as ForgeOrchestratorConfig;
+        } as OpenClawConfig;
       }
       const { [accountId]: _removed, ...remainingAccounts } = cfg.channels?.tlon?.accounts ?? {};
       return {
@@ -358,7 +358,7 @@ export const tlonPlugin: ChannelPlugin = {
             accounts: remainingAccounts,
           },
         },
-      } as ForgeOrchestratorConfig;
+      } as OpenClawConfig;
     },
     isConfigured: (account) => account.configured,
     describeAccount: (account) => ({

@@ -5,14 +5,14 @@ import { expandHomePrefix, resolveRequiredHomeDir } from "../infra/home-dir.js";
 import type { OpenClawConfig } from "./types.js";
 
 /**
- * Nix mode detection: When FORGE_ORCH_NIX_MODE=1, the gateway is running under Nix.
+ * Nix mode detection: When OPENCLAW_NIX_MODE=1, the gateway is running under Nix.
  * In this mode:
  * - No auto-install flows should be attempted
  * - Missing dependencies should produce actionable Nix-specific error messages
  * - Config is managed externally (read-only from Nix perspective)
  */
 export function resolveIsNixMode(env: NodeJS.ProcessEnv = process.env): boolean {
-  return env.FORGE_ORCH_NIX_MODE === "1";
+  return env.OPENCLAW_NIX_MODE === "1";
 }
 
 export const isNixMode = resolveIsNixMode();
@@ -27,7 +27,7 @@ function resolveDefaultHomeDir(): string {
   return resolveRequiredHomeDir(process.env, os.homedir);
 }
 
-/** Build a homedir thunk that respects FORGE_ORCH_HOME for the given env. */
+/** Build a homedir thunk that respects OPENCLAW_HOME for the given env. */
 function envHomedir(env: NodeJS.ProcessEnv): () => string {
   return () => resolveRequiredHomeDir(env, os.homedir);
 }
@@ -54,15 +54,15 @@ export function resolveNewStateDir(homedir: () => string = resolveDefaultHomeDir
 
 /**
  * State directory for mutable data (sessions, logs, caches).
- * Can be overridden via FORGE_ORCH_STATE_DIR.
- * Default: ~/.forge-orchestrator
+ * Can be overridden via OPENCLAW_STATE_DIR.
+ * Default: ~/.openclaw
  */
 export function resolveStateDir(
   env: NodeJS.ProcessEnv = process.env,
   homedir: () => string = envHomedir(env),
 ): string {
   const effectiveHomedir = () => resolveRequiredHomeDir(env, homedir);
-  const override = env.FORGE_ORCH_STATE_DIR?.trim();
+  const override = env.OPENCLAW_STATE_DIR?.trim() || env.CLAWDBOT_STATE_DIR?.trim();
   if (override) {
     return resolveUserPath(override, env, effectiveHomedir);
   }
@@ -112,14 +112,14 @@ export const STATE_DIR = resolveStateDir();
 
 /**
  * Config file path (JSON5).
- * Can be overridden via FORGE_ORCH_CONFIG_PATH.
- * Default: ~/.forge-orchestrator/forge-orchestrator.json (or $FORGE_ORCH_STATE_DIR/forge-orchestrator.json)
+ * Can be overridden via OPENCLAW_CONFIG_PATH.
+ * Default: ~/.openclaw/openclaw.json (or $OPENCLAW_STATE_DIR/openclaw.json)
  */
 export function resolveCanonicalConfigPath(
   env: NodeJS.ProcessEnv = process.env,
   stateDir: string = resolveStateDir(env, envHomedir(env)),
 ): string {
-  const override = env.FORGE_ORCH_CONFIG_PATH?.trim();
+  const override = env.OPENCLAW_CONFIG_PATH?.trim() || env.CLAWDBOT_CONFIG_PATH?.trim();
   if (override) {
     return resolveUserPath(override, env, envHomedir(env));
   }
@@ -159,7 +159,7 @@ export function resolveConfigPath(
   stateDir: string = resolveStateDir(env, envHomedir(env)),
   homedir: () => string = envHomedir(env),
 ): string {
-  const override = env.FORGE_ORCH_CONFIG_PATH?.trim();
+  const override = env.OPENCLAW_CONFIG_PATH?.trim();
   if (override) {
     return resolveUserPath(override, env, homedir);
   }
@@ -202,15 +202,15 @@ export function resolveDefaultConfigCandidates(
   homedir: () => string = envHomedir(env),
 ): string[] {
   const effectiveHomedir = () => resolveRequiredHomeDir(env, homedir);
-  const explicit = env.FORGE_ORCH_CONFIG_PATH?.trim();
+  const explicit = env.OPENCLAW_CONFIG_PATH?.trim() || env.CLAWDBOT_CONFIG_PATH?.trim();
   if (explicit) {
     return [resolveUserPath(explicit, env, effectiveHomedir)];
   }
 
   const candidates: string[] = [];
-  const forgeOrchStateDir = env.FORGE_ORCH_STATE_DIR?.trim();
-  if (forgeOrchStateDir) {
-    const resolved = resolveUserPath(forgeOrchStateDir, env, effectiveHomedir);
+  const openclawStateDir = env.OPENCLAW_STATE_DIR?.trim() || env.CLAWDBOT_STATE_DIR?.trim();
+  if (openclawStateDir) {
+    const resolved = resolveUserPath(openclawStateDir, env, effectiveHomedir);
     candidates.push(path.join(resolved, CONFIG_FILENAME));
     candidates.push(...LEGACY_CONFIG_FILENAMES.map((name) => path.join(resolved, name)));
   }
@@ -227,12 +227,12 @@ export const DEFAULT_GATEWAY_PORT = 18789;
 
 /**
  * Gateway lock directory (ephemeral).
- * Default: os.tmpdir()/forge-orchestrator-<uid> (uid suffix when available).
+ * Default: os.tmpdir()/openclaw-<uid> (uid suffix when available).
  */
 export function resolveGatewayLockDir(tmpdir: () => string = os.tmpdir): string {
   const base = tmpdir();
   const uid = typeof process.getuid === "function" ? process.getuid() : undefined;
-  const suffix = uid != null ? `forge-orchestrator-${uid}` : "forge-orchestrator";
+  const suffix = uid != null ? `openclaw-${uid}` : "openclaw";
   return path.join(base, suffix);
 }
 
@@ -242,14 +242,14 @@ const OAUTH_FILENAME = "oauth.json";
  * OAuth credentials storage directory.
  *
  * Precedence:
- * - `FORGE_ORCH_OAUTH_DIR` (explicit override)
+ * - `OPENCLAW_OAUTH_DIR` (explicit override)
  * - `$*_STATE_DIR/credentials` (canonical server/default)
  */
 export function resolveOAuthDir(
   env: NodeJS.ProcessEnv = process.env,
   stateDir: string = resolveStateDir(env, envHomedir(env)),
 ): string {
-  const override = env.FORGE_ORCH_OAUTH_DIR?.trim();
+  const override = env.OPENCLAW_OAUTH_DIR?.trim();
   if (override) {
     return resolveUserPath(override, env, envHomedir(env));
   }
@@ -264,10 +264,10 @@ export function resolveOAuthPath(
 }
 
 export function resolveGatewayPort(
-  cfg?: ForgeOrchestratorConfig,
+  cfg?: OpenClawConfig,
   env: NodeJS.ProcessEnv = process.env,
 ): number {
-  const envRaw = env.FORGE_ORCH_GATEWAY_PORT?.trim();
+  const envRaw = env.OPENCLAW_GATEWAY_PORT?.trim() || env.CLAWDBOT_GATEWAY_PORT?.trim();
   if (envRaw) {
     const parsed = Number.parseInt(envRaw, 10);
     if (Number.isFinite(parsed) && parsed > 0) {
