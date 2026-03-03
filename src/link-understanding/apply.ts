@@ -1,6 +1,6 @@
-import type { MsgContext } from "../auto-reply/templating.js";
-import type { ForgeOrchestratorConfig } from "../config/config.js";
 import { finalizeInboundContext } from "../auto-reply/reply/inbound-context.js";
+import type { MsgContext } from "../auto-reply/templating.js";
+import type { OpenClawConfig } from "../config/config.js";
 import { formatLinkUnderstandingBody } from "./format.js";
 import { runLinkUnderstanding } from "./runner.js";
 

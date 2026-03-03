@@ -383,8 +383,8 @@ Use non-interactive flags/env vars for predictable runs.
     Install Git for Windows, reopen PowerShell, rerun installer.
   </Accordion>
 
-  <Accordion title='Windows: "forge-orchestrator is not recognized"'>
-    Run `npm config get prefix`, append `\bin`, add that directory to user PATH, then reopen PowerShell.
+  <Accordion title='Windows: "openclaw is not recognized"'>
+    Run `npm config get prefix` and add that directory to your user PATH (no `\bin` suffix needed on Windows), then reopen PowerShell.
   </Accordion>
 
   <Accordion title="Windows: how to get verbose installer output">

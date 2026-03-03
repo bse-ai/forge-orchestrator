@@ -1,5 +1,9 @@
 import type { AssistantMessage } from "@mariozechner/pi-ai";
-import type { ForgeOrchestratorConfig } from "../../config/config.js";
+import type { OpenClawConfig } from "../../config/config.js";
+import {
+  resolveAgentModelFallbackValues,
+  resolveAgentModelPrimaryValue,
+} from "../../config/model-input.js";
 import { extractAssistantText } from "../pi-embedded-utils.js";
 
 export type ImageModelConfig = { primary?: string; fallbacks?: string[] };
@@ -50,13 +54,9 @@ export function coerceImageAssistantText(params: {
   throw new Error(`Image model returned no text (${params.provider}/${params.model}).`);
 }
 
-export function coerceImageModelConfig(cfg?: ForgeOrchestratorConfig): ImageModelConfig {
-  const imageModel = cfg?.agents?.defaults?.imageModel as
-    | { primary?: string; fallbacks?: string[] }
-    | string
-    | undefined;
-  const primary = typeof imageModel === "string" ? imageModel.trim() : imageModel?.primary;
-  const fallbacks = typeof imageModel === "object" ? (imageModel?.fallbacks ?? []) : [];
+export function coerceImageModelConfig(cfg?: OpenClawConfig): ImageModelConfig {
+  const primary = resolveAgentModelPrimaryValue(cfg?.agents?.defaults?.imageModel);
+  const fallbacks = resolveAgentModelFallbackValues(cfg?.agents?.defaults?.imageModel);
   return {
     ...(primary?.trim() ? { primary: primary.trim() } : {}),
     ...(fallbacks.length > 0 ? { fallbacks } : {}),

@@ -1,8 +1,8 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import type { ForgeOrchestratorConfig } from "./types.js";
 import { expandHomePrefix, resolveRequiredHomeDir } from "../infra/home-dir.js";
+import type { OpenClawConfig } from "./types.js";
 
 /**
  * Nix mode detection: When FORGE_ORCH_NIX_MODE=1, the gateway is running under Nix.
@@ -17,10 +17,11 @@ export function resolveIsNixMode(env: NodeJS.ProcessEnv = process.env): boolean 
 
 export const isNixMode = resolveIsNixMode();
 
-const LEGACY_STATE_DIRNAMES = [".openclaw"] as const;
-const NEW_STATE_DIRNAME = ".forge-orchestrator";
-const CONFIG_FILENAME = "forge-orchestrator.json";
-const LEGACY_CONFIG_FILENAMES = ["openclaw.json"] as const;
+// Support historical (and occasionally misspelled) legacy state dirs.
+const LEGACY_STATE_DIRNAMES = [".clawdbot", ".moldbot", ".moltbot"] as const;
+const NEW_STATE_DIRNAME = ".openclaw";
+const CONFIG_FILENAME = "openclaw.json";
+const LEGACY_CONFIG_FILENAMES = ["clawdbot.json", "moldbot.json", "moltbot.json"] as const;
 
 function resolveDefaultHomeDir(): string {
   return resolveRequiredHomeDir(process.env, os.homedir);
@@ -66,6 +67,9 @@ export function resolveStateDir(
     return resolveUserPath(override, env, effectiveHomedir);
   }
   const newDir = newStateDir(effectiveHomedir);
+  if (env.OPENCLAW_TEST_FAST === "1") {
+    return newDir;
+  }
   const legacyDirs = legacyStateDirs(effectiveHomedir);
   const hasNew = fs.existsSync(newDir);
   if (hasNew) {
@@ -130,6 +134,9 @@ export function resolveConfigPathCandidate(
   env: NodeJS.ProcessEnv = process.env,
   homedir: () => string = envHomedir(env),
 ): string {
+  if (env.OPENCLAW_TEST_FAST === "1") {
+    return resolveCanonicalConfigPath(env, resolveStateDir(env, homedir));
+  }
   const candidates = resolveDefaultConfigCandidates(env, homedir);
   const existing = candidates.find((candidate) => {
     try {
@@ -156,7 +163,10 @@ export function resolveConfigPath(
   if (override) {
     return resolveUserPath(override, env, homedir);
   }
-  const stateOverride = env.FORGE_ORCH_STATE_DIR?.trim();
+  if (env.OPENCLAW_TEST_FAST === "1") {
+    return path.join(stateDir, CONFIG_FILENAME);
+  }
+  const stateOverride = env.OPENCLAW_STATE_DIR?.trim();
   const candidates = [
     path.join(stateDir, CONFIG_FILENAME),
     ...LEGACY_CONFIG_FILENAMES.map((name) => path.join(stateDir, name)),

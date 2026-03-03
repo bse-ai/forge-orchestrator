@@ -93,10 +93,10 @@ forge-orchestrator hooks info session-memory
 Save session context to memory when /new command is issued
 
 Details:
-  Source: forge-orchestrator-bundled
-  Path: /path/to/forge-orchestrator/hooks/bundled/session-memory/HOOK.md
-  Handler: /path/to/forge-orchestrator/hooks/bundled/session-memory/handler.ts
-  Homepage: https://docs.forge-orchestrator.ai/hooks#session-memory
+  Source: openclaw-bundled
+  Path: /path/to/openclaw/hooks/bundled/session-memory/HOOK.md
+  Handler: /path/to/openclaw/hooks/bundled/session-memory/handler.ts
+  Homepage: https://docs.openclaw.ai/automation/hooks#session-memory
   Events: command:new
 
 Requirements:

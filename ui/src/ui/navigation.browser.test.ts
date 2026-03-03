@@ -1,15 +1,11 @@
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { ForgeOrchestratorApp } from "./app.ts";
+import { describe, expect, it } from "vitest";
 import "../styles.css";
+import { mountApp as mountTestApp, registerAppMountHooks } from "./test-helpers/app-mount.ts";
 
-// oxlint-disable-next-line typescript/unbound-method
-const originalConnect = ForgeOrchestratorApp.prototype.connect;
+registerAppMountHooks();
 
 function mountApp(pathname: string) {
-  window.history.replaceState({}, "", pathname);
-  const app = document.createElement("forge-orchestrator-app") as ForgeOrchestratorApp;
-  document.body.append(app);
-  return app;
+  return mountTestApp(pathname);
 }
 
 function nextFrame() {
@@ -17,22 +13,6 @@ function nextFrame() {
     requestAnimationFrame(() => resolve());
   });
 }
-
-beforeEach(() => {
-  ForgeOrchestratorApp.prototype.connect = () => {
-    // no-op: avoid real gateway WS connections in browser tests
-  };
-  window.__FORGE_ORCH_CONTROL_UI_BASE_PATH__ = undefined;
-  localStorage.clear();
-  document.body.innerHTML = "";
-});
-
-afterEach(() => {
-  ForgeOrchestratorApp.prototype.connect = originalConnect;
-  window.__FORGE_ORCH_CONTROL_UI_BASE_PATH__ = undefined;
-  localStorage.clear();
-  document.body.innerHTML = "";
-});
 
 describe("control UI routing", () => {
   it("hydrates the tab from the location", async () => {
@@ -82,6 +62,21 @@ describe("control UI routing", () => {
     await app.updateComplete;
     expect(app.tab).toBe("channels");
     expect(window.location.pathname).toBe("/channels");
+  });
+
+  it("resets to the main session when opening chat from sidebar navigation", async () => {
+    const app = mountApp("/sessions?session=agent:main:subagent:task-123");
+    await app.updateComplete;
+
+    const link = app.querySelector<HTMLAnchorElement>('a.nav-item[href="/chat"]');
+    expect(link).not.toBeNull();
+    link?.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true, button: 0 }));
+
+    await app.updateComplete;
+    expect(app.tab).toBe("chat");
+    expect(app.sessionKey).toBe("main");
+    expect(window.location.pathname).toBe("/chat");
+    expect(window.location.search).toBe("?session=main");
   });
 
   it("keeps chat and nav usable on narrow viewports", async () => {

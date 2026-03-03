@@ -1,5 +1,5 @@
-import type { ForgeOrchestratorConfig } from "forge-orchestrator/plugin-sdk";
-import { DEFAULT_ACCOUNT_ID, normalizeAccountId } from "forge-orchestrator/plugin-sdk";
+import type { ClawdbotConfig } from "openclaw/plugin-sdk";
+import { DEFAULT_ACCOUNT_ID, normalizeAccountId } from "openclaw/plugin-sdk/account-id";
 import type {
   FeishuConfig,
   FeishuAccountConfig,
@@ -34,8 +34,13 @@ export function listFeishuAccountIds(cfg: ForgeOrchestratorConfig): string[] {
 /**
  * Resolve the default account ID.
  */
-export function resolveDefaultFeishuAccountId(cfg: ForgeOrchestratorConfig): string {
+export function resolveDefaultFeishuAccountId(cfg: ClawdbotConfig): string {
+  const preferredRaw = (cfg.channels?.feishu as FeishuConfig | undefined)?.defaultAccount?.trim();
+  const preferred = preferredRaw ? normalizeAccountId(preferredRaw) : undefined;
   const ids = listFeishuAccountIds(cfg);
+  if (preferred && ids.includes(preferred)) {
+    return preferred;
+  }
   if (ids.includes(DEFAULT_ACCOUNT_ID)) {
     return DEFAULT_ACCOUNT_ID;
   }
@@ -64,7 +69,7 @@ function mergeFeishuAccountConfig(cfg: ForgeOrchestratorConfig, accountId: strin
   const feishuCfg = cfg.channels?.feishu as FeishuConfig | undefined;
 
   // Extract base config (exclude accounts field to avoid recursion)
-  const { accounts: _ignored, ...base } = feishuCfg ?? {};
+  const { accounts: _ignored, defaultAccount: _ignoredDefaultAccount, ...base } = feishuCfg ?? {};
 
   // Get account-specific overrides
   const account = resolveAccountConfig(cfg, accountId) ?? {};
@@ -104,7 +109,11 @@ export function resolveFeishuAccount(params: {
   cfg: ForgeOrchestratorConfig;
   accountId?: string | null;
 }): ResolvedFeishuAccount {
-  const accountId = normalizeAccountId(params.accountId);
+  const hasExplicitAccountId =
+    typeof params.accountId === "string" && params.accountId.trim() !== "";
+  const accountId = hasExplicitAccountId
+    ? normalizeAccountId(params.accountId)
+    : resolveDefaultFeishuAccountId(params.cfg);
   const feishuCfg = params.cfg.channels?.feishu as FeishuConfig | undefined;
 
   // Base enabled state (top-level)

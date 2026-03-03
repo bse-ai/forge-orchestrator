@@ -26,9 +26,9 @@ forge-orchestrator voicecall end --call-id <id>
 ## Exposing webhooks (Tailscale)
 
 ```bash
-forge-orchestrator voicecall expose --mode serve
-forge-orchestrator voicecall expose --mode funnel
-forge-orchestrator voicecall unexpose
+openclaw voicecall expose --mode serve
+openclaw voicecall expose --mode funnel
+openclaw voicecall expose --mode off
 ```
 
 Security note: only expose the webhook endpoint to networks you trust. Prefer Tailscale Serve over Funnel when possible.

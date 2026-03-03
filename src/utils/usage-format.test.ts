@@ -35,7 +35,7 @@ describe("usage-format", () => {
           },
         },
       },
-    } as ForgeOrchestratorConfig;
+    } as unknown as OpenClawConfig;
 
     const cost = resolveModelCostConfig({
       provider: "test",

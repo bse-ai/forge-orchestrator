@@ -1,9 +1,17 @@
 import { z } from "zod";
+import { parseByteSize } from "../cli/parse-bytes.js";
+import { parseDurationMs } from "../cli/parse-duration.js";
 import { ToolsSchema } from "./zod-schema.agent-runtime.js";
 import { AgentsSchema, AudioSchema, BindingsSchema, BroadcastSchema } from "./zod-schema.agents.js";
 import { ApprovalsSchema } from "./zod-schema.approvals.js";
-import { HexColorSchema, ModelsConfigSchema } from "./zod-schema.core.js";
+import {
+  HexColorSchema,
+  ModelsConfigSchema,
+  SecretInputSchema,
+  SecretsConfigSchema,
+} from "./zod-schema.core.js";
 import { HookMappingSchema, HooksGmailSchema, InternalHooksSchema } from "./zod-schema.hooks.js";
+import { InstallRecordShape } from "./zod-schema.installs.js";
 import { ChannelsSchema } from "./zod-schema.providers.js";
 import { sensitive } from "./zod-schema.sensitive.js";
 import {
@@ -71,9 +79,28 @@ const MemoryQmdLimitsSchema = z
   })
   .strict();
 
+const MemoryQmdMcporterSchema = z
+  .object({
+    enabled: z.boolean().optional(),
+    serverName: z.string().optional(),
+    startDaemon: z.boolean().optional(),
+  })
+  .strict();
+
+const LoggingLevelSchema = z.union([
+  z.literal("silent"),
+  z.literal("fatal"),
+  z.literal("error"),
+  z.literal("warn"),
+  z.literal("info"),
+  z.literal("debug"),
+  z.literal("trace"),
+]);
+
 const MemoryQmdSchema = z
   .object({
     command: z.string().optional(),
+    mcporter: MemoryQmdMcporterSchema.optional(),
     searchMode: z.union([z.literal("query"), z.literal("search"), z.literal("vsearch")]).optional(),
     includeDefaultMemory: z.boolean().optional(),
     paths: z.array(MemoryQmdPathSchema).optional(),
@@ -93,12 +120,35 @@ const MemorySchema = z
   .strict()
   .optional();
 
-export const ForgeOrchestratorSchema = z
+const HttpUrlSchema = z
+  .string()
+  .url()
+  .refine((value) => {
+    const protocol = new URL(value).protocol;
+    return protocol === "http:" || protocol === "https:";
+  }, "Expected http:// or https:// URL");
+
+export const OpenClawSchema = z
   .object({
+    $schema: z.string().optional(),
     meta: z
       .object({
         lastTouchedVersion: z.string().optional(),
-        lastTouchedAt: z.string().optional(),
+        // Accept any string unchanged (backwards-compatible) and coerce numeric Unix
+        // timestamps to ISO strings (agent file edits may write Date.now()).
+        lastTouchedAt: z
+          .union([
+            z.string(),
+            z.number().transform((n, ctx) => {
+              const d = new Date(n);
+              if (Number.isNaN(d.getTime())) {
+                ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Invalid timestamp" });
+                return z.NEVER;
+              }
+              return d.toISOString();
+            }),
+          ])
+          .optional(),
       })
       .strict()
       .optional(),
@@ -129,6 +179,7 @@ export const ForgeOrchestratorSchema = z
       .object({
         enabled: z.boolean().optional(),
         flags: z.array(z.string()).optional(),
+        stuckSessionWarnMs: z.number().int().positive().optional(),
         otel: z
           .object({
             enabled: z.boolean().optional(),
@@ -159,29 +210,10 @@ export const ForgeOrchestratorSchema = z
       .optional(),
     logging: z
       .object({
-        level: z
-          .union([
-            z.literal("silent"),
-            z.literal("fatal"),
-            z.literal("error"),
-            z.literal("warn"),
-            z.literal("info"),
-            z.literal("debug"),
-            z.literal("trace"),
-          ])
-          .optional(),
+        level: LoggingLevelSchema.optional(),
         file: z.string().optional(),
-        consoleLevel: z
-          .union([
-            z.literal("silent"),
-            z.literal("fatal"),
-            z.literal("error"),
-            z.literal("warn"),
-            z.literal("info"),
-            z.literal("debug"),
-            z.literal("trace"),
-          ])
-          .optional(),
+        maxFileBytes: z.number().int().positive().optional(),
+        consoleLevel: LoggingLevelSchema.optional(),
         consoleStyle: z
           .union([z.literal("pretty"), z.literal("compact"), z.literal("json")])
           .optional(),
@@ -190,10 +222,32 @@ export const ForgeOrchestratorSchema = z
       })
       .strict()
       .optional(),
+    cli: z
+      .object({
+        banner: z
+          .object({
+            taglineMode: z
+              .union([z.literal("random"), z.literal("default"), z.literal("off")])
+              .optional(),
+          })
+          .strict()
+          .optional(),
+      })
+      .strict()
+      .optional(),
     update: z
       .object({
         channel: z.union([z.literal("stable"), z.literal("beta"), z.literal("dev")]).optional(),
         checkOnStart: z.boolean().optional(),
+        auto: z
+          .object({
+            enabled: z.boolean().optional(),
+            stableDelayHours: z.number().nonnegative().max(168).optional(),
+            stableJitterHours: z.number().nonnegative().max(168).optional(),
+            betaCheckIntervalHours: z.number().positive().max(24).optional(),
+          })
+          .strict()
+          .optional(),
       })
       .strict()
       .optional(),
@@ -209,8 +263,18 @@ export const ForgeOrchestratorSchema = z
         headless: z.boolean().optional(),
         noSandbox: z.boolean().optional(),
         attachOnly: z.boolean().optional(),
+        cdpPortRangeStart: z.number().int().min(1).max(65535).optional(),
         defaultProfile: z.string().optional(),
         snapshotDefaults: BrowserSnapshotDefaultsSchema,
+        ssrfPolicy: z
+          .object({
+            allowPrivateNetwork: z.boolean().optional(),
+            dangerouslyAllowPrivateNetwork: z.boolean().optional(),
+            allowedHostnames: z.array(z.string()).optional(),
+            hostnameAllowlist: z.array(z.string()).optional(),
+          })
+          .strict()
+          .optional(),
         profiles: z
           .record(
             z
@@ -221,6 +285,7 @@ export const ForgeOrchestratorSchema = z
                 cdpPort: z.number().int().min(1).max(65535).optional(),
                 cdpUrl: z.string().optional(),
                 driver: z.union([z.literal("clawd"), z.literal("extension")]).optional(),
+                attachOnly: z.boolean().optional(),
                 color: HexColorSchema,
               })
               .strict()
@@ -229,6 +294,7 @@ export const ForgeOrchestratorSchema = z
               }),
           )
           .optional(),
+        extraArgs: z.array(z.string()).optional(),
       })
       .strict()
       .optional(),
@@ -245,6 +311,7 @@ export const ForgeOrchestratorSchema = z
       })
       .strict()
       .optional(),
+    secrets: SecretsConfigSchema,
     auth: z
       .object({
         profiles: z
@@ -266,6 +333,49 @@ export const ForgeOrchestratorSchema = z
             billingBackoffHoursByProvider: z.record(z.string(), z.number().positive()).optional(),
             billingMaxHours: z.number().positive().optional(),
             failureWindowHours: z.number().positive().optional(),
+          })
+          .strict()
+          .optional(),
+      })
+      .strict()
+      .optional(),
+    acp: z
+      .object({
+        enabled: z.boolean().optional(),
+        dispatch: z
+          .object({
+            enabled: z.boolean().optional(),
+          })
+          .strict()
+          .optional(),
+        backend: z.string().optional(),
+        defaultAgent: z.string().optional(),
+        allowedAgents: z.array(z.string()).optional(),
+        maxConcurrentSessions: z.number().int().positive().optional(),
+        stream: z
+          .object({
+            coalesceIdleMs: z.number().int().nonnegative().optional(),
+            maxChunkChars: z.number().int().positive().optional(),
+            repeatSuppression: z.boolean().optional(),
+            deliveryMode: z.union([z.literal("live"), z.literal("final_only")]).optional(),
+            hiddenBoundarySeparator: z
+              .union([
+                z.literal("none"),
+                z.literal("space"),
+                z.literal("newline"),
+                z.literal("paragraph"),
+              ])
+              .optional(),
+            maxOutputChars: z.number().int().positive().optional(),
+            maxSessionUpdateChars: z.number().int().positive().optional(),
+            tagVisibility: z.record(z.string(), z.boolean()).optional(),
+          })
+          .strict()
+          .optional(),
+        runtime: z
+          .object({
+            ttlMinutes: z.number().int().positive().optional(),
+            installCommand: z.string().optional(),
           })
           .strict()
           .optional(),
@@ -294,9 +404,72 @@ export const ForgeOrchestratorSchema = z
         enabled: z.boolean().optional(),
         store: z.string().optional(),
         maxConcurrentRuns: z.number().int().positive().optional(),
+        retry: z
+          .object({
+            maxAttempts: z.number().int().min(0).max(10).optional(),
+            backoffMs: z.array(z.number().int().nonnegative()).min(1).max(10).optional(),
+            retryOn: z
+              .array(z.enum(["rate_limit", "network", "timeout", "server_error"]))
+              .min(1)
+              .optional(),
+          })
+          .strict()
+          .optional(),
+        webhook: HttpUrlSchema.optional(),
+        webhookToken: z.string().optional().register(sensitive),
         sessionRetention: z.union([z.string(), z.literal(false)]).optional(),
+        runLog: z
+          .object({
+            maxBytes: z.union([z.string(), z.number()]).optional(),
+            keepLines: z.number().int().positive().optional(),
+          })
+          .strict()
+          .optional(),
+        failureAlert: z
+          .object({
+            enabled: z.boolean().optional(),
+            after: z.number().int().min(1).optional(),
+            cooldownMs: z.number().int().min(0).optional(),
+            mode: z.enum(["announce", "webhook"]).optional(),
+            accountId: z.string().optional(),
+          })
+          .strict()
+          .optional(),
+        failureDestination: z
+          .object({
+            channel: z.string().optional(),
+            to: z.string().optional(),
+            accountId: z.string().optional(),
+            mode: z.enum(["announce", "webhook"]).optional(),
+          })
+          .strict()
+          .optional(),
       })
       .strict()
+      .superRefine((val, ctx) => {
+        if (val.sessionRetention !== undefined && val.sessionRetention !== false) {
+          try {
+            parseDurationMs(String(val.sessionRetention).trim(), { defaultUnit: "h" });
+          } catch {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              path: ["sessionRetention"],
+              message: "invalid duration (use ms, s, m, h, d)",
+            });
+          }
+        }
+        if (val.runLog?.maxBytes !== undefined) {
+          try {
+            parseByteSize(String(val.runLog.maxBytes).trim(), { defaultUnit: "b" });
+          } catch {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              path: ["runLog", "maxBytes"],
+              message: "invalid size (use b, kb, mb, gb, tb)",
+            });
+          }
+        }
+      })
       .optional(),
     hooks: z
       .object({
@@ -362,6 +535,21 @@ export const ForgeOrchestratorSchema = z
       .optional(),
     talk: z
       .object({
+        provider: z.string().optional(),
+        providers: z
+          .record(
+            z.string(),
+            z
+              .object({
+                voiceId: z.string().optional(),
+                voiceAliases: z.record(z.string(), z.string()).optional(),
+                modelId: z.string().optional(),
+                outputFormat: z.string().optional(),
+                apiKey: z.string().optional().register(sensitive),
+              })
+              .catchall(z.unknown()),
+          )
+          .optional(),
         voiceId: z.string().optional(),
         voiceAliases: z.record(z.string(), z.string()).optional(),
         modelId: z.string().optional(),
@@ -384,12 +572,14 @@ export const ForgeOrchestratorSchema = z
             z.literal("tailnet"),
           ])
           .optional(),
+        customBindHost: z.string().optional(),
         controlUi: z
           .object({
             enabled: z.boolean().optional(),
             basePath: z.string().optional(),
             root: z.string().optional(),
             allowedOrigins: z.array(z.string()).optional(),
+            dangerouslyAllowHostHeaderOriginFallback: z.boolean().optional(),
             allowInsecureAuth: z.boolean().optional(),
             dangerouslyDisableDeviceAuth: z.boolean().optional(),
           })
@@ -397,14 +587,39 @@ export const ForgeOrchestratorSchema = z
           .optional(),
         auth: z
           .object({
-            mode: z.union([z.literal("token"), z.literal("password")]).optional(),
+            mode: z
+              .union([
+                z.literal("none"),
+                z.literal("token"),
+                z.literal("password"),
+                z.literal("trusted-proxy"),
+              ])
+              .optional(),
             token: z.string().optional().register(sensitive),
             password: z.string().optional().register(sensitive),
             allowTailscale: z.boolean().optional(),
+            rateLimit: z
+              .object({
+                maxAttempts: z.number().optional(),
+                windowMs: z.number().optional(),
+                lockoutMs: z.number().optional(),
+                exemptLoopback: z.boolean().optional(),
+              })
+              .strict()
+              .optional(),
+            trustedProxy: z
+              .object({
+                userHeader: z.string().min(1, "userHeader is required for trusted-proxy mode"),
+                requiredHeaders: z.array(z.string()).optional(),
+                allowUsers: z.array(z.string()).optional(),
+              })
+              .strict()
+              .optional(),
           })
           .strict()
           .optional(),
         trustedProxies: z.array(z.string()).optional(),
+        allowRealIpFallback: z.boolean().optional(),
         tools: z
           .object({
             deny: z.array(z.string()).optional(),
@@ -412,6 +627,7 @@ export const ForgeOrchestratorSchema = z
           })
           .strict()
           .optional(),
+        channelHealthCheckMinutes: z.number().int().min(0).optional(),
         tailscale: z
           .object({
             mode: z.union([z.literal("off"), z.literal("serve"), z.literal("funnel")]).optional(),
@@ -506,6 +722,12 @@ export const ForgeOrchestratorSchema = z
               })
               .strict()
               .optional(),
+            securityHeaders: z
+              .object({
+                strictTransportSecurity: z.union([z.string(), z.literal(false)]).optional(),
+              })
+              .strict()
+              .optional(),
           })
           .strict()
           .optional(),
@@ -549,13 +771,23 @@ export const ForgeOrchestratorSchema = z
           })
           .strict()
           .optional(),
+        limits: z
+          .object({
+            maxCandidatesPerRoot: z.number().int().min(1).optional(),
+            maxSkillsLoadedPerSource: z.number().int().min(1).optional(),
+            maxSkillsInPrompt: z.number().int().min(0).optional(),
+            maxSkillsPromptChars: z.number().int().min(0).optional(),
+            maxSkillFileBytes: z.number().int().min(0).optional(),
+          })
+          .strict()
+          .optional(),
         entries: z
           .record(
             z.string(),
             z
               .object({
                 enabled: z.boolean().optional(),
-                apiKey: z.string().optional().register(sensitive),
+                apiKey: SecretInputSchema.optional().register(sensitive),
                 env: z.record(z.string(), z.string()).optional(),
                 config: z.record(z.string(), z.unknown()).optional(),
               })
@@ -598,12 +830,7 @@ export const ForgeOrchestratorSchema = z
             z.string(),
             z
               .object({
-                source: z.union([z.literal("npm"), z.literal("archive"), z.literal("path")]),
-                spec: z.string().optional(),
-                sourcePath: z.string().optional(),
-                installPath: z.string().optional(),
-                version: z.string().optional(),
-                installedAt: z.string().optional(),
+                ...InstallRecordShape,
               })
               .strict(),
           )

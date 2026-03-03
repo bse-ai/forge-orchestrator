@@ -5,25 +5,22 @@ services:
     environment:
       HOME: /home/node
       TERM: xterm-256color
-      NODE_ENV: production
-      FORGE_ORCH_GATEWAY_TOKEN: ${FORGE_ORCH_GATEWAY_TOKEN}
-      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-}
-      N8N_API_KEY: ${N8N_API_KEY:-}
-      N8N_API_URL: ${N8N_API_URL:-https://arcbse.app.n8n.cloud}
-      GRAPHITI_ENABLED: ${GRAPHITI_ENABLED:-}
-      GRAPHITI_ENDPOINT: ${GRAPHITI_ENDPOINT:-}
-      SLACK_BOT_TOKEN: ${SLACK_BOT_TOKEN:-}
+      OPENCLAW_GATEWAY_TOKEN: ${OPENCLAW_GATEWAY_TOKEN}
+      OPENCLAW_ALLOW_INSECURE_PRIVATE_WS: ${OPENCLAW_ALLOW_INSECURE_PRIVATE_WS:-}
       CLAUDE_AI_SESSION_KEY: ${CLAUDE_AI_SESSION_KEY:-}
       CLAUDE_WEB_SESSION_KEY: ${CLAUDE_WEB_SESSION_KEY:-}
       CLAUDE_WEB_COOKIE: ${CLAUDE_WEB_COOKIE:-}
-      GOG_KEYRING_PASSWORD: ${GOG_KEYRING_PASSWORD:-forge-gmail-2026}
     volumes:
-      - ${FORGE_ORCH_CONFIG_DIR:-./docker}:/home/node/.forge-orchestrator
-      - ${FORGE_ORCH_WORKSPACE_DIR:-./workspace}:/home/node/.forge-orchestrator/workspace
-      - ${FORGE_ORCH_CREDENTIALS_DIR:-C:/Users/brend/.forge-orchestrator/credentials}:/home/node/.forge-orchestrator/credentials
-      - ${FORGE_ORCH_DEVICES_DIR:-C:/Users/brend/.forge-orchestrator/devices}:/home/node/.forge-orchestrator/devices
-      - ${FORGE_ORCH_IDENTITY_DIR:-C:/Users/brend/.forge-orchestrator/identity}:/home/node/.forge-orchestrator/identity
-      - ${FORGE_ORCH_GOGCLI_DIR:-C:/Users/brend/AppData/Roaming/gogcli}:/home/node/.config/gogcli
+      - ${OPENCLAW_CONFIG_DIR}:/home/node/.openclaw
+      - ${OPENCLAW_WORKSPACE_DIR}:/home/node/.openclaw/workspace
+      ## Uncomment the lines below to enable sandbox isolation
+      ## (agents.defaults.sandbox). Requires Docker CLI in the image
+      ## (build with --build-arg OPENCLAW_INSTALL_DOCKER_CLI=1) or use
+      ## docker-setup.sh with OPENCLAW_SANDBOX=1 for automated setup.
+      ## Set DOCKER_GID to the host's docker group GID (run: stat -c '%g' /var/run/docker.sock).
+      # - /var/run/docker.sock:/var/run/docker.sock
+    # group_add:
+    #   - "${DOCKER_GID:-999}"
     ports:
       - "${FORGE_ORCH_GATEWAY_PORT:-18789}:18789"
       - "${FORGE_ORCH_BRIDGE_PORT:-18790}:18790"
@@ -42,15 +39,32 @@ services:
         "--port",
         "18789",
       ]
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:18789/healthz').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
 
-  forge-cli:
-    image: ${FORGE_ORCH_IMAGE:-forge-orchestrator:local}
-    container_name: forge-cli
+  openclaw-cli:
+    image: ${OPENCLAW_IMAGE:-openclaw:local}
+    network_mode: "service:openclaw-gateway"
+    cap_drop:
+      - NET_RAW
+      - NET_ADMIN
+    security_opt:
+      - no-new-privileges:true
     environment:
       HOME: /home/node
       TERM: xterm-256color
-      NODE_ENV: production
-      FORGE_ORCH_GATEWAY_TOKEN: ${FORGE_ORCH_GATEWAY_TOKEN}
+      OPENCLAW_GATEWAY_TOKEN: ${OPENCLAW_GATEWAY_TOKEN}
+      OPENCLAW_ALLOW_INSECURE_PRIVATE_WS: ${OPENCLAW_ALLOW_INSECURE_PRIVATE_WS:-}
       BROWSER: echo
       CLAUDE_AI_SESSION_KEY: ${CLAUDE_AI_SESSION_KEY:-}
       CLAUDE_WEB_SESSION_KEY: ${CLAUDE_WEB_SESSION_KEY:-}
@@ -63,6 +77,6 @@ services:
     stdin_open: true
     tty: true
     init: true
-    profiles:
-      - cli
-    entrypoint: ["node", "forge-orchestrator.mjs"]
+    entrypoint: ["node", "dist/index.js"]
+    depends_on:
+      - openclaw-gateway

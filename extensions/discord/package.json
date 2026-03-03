@@ -1,12 +1,9 @@
 {
-  "name": "@forge-orchestrator/discord",
-  "version": "2026.2.13",
-  "description": "ForgeOrchestrator Discord channel plugin",
+  "name": "@openclaw/discord",
+  "version": "2026.3.2",
+  "description": "OpenClaw Discord channel plugin",
   "type": "module",
-  "devDependencies": {
-    "forge-orchestrator": "workspace:*"
-  },
-  "forge-orchestrator": {
+  "openclaw": {
     "extensions": [
       "./index.ts"
     ]

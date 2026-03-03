@@ -2,6 +2,7 @@ import type { ForgeOrchestratorPluginApi } from "forge-orchestrator/plugin-sdk";
 import { emptyPluginConfigSchema } from "forge-orchestrator/plugin-sdk";
 import { discordPlugin } from "./src/channel.js";
 import { setDiscordRuntime } from "./src/runtime.js";
+import { registerDiscordSubagentHooks } from "./src/subagent-hooks.js";
 
 const plugin = {
   id: "discord",
@@ -11,6 +12,7 @@ const plugin = {
   register(api: ForgeOrchestratorPluginApi) {
     setDiscordRuntime(api.runtime);
     api.registerChannel({ plugin: discordPlugin });
+    registerDiscordSubagentHooks(api);
   },
 };
 

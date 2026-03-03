@@ -1,20 +1,17 @@
 import type { VoiceCallConfig } from "./config.js";
-import type { CoreConfig } from "./core-bridge.js";
-import type { VoiceCallProvider } from "./providers/base.js";
-import type { TelephonyTtsRuntime } from "./telephony-tts.js";
 import { resolveVoiceCallConfig, validateProviderConfig } from "./config.js";
+import type { CoreConfig } from "./core-bridge.js";
 import { CallManager } from "./manager.js";
+import type { VoiceCallProvider } from "./providers/base.js";
 import { MockProvider } from "./providers/mock.js";
 import { PlivoProvider } from "./providers/plivo.js";
 import { TelnyxProvider } from "./providers/telnyx.js";
 import { TwilioProvider } from "./providers/twilio.js";
+import type { TelephonyTtsRuntime } from "./telephony-tts.js";
 import { createTelephonyTtsProvider } from "./telephony-tts.js";
 import { startTunnel, type TunnelResult } from "./tunnel.js";
-import {
-  cleanupTailscaleExposure,
-  setupTailscaleExposure,
-  VoiceCallWebhookServer,
-} from "./webhook.js";
+import { VoiceCallWebhookServer } from "./webhook.js";
+import { cleanupTailscaleExposure, setupTailscaleExposure } from "./webhook/tailscale.js";
 
 export type VoiceCallRuntime = {
   config: VoiceCallConfig;
@@ -55,8 +52,7 @@ function resolveProvider(config: VoiceCallConfig): VoiceCallProvider {
           publicKey: config.telnyx?.publicKey,
         },
         {
-          allowUnsignedWebhooks:
-            config.inboundPolicy === "open" || config.inboundPolicy === "disabled",
+          skipVerification: config.skipSignatureVerification,
         },
       );
     case "twilio":
@@ -111,6 +107,12 @@ export async function createVoiceCallRuntime(params: {
 
   if (!config.enabled) {
     throw new Error("Voice call disabled. Enable the plugin entry in config.");
+  }
+
+  if (config.skipSignatureVerification) {
+    log.warn(
+      "[voice-call] SECURITY WARNING: skipSignatureVerification=true disables webhook signature verification (development only). Do not use in production.",
+    );
   }
 
   const validation = validateProviderConfig(config);
@@ -184,7 +186,7 @@ export async function createVoiceCallRuntime(params: {
     }
   }
 
-  manager.initialize(provider, webhookUrl);
+  await manager.initialize(provider, webhookUrl);
 
   const stop = async () => {
     if (tunnelResult) {

@@ -1,5 +1,5 @@
 ---
-summary: "CLI reference for `forge-orchestrator config` (get/set/unset config values)"
+summary: "CLI reference for `openclaw config` (get/set/unset/file/validate)"
 read_when:
   - You want to read or edit config non-interactively
 title: "config"
@@ -7,17 +7,21 @@ title: "config"
 
 # `forge-orchestrator config`
 
-Config helpers: get/set/unset values by path. Run without a subcommand to open
-the configure wizard (same as `forge-orchestrator configure`).
+Config helpers: get/set/unset/validate values by path and print the active
+config file. Run without a subcommand to open
+the configure wizard (same as `openclaw configure`).
 
 ## Examples
 
 ```bash
-forge-orchestrator config get browser.executablePath
-forge-orchestrator config set browser.executablePath "/usr/bin/google-chrome"
-forge-orchestrator config set agents.defaults.heartbeat.every "2h"
-forge-orchestrator config set agents.list[0].tools.exec.node "node-id-or-name"
-forge-orchestrator config unset tools.web.search.apiKey
+openclaw config file
+openclaw config get browser.executablePath
+openclaw config set browser.executablePath "/usr/bin/google-chrome"
+openclaw config set agents.defaults.heartbeat.every "2h"
+openclaw config set agents.list[0].tools.exec.node "node-id-or-name"
+openclaw config unset tools.web.search.apiKey
+openclaw config validate
+openclaw config validate --json
 ```
 
 ## Paths
@@ -39,12 +43,26 @@ forge-orchestrator config set agents.list[1].tools.exec.node "node-id-or-name"
 ## Values
 
 Values are parsed as JSON5 when possible; otherwise they are treated as strings.
-Use `--json` to require JSON5 parsing.
+Use `--strict-json` to require JSON5 parsing. `--json` remains supported as a legacy alias.
 
 ```bash
-forge-orchestrator config set agents.defaults.heartbeat.every "0m"
-forge-orchestrator config set gateway.port 19001 --json
-forge-orchestrator config set channels.whatsapp.groups '["*"]' --json
+openclaw config set agents.defaults.heartbeat.every "0m"
+openclaw config set gateway.port 19001 --strict-json
+openclaw config set channels.whatsapp.groups '["*"]' --strict-json
 ```
 
+## Subcommands
+
+- `config file`: Print the active config file path (resolved from `OPENCLAW_CONFIG_PATH` or default location).
+
 Restart the gateway after edits.
+
+## Validate
+
+Validate the current config against the active schema without starting the
+gateway.
+
+```bash
+openclaw config validate
+openclaw config validate --json
+```

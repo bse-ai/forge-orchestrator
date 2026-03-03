@@ -42,13 +42,11 @@ describe("parseCliProfileArgs", () => {
     expect(res.ok).toBe(false);
   });
 
-  it("rejects combining --dev with --profile (dev first)", () => {
-    const res = parseCliProfileArgs(["node", "forge-orchestrator", "--dev", "--profile", "work", "status"]);
-    expect(res.ok).toBe(false);
-  });
-
-  it("rejects combining --dev with --profile (profile first)", () => {
-    const res = parseCliProfileArgs(["node", "forge-orchestrator", "--profile", "work", "--dev", "status"]);
+  it.each([
+    ["--dev first", ["node", "openclaw", "--dev", "--profile", "work", "status"]],
+    ["--profile first", ["node", "openclaw", "--profile", "work", "--dev", "status"]],
+  ])("rejects combining --dev with --profile (%s)", (_name, argv) => {
+    const res = parseCliProfileArgs(argv);
     expect(res.ok).toBe(false);
   });
 });
@@ -103,38 +101,45 @@ describe("applyCliProfileEnv", () => {
 });
 
 describe("formatCliCommand", () => {
-  it("returns command unchanged when no profile is set", () => {
-    expect(formatCliCommand("forge-orchestrator doctor --fix", {})).toBe("forge-orchestrator doctor --fix");
-  });
-
-  it("returns command unchanged when profile is default", () => {
-    expect(formatCliCommand("forge-orchestrator doctor --fix", { FORGE_ORCH_PROFILE: "default" })).toBe(
-      "forge-orchestrator doctor --fix",
-    );
-  });
-
-  it("returns command unchanged when profile is Default (case-insensitive)", () => {
-    expect(formatCliCommand("forge-orchestrator doctor --fix", { FORGE_ORCH_PROFILE: "Default" })).toBe(
-      "forge-orchestrator doctor --fix",
-    );
-  });
-
-  it("returns command unchanged when profile is invalid", () => {
-    expect(formatCliCommand("forge-orchestrator doctor --fix", { FORGE_ORCH_PROFILE: "bad profile" })).toBe(
-      "forge-orchestrator doctor --fix",
-    );
-  });
-
-  it("returns command unchanged when --profile is already present", () => {
-    expect(
-      formatCliCommand("forge-orchestrator --profile work doctor --fix", { FORGE_ORCH_PROFILE: "work" }),
-    ).toBe("forge-orchestrator --profile work doctor --fix");
-  });
-
-  it("returns command unchanged when --dev is already present", () => {
-    expect(formatCliCommand("forge-orchestrator --dev doctor", { FORGE_ORCH_PROFILE: "dev" })).toBe(
-      "forge-orchestrator --dev doctor",
-    );
+  it.each([
+    {
+      name: "no profile is set",
+      cmd: "openclaw doctor --fix",
+      env: {},
+      expected: "openclaw doctor --fix",
+    },
+    {
+      name: "profile is default",
+      cmd: "openclaw doctor --fix",
+      env: { OPENCLAW_PROFILE: "default" },
+      expected: "openclaw doctor --fix",
+    },
+    {
+      name: "profile is Default (case-insensitive)",
+      cmd: "openclaw doctor --fix",
+      env: { OPENCLAW_PROFILE: "Default" },
+      expected: "openclaw doctor --fix",
+    },
+    {
+      name: "profile is invalid",
+      cmd: "openclaw doctor --fix",
+      env: { OPENCLAW_PROFILE: "bad profile" },
+      expected: "openclaw doctor --fix",
+    },
+    {
+      name: "--profile is already present",
+      cmd: "openclaw --profile work doctor --fix",
+      env: { OPENCLAW_PROFILE: "work" },
+      expected: "openclaw --profile work doctor --fix",
+    },
+    {
+      name: "--dev is already present",
+      cmd: "openclaw --dev doctor",
+      env: { OPENCLAW_PROFILE: "dev" },
+      expected: "openclaw --dev doctor",
+    },
+  ])("returns command unchanged when $name", ({ cmd, env, expected }) => {
+    expect(formatCliCommand(cmd, env)).toBe(expected);
   });
 
   it("inserts --profile flag when profile is set", () => {

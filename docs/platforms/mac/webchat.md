@@ -24,7 +24,7 @@ agent (with a session switcher for other sessions).
   dist/ForgeOrchestrator.app/Contents/MacOS/ForgeOrchestrator --webchat
   ```
 
-- Logs: `./scripts/clawlog.sh` (subsystem `bot.molt`, category `WebChatSwiftUI`).
+- Logs: `./scripts/clawlog.sh` (subsystem `ai.openclaw`, category `WebChatSwiftUI`).
 
 ## How it’s wired
 

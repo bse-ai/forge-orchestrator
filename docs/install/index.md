@@ -27,6 +27,10 @@ On Windows, we strongly recommend running ForgeOrchestrator under [WSL2](https:/
 The **installer script** is the recommended way to install ForgeOrchestrator. It handles Node detection, installation, and onboarding in one step.
 </Tip>
 
+<Warning>
+For VPS/cloud hosts, avoid third-party "1-click" marketplace images when possible. Prefer a clean base OS image (for example Ubuntu LTS), then install OpenClaw yourself with the installer script.
+</Warning>
+
 <AccordionGroup>
   <Accordion title="Installer script" icon="rocket" defaultOpen>
     Downloads the CLI, installs it globally via npm, and launches the onboarding wizard.
@@ -141,6 +145,9 @@ The **installer script** is the recommended way to install ForgeOrchestrator. It
 <CardGroup cols={2}>
   <Card title="Docker" href="/install/docker" icon="container">
     Containerized or headless deployments.
+  </Card>
+  <Card title="Podman" href="/install/podman" icon="container">
+    Rootless container: run `setup-podman.sh` once, then the launch script.
   </Card>
   <Card title="Nix" href="/install/nix" icon="snowflake">
     Declarative install via Nix.

@@ -133,7 +133,7 @@ Hook 包可以附带依赖；它们将安装在 `~/.forge-orchestrator/hooks/<id
 ---
 name: my-hook
 description: "Short description of what this hook does"
-homepage: https://docs.forge-orchestrator.ai/hooks#my-hook
+homepage: https://docs.openclaw.ai/automation/hooks#my-hook
 metadata:
   { "forge-orchestrator": { "emoji": "🔗", "events": ["command:new"], "requires": { "bins": ["node"] } } }
 ---

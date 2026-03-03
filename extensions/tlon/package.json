@@ -1,17 +1,15 @@
 {
-  "name": "@forge-orchestrator/tlon",
-  "version": "2026.2.13",
-  "private": true,
-  "description": "ForgeOrchestrator Tlon/Urbit channel plugin",
+  "name": "@openclaw/tlon",
+  "version": "2026.3.2",
+  "description": "OpenClaw Tlon/Urbit channel plugin",
   "type": "module",
   "dependencies": {
+    "@tloncorp/api": "github:tloncorp/api-beta#main",
+    "@tloncorp/tlon-skill": "0.1.9",
     "@urbit/aura": "^3.0.0",
     "@urbit/http-api": "^3.0.0"
   },
-  "devDependencies": {
-    "forge-orchestrator": "workspace:*"
-  },
-  "forge-orchestrator": {
+  "openclaw": {
     "extensions": [
       "./index.ts"
     ],

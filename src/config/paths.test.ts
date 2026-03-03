@@ -37,7 +37,28 @@ describe("oauth paths", () => {
 });
 
 describe("state + config path candidates", () => {
-  it("uses FORGE_ORCH_STATE_DIR when set", () => {
+  async function withTempRoot(prefix: string, run: (root: string) => Promise<void>): Promise<void> {
+    const root = await fs.mkdtemp(path.join(os.tmpdir(), prefix));
+    try {
+      await run(root);
+    } finally {
+      await fs.rm(root, { recursive: true, force: true });
+    }
+  }
+
+  function expectOpenClawHomeDefaults(env: NodeJS.ProcessEnv): void {
+    const configuredHome = env.OPENCLAW_HOME;
+    if (!configuredHome) {
+      throw new Error("OPENCLAW_HOME must be set for this assertion helper");
+    }
+    const resolvedHome = path.resolve(configuredHome);
+    expect(resolveStateDir(env)).toBe(path.join(resolvedHome, ".openclaw"));
+
+    const candidates = resolveDefaultConfigCandidates(env);
+    expect(candidates[0]).toBe(path.join(resolvedHome, ".openclaw", "openclaw.json"));
+  }
+
+  it("uses OPENCLAW_STATE_DIR when set", () => {
     const env = {
       FORGE_ORCH_STATE_DIR: "/new/state",
     } as NodeJS.ProcessEnv;
@@ -49,12 +70,7 @@ describe("state + config path candidates", () => {
     const env = {
       FORGE_ORCH_HOME: "/srv/forge-orchestrator-home",
     } as NodeJS.ProcessEnv;
-
-    const resolvedHome = path.resolve("/srv/forge-orchestrator-home");
-    expect(resolveStateDir(env)).toBe(path.join(resolvedHome, ".forge-orchestrator"));
-
-    const candidates = resolveDefaultConfigCandidates(env);
-    expect(candidates[0]).toBe(path.join(resolvedHome, ".forge-orchestrator", "forge-orchestrator.json"));
+    expectOpenClawHomeDefaults(env);
   });
 
   it("prefers FORGE_ORCH_HOME over HOME for default state/config locations", () => {
@@ -62,12 +78,7 @@ describe("state + config path candidates", () => {
       FORGE_ORCH_HOME: "/srv/forge-orchestrator-home",
       HOME: "/home/other",
     } as NodeJS.ProcessEnv;
-
-    const resolvedHome = path.resolve("/srv/forge-orchestrator-home");
-    expect(resolveStateDir(env)).toBe(path.join(resolvedHome, ".forge-orchestrator"));
-
-    const candidates = resolveDefaultConfigCandidates(env);
-    expect(candidates[0]).toBe(path.join(resolvedHome, ".forge-orchestrator", "forge-orchestrator.json"));
+    expectOpenClawHomeDefaults(env);
   });
 
   it("orders default config candidates in a stable order", () => {
@@ -79,41 +90,58 @@ describe("state + config path candidates", () => {
       path.join(resolvedHome, ".forge-orchestrator", "openclaw.json"),
       path.join(resolvedHome, ".openclaw", "forge-orchestrator.json"),
       path.join(resolvedHome, ".openclaw", "openclaw.json"),
+      path.join(resolvedHome, ".openclaw", "clawdbot.json"),
+      path.join(resolvedHome, ".openclaw", "moldbot.json"),
+      path.join(resolvedHome, ".openclaw", "moltbot.json"),
+      path.join(resolvedHome, ".clawdbot", "openclaw.json"),
+      path.join(resolvedHome, ".clawdbot", "clawdbot.json"),
+      path.join(resolvedHome, ".clawdbot", "moldbot.json"),
+      path.join(resolvedHome, ".clawdbot", "moltbot.json"),
+      path.join(resolvedHome, ".moldbot", "openclaw.json"),
+      path.join(resolvedHome, ".moldbot", "clawdbot.json"),
+      path.join(resolvedHome, ".moldbot", "moldbot.json"),
+      path.join(resolvedHome, ".moldbot", "moltbot.json"),
+      path.join(resolvedHome, ".moltbot", "openclaw.json"),
+      path.join(resolvedHome, ".moltbot", "clawdbot.json"),
+      path.join(resolvedHome, ".moltbot", "moldbot.json"),
+      path.join(resolvedHome, ".moltbot", "moltbot.json"),
     ];
     expect(candidates).toEqual(expected);
   });
 
-  it("prefers ~/.forge-orchestrator when it exists and legacy dir is missing", async () => {
-    const root = await fs.mkdtemp(path.join(os.tmpdir(), "forge-orchestrator-state-"));
-    try {
-      const newDir = path.join(root, ".forge-orchestrator");
+  it("prefers ~/.openclaw when it exists and legacy dir is missing", async () => {
+    await withTempRoot("openclaw-state-", async (root) => {
+      const newDir = path.join(root, ".openclaw");
       await fs.mkdir(newDir, { recursive: true });
       const resolved = resolveStateDir({} as NodeJS.ProcessEnv, () => root);
       expect(resolved).toBe(newDir);
-    } finally {
-      await fs.rm(root, { recursive: true, force: true });
-    }
+    });
+  });
+
+  it("falls back to existing legacy state dir when ~/.openclaw is missing", async () => {
+    await withTempRoot("openclaw-state-legacy-", async (root) => {
+      const legacyDir = path.join(root, ".clawdbot");
+      await fs.mkdir(legacyDir, { recursive: true });
+      const resolved = resolveStateDir({} as NodeJS.ProcessEnv, () => root);
+      expect(resolved).toBe(legacyDir);
+    });
   });
 
   it("CONFIG_PATH prefers existing config when present", async () => {
-    const root = await fs.mkdtemp(path.join(os.tmpdir(), "forge-orchestrator-config-"));
-    try {
-      const legacyDir = path.join(root, ".forge-orchestrator");
+    await withTempRoot("openclaw-config-", async (root) => {
+      const legacyDir = path.join(root, ".openclaw");
       await fs.mkdir(legacyDir, { recursive: true });
       const legacyPath = path.join(legacyDir, "forge-orchestrator.json");
       await fs.writeFile(legacyPath, "{}", "utf-8");
 
       const resolved = resolveConfigPathCandidate({} as NodeJS.ProcessEnv, () => root);
       expect(resolved).toBe(legacyPath);
-    } finally {
-      await fs.rm(root, { recursive: true, force: true });
-    }
+    });
   });
 
   it("respects state dir overrides when config is missing", async () => {
-    const root = await fs.mkdtemp(path.join(os.tmpdir(), "forge-orchestrator-config-override-"));
-    try {
-      const legacyDir = path.join(root, ".forge-orchestrator");
+    await withTempRoot("openclaw-config-override-", async (root) => {
+      const legacyDir = path.join(root, ".openclaw");
       await fs.mkdir(legacyDir, { recursive: true });
       const legacyConfig = path.join(legacyDir, "forge-orchestrator.json");
       await fs.writeFile(legacyConfig, "{}", "utf-8");
@@ -121,9 +149,7 @@ describe("state + config path candidates", () => {
       const overrideDir = path.join(root, "override");
       const env = { FORGE_ORCH_STATE_DIR: overrideDir } as NodeJS.ProcessEnv;
       const resolved = resolveConfigPath(env, overrideDir, () => root);
-      expect(resolved).toBe(path.join(overrideDir, "forge-orchestrator.json"));
-    } finally {
-      await fs.rm(root, { recursive: true, force: true });
-    }
+      expect(resolved).toBe(path.join(overrideDir, "openclaw.json"));
+    });
   });
 });

@@ -10,9 +10,9 @@ describe("resolveTailnetDnsHint", () => {
   const prevTailnetDns = { value: undefined as string | undefined };
 
   beforeEach(() => {
-    prevTailnetDns.value = process.env.FORGE_ORCH_TAILNET_DNS;
-    delete process.env.FORGE_ORCH_TAILNET_DNS;
-    getTailnetHostname.mockReset();
+    prevTailnetDns.value = process.env.OPENCLAW_TAILNET_DNS;
+    delete process.env.OPENCLAW_TAILNET_DNS;
+    getTailnetHostname.mockClear();
   });
 
   afterEach(() => {

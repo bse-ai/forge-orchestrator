@@ -1,7 +1,7 @@
 ---
 name: boot-md
 description: "Run BOOT.md on gateway startup"
-homepage: https://docs.forge-orchestrator.ai/hooks#boot-md
+homepage: https://docs.openclaw.ai/automation/hooks#boot-md
 metadata:
   {
     "forge-orchestrator":
@@ -16,4 +16,5 @@ metadata:
 
 # Boot Checklist Hook
 
-Runs `BOOT.md` every time the gateway starts, if the file exists in the workspace.
+Runs `BOOT.md` at gateway startup for each configured agent scope, if the file exists in that
+agent's resolved workspace.

@@ -1,18 +1,18 @@
 import fs from "node:fs/promises";
-import os from "node:os";
 import path from "node:path";
-import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { withTempHome as withTempHomeBase } from "../../test/helpers/temp-home.js";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { loadModelCatalog } from "../agents/model-catalog.js";
+import type { OpenClawConfig } from "../config/config.js";
+import { withTempHome as withTempHomeHarness } from "../config/home-env.test-harness.js";
 import { getReplyFromConfig } from "./reply.js";
 
 type RunEmbeddedPiAgent = typeof import("../agents/pi-embedded.js").runEmbeddedPiAgent;
 type RunEmbeddedPiAgentParams = Parameters<RunEmbeddedPiAgent>[0];
-type ReplyResult = Awaited<ReturnType<RunEmbeddedPiAgent>>;
+type RunEmbeddedPiAgentReply = Awaited<ReturnType<RunEmbeddedPiAgent>>;
 
 const piEmbeddedMock = vi.hoisted(() => ({
   abortEmbeddedPiRun: vi.fn().mockReturnValue(false),
-  runEmbeddedPiAgent: vi.fn<ReturnType<RunEmbeddedPiAgent>, Parameters<RunEmbeddedPiAgent>>(),
+  runEmbeddedPiAgent: vi.fn<RunEmbeddedPiAgent>(),
   queueEmbeddedPiMessage: vi.fn().mockReturnValue(false),
   resolveEmbeddedSessionLane: (key: string) => `session:${key.trim() || "main"}`,
   isEmbeddedPiRunActive: vi.fn().mockReturnValue(false),
@@ -25,61 +25,9 @@ vi.mock("../agents/model-catalog.js", () => ({
   loadModelCatalog: vi.fn(),
 }));
 
-type HomeEnvSnapshot = {
-  HOME: string | undefined;
-  USERPROFILE: string | undefined;
-  HOMEDRIVE: string | undefined;
-  HOMEPATH: string | undefined;
-  FORGE_ORCH_STATE_DIR: string | undefined;
-};
+type GetReplyOptions = NonNullable<Parameters<typeof getReplyFromConfig>[1]>;
 
-function snapshotHomeEnv(): HomeEnvSnapshot {
-  return {
-    HOME: process.env.HOME,
-    USERPROFILE: process.env.USERPROFILE,
-    HOMEDRIVE: process.env.HOMEDRIVE,
-    HOMEPATH: process.env.HOMEPATH,
-    FORGE_ORCH_STATE_DIR: process.env.FORGE_ORCH_STATE_DIR,
-  };
-}
-
-function restoreHomeEnv(snapshot: HomeEnvSnapshot) {
-  for (const [key, value] of Object.entries(snapshot)) {
-    if (value === undefined) {
-      delete process.env[key];
-    } else {
-      process.env[key] = value;
-    }
-  }
-}
-
-let fixtureRoot = "";
-let caseId = 0;
-
-async function withTempHome<T>(fn: (home: string) => Promise<T>): Promise<T> {
-  const home = path.join(fixtureRoot, `case-${++caseId}`);
-  await fs.mkdir(path.join(home, ".forge-orchestrator", "agents", "main", "sessions"), { recursive: true });
-  const envSnapshot = snapshotHomeEnv();
-  process.env.HOME = home;
-  process.env.USERPROFILE = home;
-  process.env.FORGE_ORCH_STATE_DIR = path.join(home, ".forge-orchestrator");
-
-  if (process.platform === "win32") {
-    const match = home.match(/^([A-Za-z]:)(.*)$/);
-    if (match) {
-      process.env.HOMEDRIVE = match[1];
-      process.env.HOMEPATH = match[2] || "\\";
-    }
-  }
-
-  try {
-    return await fn(home);
-  } finally {
-    restoreHomeEnv(envSnapshot);
-  }
-}
-
-function makeAgentResult(text: string): ReplyResult {
+function createEmbeddedReply(text: string): RunEmbeddedPiAgentReply {
   return {
     payloads: [{ text }],
     meta: {
@@ -89,21 +37,63 @@ function makeAgentResult(text: string): ReplyResult {
   };
 }
 
+function createTelegramMessage(messageSid: string) {
+  return {
+    Body: "ping",
+    From: "+1004",
+    To: "+2000",
+    MessageSid: messageSid,
+    Provider: "telegram",
+  } as const;
+}
+
+function createReplyConfig(home: string, streamMode?: "block"): OpenClawConfig {
+  return {
+    agents: {
+      defaults: {
+        model: { primary: "anthropic/claude-opus-4-5" },
+        workspace: path.join(home, "openclaw"),
+      },
+    },
+    channels: { telegram: { allowFrom: ["*"], streamMode } },
+    session: { store: path.join(home, "sessions.json") },
+  };
+}
+
+async function runTelegramReply(params: {
+  home: string;
+  messageSid: string;
+  onBlockReply?: GetReplyOptions["onBlockReply"];
+  onReplyStart?: GetReplyOptions["onReplyStart"];
+  disableBlockStreaming?: boolean;
+  streamMode?: "block";
+}) {
+  return getReplyFromConfig(
+    createTelegramMessage(params.messageSid),
+    {
+      onReplyStart: params.onReplyStart,
+      onBlockReply: params.onBlockReply,
+      disableBlockStreaming: params.disableBlockStreaming,
+    },
+    createReplyConfig(params.home, params.streamMode),
+  );
+}
+
+async function withTempHome<T>(fn: (home: string) => Promise<T>): Promise<T> {
+  return withTempHomeHarness("openclaw-stream-", async (home) => {
+    await fs.mkdir(path.join(home, ".openclaw", "agents", "main", "sessions"), { recursive: true });
+    return fn(home);
+  });
+}
+
 describe("block streaming", () => {
-  beforeAll(async () => {
-    fixtureRoot = await fs.mkdtemp(path.join(os.tmpdir(), "forge-orchestrator-stream-"));
-  });
-
-  afterAll(async () => {
-    await fs.rm(fixtureRoot, { recursive: true, force: true });
-  });
-
   beforeEach(() => {
-    piEmbeddedMock.abortEmbeddedPiRun.mockReset().mockReturnValue(false);
-    piEmbeddedMock.queueEmbeddedPiMessage.mockReset().mockReturnValue(false);
-    piEmbeddedMock.isEmbeddedPiRunActive.mockReset().mockReturnValue(false);
-    piEmbeddedMock.isEmbeddedPiRunStreaming.mockReset().mockReturnValue(false);
-    piEmbeddedMock.runEmbeddedPiAgent.mockReset();
+    vi.stubEnv("OPENCLAW_TEST_FAST", "1");
+    piEmbeddedMock.abortEmbeddedPiRun.mockClear().mockReturnValue(false);
+    piEmbeddedMock.queueEmbeddedPiMessage.mockClear().mockReturnValue(false);
+    piEmbeddedMock.isEmbeddedPiRunActive.mockClear().mockReturnValue(false);
+    piEmbeddedMock.isEmbeddedPiRunStreaming.mockClear().mockReturnValue(false);
+    piEmbeddedMock.runEmbeddedPiAgent.mockClear();
     vi.mocked(loadModelCatalog).mockResolvedValue([
       { id: "claude-opus-4-5", name: "Opus 4.5", provider: "anthropic" },
       { id: "gpt-4.1-mini", name: "GPT-4.1 Mini", provider: "openai" },
@@ -134,38 +124,18 @@ describe("block streaming", () => {
         void params.onBlockReply?.({ text: "second" });
         return {
           payloads: [{ text: "first" }, { text: "second" }],
-          meta: {
-            durationMs: 5,
-            agentMeta: { sessionId: "s", provider: "p", model: "m" },
-          },
+          meta: createEmbeddedReply("first").meta,
         };
       };
       piEmbeddedMock.runEmbeddedPiAgent.mockImplementation(impl);
 
-      const replyPromise = getReplyFromConfig(
-        {
-          Body: "ping",
-          From: "+1004",
-          To: "+2000",
-          MessageSid: "msg-123",
-          Provider: "telegram",
-        },
-        {
-          onReplyStart,
-          onBlockReply,
-          disableBlockStreaming: false,
-        },
-        {
-          agents: {
-            defaults: {
-              model: "anthropic/claude-opus-4-5",
-              workspace: path.join(home, "forge-orchestrator"),
-            },
-          },
-          channels: { telegram: { allowFrom: ["*"] } },
-          session: { store: path.join(home, "sessions.json") },
-        },
-      );
+      const replyPromise = runTelegramReply({
+        home,
+        messageSid: "msg-123",
+        onReplyStart,
+        onBlockReply,
+        disableBlockStreaming: false,
+      });
 
       await onReplyStartCalled;
       releaseTyping?.();
@@ -174,191 +144,75 @@ describe("block streaming", () => {
       expect(res).toBeUndefined();
       expect(seen).toEqual(["first\n\nsecond"]);
 
-      let sawAbort = false;
-      const onBlockReplyTimeout = vi.fn((_, context) => {
-        return new Promise<void>((resolve) => {
-          context?.abortSignal?.addEventListener(
-            "abort",
-            () => {
-              sawAbort = true;
-              resolve();
-            },
-            { once: true },
-          );
-        });
+      const onBlockReplyStreamMode = vi.fn().mockResolvedValue(undefined);
+      piEmbeddedMock.runEmbeddedPiAgent.mockImplementation(async () =>
+        createEmbeddedReply("final"),
+      );
+
+      const resStreamMode = await runTelegramReply({
+        home,
+        messageSid: "msg-127",
+        onBlockReply: onBlockReplyStreamMode,
+        streamMode: "block",
       });
 
-      const timeoutImpl = async (params: RunEmbeddedPiAgentParams) => {
-        void params.onBlockReply?.({ text: "streamed" });
-        return {
-          payloads: [{ text: "final" }],
-          meta: {
-            durationMs: 5,
-            agentMeta: { sessionId: "s", provider: "p", model: "m" },
-          },
-        };
-      };
-      piEmbeddedMock.runEmbeddedPiAgent.mockImplementation(timeoutImpl);
-
-      const timeoutReplyPromise = getReplyFromConfig(
-        {
-          Body: "ping",
-          From: "+1004",
-          To: "+2000",
-          MessageSid: "msg-126",
-          Provider: "telegram",
-        },
-        {
-          onBlockReply: onBlockReplyTimeout,
-          blockReplyTimeoutMs: 1,
-          disableBlockStreaming: false,
-        },
-        {
-          agents: {
-            defaults: {
-              model: "anthropic/claude-opus-4-5",
-              workspace: path.join(home, "forge-orchestrator"),
-            },
-          },
-          channels: { telegram: { allowFrom: ["*"] } },
-          session: { store: path.join(home, "sessions.json") },
-        },
-      );
-
-      const timeoutRes = await timeoutReplyPromise;
-      expect(timeoutRes).toMatchObject({ text: "final" });
-      expect(sawAbort).toBe(true);
-
-      const onBlockReplyStreamMode = vi.fn().mockResolvedValue(undefined);
-      piEmbeddedMock.runEmbeddedPiAgent.mockImplementation(async () => ({
-        payloads: [{ text: "final" }],
-        meta: {
-          durationMs: 5,
-          agentMeta: { sessionId: "s", provider: "p", model: "m" },
-        },
-      }));
-
-      const resStreamMode = await getReplyFromConfig(
-        {
-          Body: "ping",
-          From: "+1004",
-          To: "+2000",
-          MessageSid: "msg-127",
-          Provider: "telegram",
-        },
-        {
-          onBlockReply: onBlockReplyStreamMode,
-        },
-        {
-          agents: {
-            defaults: {
-              model: "anthropic/claude-opus-4-5",
-              workspace: path.join(home, "forge-orchestrator"),
-            },
-          },
-          channels: { telegram: { allowFrom: ["*"], streamMode: "block" } },
-          session: { store: path.join(home, "sessions.json") },
-        },
-      );
-
-      expect(resStreamMode?.text).toBe("final");
+      const streamPayload = Array.isArray(resStreamMode) ? resStreamMode[0] : resStreamMode;
+      expect(streamPayload?.text).toBe("final");
       expect(onBlockReplyStreamMode).not.toHaveBeenCalled();
     });
   });
 
-  it("queues followups for collect + summarize modes", async () => {
-    vi.useFakeTimers();
-    await withTempHomeBase(
-      async (home) => {
-        const prompts: string[] = [];
-        piEmbeddedMock.runEmbeddedPiAgent.mockImplementation(async (params) => {
-          prompts.push(params.prompt);
-          return makeAgentResult("ok");
-        });
+  it("trims leading whitespace in block-streamed replies", async () => {
+    await withTempHome(async (home) => {
+      const seen: string[] = [];
+      const onBlockReply = vi.fn(async (payload) => {
+        seen.push(payload.text ?? "");
+      });
 
-        const collectCfg = {
-          agents: {
-            defaults: {
-              model: "anthropic/claude-opus-4-5",
-              workspace: path.join(home, "forge-orchestrator"),
-            },
-          },
-          channels: { whatsapp: { allowFrom: ["*"] } },
-          session: { store: path.join(home, "sessions.json") },
-          messages: {
-            queue: {
-              mode: "collect",
-              debounceMs: 200,
-              cap: 10,
-              drop: "summarize",
-            },
-          },
-        };
+      piEmbeddedMock.runEmbeddedPiAgent.mockImplementation(
+        async (params: RunEmbeddedPiAgentParams) => {
+          void params.onBlockReply?.({ text: "\n\n  Hello from stream" });
+          return createEmbeddedReply("\n\n  Hello from stream");
+        },
+      );
 
-        piEmbeddedMock.isEmbeddedPiRunActive.mockReturnValue(true);
-        piEmbeddedMock.isEmbeddedPiRunStreaming.mockReturnValue(true);
+      const res = await runTelegramReply({
+        home,
+        messageSid: "msg-128",
+        onBlockReply,
+        disableBlockStreaming: false,
+      });
 
-        const first = await getReplyFromConfig(
-          { Body: "first", From: "+1001", To: "+2000", MessageSid: "m-1" },
-          {},
-          collectCfg,
-        );
-        expect(first).toBeUndefined();
-        expect(piEmbeddedMock.runEmbeddedPiAgent).not.toHaveBeenCalled();
+      expect(res).toBeUndefined();
+      expect(onBlockReply).toHaveBeenCalledTimes(1);
+      expect(seen).toEqual(["Hello from stream"]);
+    });
+  });
 
-        piEmbeddedMock.isEmbeddedPiRunActive.mockReturnValue(false);
-        piEmbeddedMock.isEmbeddedPiRunStreaming.mockReturnValue(false);
+  it("still parses media directives for direct block payloads", async () => {
+    await withTempHome(async (home) => {
+      const onBlockReply = vi.fn();
 
-        const second = await getReplyFromConfig(
-          { Body: "second", From: "+1001", To: "+2000" },
-          {},
-          collectCfg,
-        );
-        const secondText = Array.isArray(second) ? second[0]?.text : second?.text;
-        expect(secondText).toBe("ok");
+      piEmbeddedMock.runEmbeddedPiAgent.mockImplementation(
+        async (params: RunEmbeddedPiAgentParams) => {
+          void params.onBlockReply?.({ text: "Result\nMEDIA: ./image.png" });
+          return createEmbeddedReply("Result\nMEDIA: ./image.png");
+        },
+      );
 
-        await vi.advanceTimersByTimeAsync(500);
-        await Promise.resolve();
-        const queuedPrompt =
-          prompts.find((p) => p.includes("[Queued messages while agent was busy]")) ?? "";
-        expect(queuedPrompt).toContain("Queued #1");
-        expect(queuedPrompt).toContain("first");
-        expect(queuedPrompt).not.toContain("[message_id:");
+      const res = await runTelegramReply({
+        home,
+        messageSid: "msg-129",
+        onBlockReply,
+        disableBlockStreaming: false,
+      });
 
-        prompts.length = 0;
-        piEmbeddedMock.isEmbeddedPiRunActive.mockReturnValue(true);
-        piEmbeddedMock.isEmbeddedPiRunStreaming.mockReturnValue(false);
-
-        const followupCfg = {
-          agents: {
-            defaults: {
-              model: "anthropic/claude-opus-4-5",
-              workspace: path.join(home, "forge-orchestrator"),
-            },
-          },
-          channels: { whatsapp: { allowFrom: ["*"] } },
-          session: { store: path.join(home, "sessions-2.json") },
-          messages: {
-            queue: {
-              mode: "followup",
-              debounceMs: 0,
-              cap: 1,
-              drop: "summarize",
-            },
-          },
-        };
-
-        await getReplyFromConfig({ Body: "one", From: "+1002", To: "+2000" }, {}, followupCfg);
-        await getReplyFromConfig({ Body: "two", From: "+1002", To: "+2000" }, {}, followupCfg);
-
-        piEmbeddedMock.isEmbeddedPiRunActive.mockReturnValue(false);
-        await getReplyFromConfig({ Body: "three", From: "+1002", To: "+2000" }, {}, followupCfg);
-
-        await vi.advanceTimersByTimeAsync(50);
-        await Promise.resolve();
-        expect(prompts.some((p) => p.includes("[Queue overflow]"))).toBe(true);
-      },
-      { prefix: "forge-orchestrator-queue-" },
-    );
+      expect(res).toBeUndefined();
+      expect(onBlockReply).toHaveBeenCalledTimes(1);
+      expect(onBlockReply.mock.calls[0][0]).toMatchObject({
+        text: "Result",
+        mediaUrls: ["./image.png"],
+      });
+    });
   });
 });

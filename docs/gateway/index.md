@@ -16,6 +16,12 @@ Use this page for day-1 startup and day-2 operations of the Gateway service.
   <Card title="Configuration" icon="sliders" href="/gateway/configuration">
     Task-oriented setup guide + full configuration reference.
   </Card>
+  <Card title="Secrets management" icon="key-round" href="/gateway/secrets">
+    SecretRef contract, runtime snapshot behavior, and migrate/reload operations.
+  </Card>
+  <Card title="Secrets plan contract" icon="shield-check" href="/gateway/secrets-plan-contract">
+    Exact `secrets apply` target/path rules and ref-only auth-profile behavior.
+  </Card>
 </CardGroup>
 
 ## 5-minute local startup
@@ -88,14 +94,15 @@ Default mode is `gateway.reload.mode="hybrid"`.
 ## Operator command set
 
 ```bash
-forge-orchestrator gateway status
-forge-orchestrator gateway status --deep
-forge-orchestrator gateway status --json
-forge-orchestrator gateway install
-forge-orchestrator gateway restart
-forge-orchestrator gateway stop
-forge-orchestrator logs --follow
-forge-orchestrator doctor
+openclaw gateway status
+openclaw gateway status --deep
+openclaw gateway status --json
+openclaw gateway install
+openclaw gateway restart
+openclaw gateway stop
+openclaw secrets reload
+openclaw logs --follow
+openclaw doctor
 ```
 
 ## Remote access

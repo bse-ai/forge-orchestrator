@@ -1,3 +1,4 @@
+import type { BaseProbeResult } from "openclaw/plugin-sdk";
 import type {
   FeishuConfigSchema,
   FeishuGroupSchema,
@@ -35,10 +36,11 @@ export type FeishuMessageContext = {
   senderId: string;
   senderOpenId: string;
   senderName?: string;
-  chatType: "p2p" | "group";
+  chatType: "p2p" | "group" | "private";
   mentionedBot: boolean;
   rootId?: string;
   parentId?: string;
+  threadId?: string;
   content: string;
   contentType: string;
   /** Mention forward targets (excluding the bot itself) */
@@ -52,9 +54,7 @@ export type FeishuSendResult = {
   chatId: string;
 };
 
-export type FeishuProbeResult = {
-  ok: boolean;
-  error?: string;
+export type FeishuProbeResult = BaseProbeResult<string> & {
   appId?: string;
   botName?: string;
   botOpenId?: string;
@@ -68,6 +68,7 @@ export type FeishuMediaInfo = {
 
 export type FeishuToolsConfig = {
   doc?: boolean;
+  chat?: boolean;
   wiki?: boolean;
   drive?: boolean;
   perm?: boolean;

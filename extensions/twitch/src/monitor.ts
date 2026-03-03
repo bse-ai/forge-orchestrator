@@ -5,12 +5,12 @@
  * resolves agent routes, and handles replies.
  */
 
-import type { ReplyPayload, ForgeOrchestratorConfig } from "forge-orchestrator/plugin-sdk";
-import { createReplyPrefixOptions } from "forge-orchestrator/plugin-sdk";
-import type { TwitchAccountConfig, TwitchChatMessage } from "./types.js";
+import type { ReplyPayload, OpenClawConfig } from "openclaw/plugin-sdk";
+import { createReplyPrefixOptions } from "openclaw/plugin-sdk";
 import { checkTwitchAccessControl } from "./access-control.js";
 import { getOrCreateClientManager } from "./client-manager-registry.js";
 import { getTwitchRuntime } from "./runtime.js";
+import type { TwitchAccountConfig, TwitchChatMessage } from "./types.js";
 import { stripMarkdownForTwitch } from "./utils/markdown.js";
 
 export type TwitchRuntimeEnv = {

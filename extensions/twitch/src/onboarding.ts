@@ -9,9 +9,9 @@ import {
   type ChannelOnboardingAdapter,
   type ChannelOnboardingDmPolicy,
   type WizardPrompter,
-} from "forge-orchestrator/plugin-sdk";
-import type { TwitchAccountConfig, TwitchRole } from "./types.js";
+} from "openclaw/plugin-sdk";
 import { DEFAULT_ACCOUNT_ID, getAccountConfig } from "./config.js";
+import type { TwitchAccountConfig, TwitchRole } from "./types.js";
 import { isAccountConfigured } from "./utils/twitch.js";
 
 const channel = "twitch" as const;

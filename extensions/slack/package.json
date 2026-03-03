@@ -1,13 +1,10 @@
 {
-  "name": "@forge-orchestrator/slack",
-  "version": "2026.2.13",
+  "name": "@openclaw/slack",
+  "version": "2026.3.2",
   "private": true,
   "description": "ForgeOrchestrator Slack channel plugin",
   "type": "module",
-  "devDependencies": {
-    "forge-orchestrator": "workspace:*"
-  },
-  "forge-orchestrator": {
+  "openclaw": {
     "extensions": [
       "./index.ts"
     ]

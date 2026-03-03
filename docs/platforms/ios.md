@@ -38,8 +38,8 @@ forge-orchestrator gateway --port 18789
 3. Approve the pairing request on the gateway host:
 
 ```bash
-forge-orchestrator nodes pending
-forge-orchestrator nodes approve <requestId>
+openclaw devices list
+openclaw devices approve <requestId>
 ```
 
 4. Verify connection:
@@ -69,12 +69,13 @@ In Settings, enable **Manual Host** and enter the gateway host + port (default `
 The iOS node renders a WKWebView canvas. Use `node.invoke` to drive it:
 
 ```bash
-forge-orchestrator nodes invoke --node "iOS Node" --command canvas.navigate --params '{"url":"http://<gateway-host>:18793/__forge-orchestrator__/canvas/"}'
+openclaw nodes invoke --node "iOS Node" --command canvas.navigate --params '{"url":"http://<gateway-host>:18789/__openclaw__/canvas/"}'
 ```
 
 Notes:
 
-- The Gateway canvas host serves `/__forge-orchestrator__/canvas/` and `/__forge-orchestrator__/a2ui/`.
+- The Gateway canvas host serves `/__openclaw__/canvas/` and `/__openclaw__/a2ui/`.
+- It is served from the Gateway HTTP server (same port as `gateway.port`, default `18789`).
 - The iOS node auto-navigates to A2UI on connect when a canvas host URL is advertised.
 - Return to the built-in scaffold with `canvas.navigate` and `{"url":""}`.
 
@@ -97,11 +98,11 @@ forge-orchestrator nodes invoke --node "iOS Node" --command canvas.snapshot --pa
 
 - `NODE_BACKGROUND_UNAVAILABLE`: bring the iOS app to the foreground (canvas/camera/screen commands require it).
 - `A2UI_HOST_NOT_CONFIGURED`: the Gateway did not advertise a canvas host URL; check `canvasHost` in [Gateway configuration](/gateway/configuration).
-- Pairing prompt never appears: run `forge-orchestrator nodes pending` and approve manually.
+- Pairing prompt never appears: run `openclaw devices list` and approve manually.
 - Reconnect fails after reinstall: the Keychain pairing token was cleared; re-pair the node.
 
 ## Related docs
 
-- [Pairing](/gateway/pairing)
+- [Pairing](/channels/pairing)
 - [Discovery](/gateway/discovery)
 - [Bonjour](/gateway/bonjour)

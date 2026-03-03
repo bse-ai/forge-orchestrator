@@ -59,6 +59,12 @@ Browser settings live in `~/.forge-orchestrator/forge-orchestrator.json`.
 {
   browser: {
     enabled: true, // default: true
+    ssrfPolicy: {
+      dangerouslyAllowPrivateNetwork: true, // default trusted-network mode
+      // allowPrivateNetwork: true, // legacy alias
+      // hostnameAllowlist: ["*.example.com", "example.com"],
+      // allowedHostnames: ["localhost"],
+    },
     // cdpUrl: "http://127.0.0.1:18792", // legacy single-profile override
     remoteCdpTimeoutMs: 1500, // remote CDP HTTP timeout (ms)
     remoteCdpHandshakeTimeoutMs: 3000, // remote CDP WebSocket handshake timeout (ms)
@@ -86,9 +92,12 @@ Notes:
 - `cdpUrl` defaults to the relay port when unset.
 - `remoteCdpTimeoutMs` applies to remote (non-loopback) CDP reachability checks.
 - `remoteCdpHandshakeTimeoutMs` applies to remote CDP WebSocket reachability checks.
+- Browser navigation/open-tab is SSRF-guarded before navigation and best-effort re-checked on final `http(s)` URL after navigation.
+- `browser.ssrfPolicy.dangerouslyAllowPrivateNetwork` defaults to `true` (trusted-network model). Set it to `false` for strict public-only browsing.
+- `browser.ssrfPolicy.allowPrivateNetwork` remains supported as a legacy alias for compatibility.
 - `attachOnly: true` means “never launch a local browser; only attach if it is already running.”
 - `color` + per-profile `color` tint the browser UI so you can see which profile is active.
-- Default profile is `chrome` (extension relay). Use `defaultProfile: "forge-orchestrator"` for the managed browser.
+- Default profile is `openclaw` (OpenClaw-managed standalone browser). Use `defaultProfile: "chrome"` to opt into the Chrome extension relay.
 - Auto-detect order: system default browser if Chromium-based; otherwise Chrome → Brave → Edge → Chromium → Chrome Canary.
 - Local `forge-orchestrator` profiles auto-assign `cdpPort`/`cdpUrl` — set those only for remote CDP.
 
@@ -399,54 +408,56 @@ Inspection:
 
 Actions:
 
-- `forge-orchestrator browser navigate https://example.com`
-- `forge-orchestrator browser resize 1280 720`
-- `forge-orchestrator browser click 12 --double`
-- `forge-orchestrator browser click e12 --double`
-- `forge-orchestrator browser type 23 "hello" --submit`
-- `forge-orchestrator browser press Enter`
-- `forge-orchestrator browser hover 44`
-- `forge-orchestrator browser scrollintoview e12`
-- `forge-orchestrator browser drag 10 11`
-- `forge-orchestrator browser select 9 OptionA OptionB`
-- `forge-orchestrator browser download e12 report.pdf`
-- `forge-orchestrator browser waitfordownload report.pdf`
-- `forge-orchestrator browser upload /tmp/file.pdf`
-- `forge-orchestrator browser fill --fields '[{"ref":"1","type":"text","value":"Ada"}]'`
-- `forge-orchestrator browser dialog --accept`
-- `forge-orchestrator browser wait --text "Done"`
-- `forge-orchestrator browser wait "#main" --url "**/dash" --load networkidle --fn "window.ready===true"`
-- `forge-orchestrator browser evaluate --fn '(el) => el.textContent' --ref 7`
-- `forge-orchestrator browser highlight e12`
-- `forge-orchestrator browser trace start`
-- `forge-orchestrator browser trace stop`
+- `openclaw browser navigate https://example.com`
+- `openclaw browser resize 1280 720`
+- `openclaw browser click 12 --double`
+- `openclaw browser click e12 --double`
+- `openclaw browser type 23 "hello" --submit`
+- `openclaw browser press Enter`
+- `openclaw browser hover 44`
+- `openclaw browser scrollintoview e12`
+- `openclaw browser drag 10 11`
+- `openclaw browser select 9 OptionA OptionB`
+- `openclaw browser download e12 report.pdf`
+- `openclaw browser waitfordownload report.pdf`
+- `openclaw browser upload /tmp/openclaw/uploads/file.pdf`
+- `openclaw browser fill --fields '[{"ref":"1","type":"text","value":"Ada"}]'`
+- `openclaw browser dialog --accept`
+- `openclaw browser wait --text "Done"`
+- `openclaw browser wait "#main" --url "**/dash" --load networkidle --fn "window.ready===true"`
+- `openclaw browser evaluate --fn '(el) => el.textContent' --ref 7`
+- `openclaw browser highlight e12`
+- `openclaw browser trace start`
+- `openclaw browser trace stop`
 
 State:
 
-- `forge-orchestrator browser cookies`
-- `forge-orchestrator browser cookies set session abc123 --url "https://example.com"`
-- `forge-orchestrator browser cookies clear`
-- `forge-orchestrator browser storage local get`
-- `forge-orchestrator browser storage local set theme dark`
-- `forge-orchestrator browser storage session clear`
-- `forge-orchestrator browser set offline on`
-- `forge-orchestrator browser set headers --json '{"X-Debug":"1"}'`
-- `forge-orchestrator browser set credentials user pass`
-- `forge-orchestrator browser set credentials --clear`
-- `forge-orchestrator browser set geo 37.7749 -122.4194 --origin "https://example.com"`
-- `forge-orchestrator browser set geo --clear`
-- `forge-orchestrator browser set media dark`
-- `forge-orchestrator browser set timezone America/New_York`
-- `forge-orchestrator browser set locale en-US`
-- `forge-orchestrator browser set device "iPhone 14"`
+- `openclaw browser cookies`
+- `openclaw browser cookies set session abc123 --url "https://example.com"`
+- `openclaw browser cookies clear`
+- `openclaw browser storage local get`
+- `openclaw browser storage local set theme dark`
+- `openclaw browser storage session clear`
+- `openclaw browser set offline on`
+- `openclaw browser set headers --headers-json '{"X-Debug":"1"}'`
+- `openclaw browser set credentials user pass`
+- `openclaw browser set credentials --clear`
+- `openclaw browser set geo 37.7749 -122.4194 --origin "https://example.com"`
+- `openclaw browser set geo --clear`
+- `openclaw browser set media dark`
+- `openclaw browser set timezone America/New_York`
+- `openclaw browser set locale en-US`
+- `openclaw browser set device "iPhone 14"`
 
 Notes:
 
 - `upload` and `dialog` are **arming** calls; run them before the click/press
   that triggers the chooser/dialog.
-- Download and trace output paths are constrained to ForgeOrchestrator temp roots:
-  - traces: `/tmp/forge-orchestrator` (fallback: `${os.tmpdir()}/forge-orchestrator`)
-  - downloads: `/tmp/forge-orchestrator/downloads` (fallback: `${os.tmpdir()}/forge-orchestrator/downloads`)
+- Download and trace output paths are constrained to OpenClaw temp roots:
+  - traces: `/tmp/openclaw` (fallback: `${os.tmpdir()}/openclaw`)
+  - downloads: `/tmp/openclaw/downloads` (fallback: `${os.tmpdir()}/openclaw/downloads`)
+- Upload paths are constrained to an OpenClaw temp uploads root:
+  - uploads: `/tmp/openclaw/uploads` (fallback: `${os.tmpdir()}/openclaw/uploads`)
 - `upload` can also set file inputs directly via `--input-ref` or `--element`.
 - `snapshot`:
   - `--format ai` (default when Playwright is installed): returns an AI snapshot with numeric refs (`aria-ref="<n>"`).
@@ -540,7 +551,7 @@ These are useful for “make the site behave like X” workflows:
 - Cookies: `cookies`, `cookies set`, `cookies clear`
 - Storage: `storage local|session get|set|clear`
 - Offline: `set offline on|off`
-- Headers: `set headers --json '{"X-Debug":"1"}'` (or `--clear`)
+- Headers: `set headers --headers-json '{"X-Debug":"1"}'` (legacy `set headers --json '{"X-Debug":"1"}'` remains supported)
 - HTTP basic auth: `set credentials user pass` (or `--clear`)
 - Geolocation: `set geo <lat> <lon> --origin "https://example.com"` (or `--clear`)
 - Media: `set media dark|light|no-preference|none`
@@ -558,6 +569,20 @@ These are useful for “make the site behave like X” workflows:
 - For logins and anti-bot notes (X/Twitter, etc.), see [Browser login + X/Twitter posting](/tools/browser-login).
 - Keep the Gateway/node host private (loopback or tailnet-only).
 - Remote CDP endpoints are powerful; tunnel and protect them.
+
+Strict-mode example (block private/internal destinations by default):
+
+```json5
+{
+  browser: {
+    ssrfPolicy: {
+      dangerouslyAllowPrivateNetwork: false,
+      hostnameAllowlist: ["*.example.com", "example.com"],
+      allowedHostnames: ["localhost"], // optional exact allow
+    },
+  },
+}
+```
 
 ## Troubleshooting
 

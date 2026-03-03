@@ -17,6 +17,14 @@ Run a persistent ForgeOrchestrator Gateway on a Hetzner VPS using Docker, with d
 If you want “ForgeOrchestrator 24/7 for ~$5”, this is the simplest reliable setup.
 Hetzner pricing changes; pick the smallest Debian/Ubuntu VPS and scale up if you hit OOMs.
 
+Security model reminder:
+
+- Company-shared agents are fine when everyone is in the same trust boundary and the runtime is business-only.
+- Keep strict separation: dedicated VPS/runtime + dedicated accounts; no personal Apple/Google/browser/password-manager profiles on that host.
+- If users are adversarial to each other, split by gateway/host/OS user.
+
+See [Security](/gateway/security) and [VPS hosting](/vps).
+
 ## What are we doing (simple terms)?
 
 - Rent a small Linux server (Hetzner VPS)
@@ -176,11 +184,7 @@ services:
     ports:
       # Recommended: keep the Gateway loopback-only on the VPS; access via SSH tunnel.
       # To expose it publicly, remove the `127.0.0.1:` prefix and firewall accordingly.
-      - "127.0.0.1:${FORGE_ORCH_GATEWAY_PORT}:18789"
-
-      # Optional: only if you run iOS/Android nodes against this VPS and need Canvas host.
-      # If you expose this publicly, read /gateway/security and firewall accordingly.
-      # - "18793:18793"
+      - "127.0.0.1:${OPENCLAW_GATEWAY_PORT}:18789"
     command:
       [
         "node",

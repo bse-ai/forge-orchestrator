@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   rewriteUpdateFlagArgv,
+  shouldEnsureCliPath,
   shouldRegisterPrimarySubcommand,
   shouldSkipPluginCommandRegistration,
 } from "./run-main.js";
@@ -41,12 +42,14 @@ describe("rewriteUpdateFlagArgv", () => {
 
 describe("shouldRegisterPrimarySubcommand", () => {
   it("skips eager primary registration for help/version invocations", () => {
-    expect(shouldRegisterPrimarySubcommand(["node", "forge-orchestrator", "status", "--help"])).toBe(false);
-    expect(shouldRegisterPrimarySubcommand(["node", "forge-orchestrator", "-V"])).toBe(false);
+    expect(shouldRegisterPrimarySubcommand(["node", "openclaw", "status", "--help"])).toBe(false);
+    expect(shouldRegisterPrimarySubcommand(["node", "openclaw", "-V"])).toBe(false);
+    expect(shouldRegisterPrimarySubcommand(["node", "openclaw", "-v"])).toBe(false);
   });
 
   it("keeps eager primary registration for regular command runs", () => {
-    expect(shouldRegisterPrimarySubcommand(["node", "forge-orchestrator", "status"])).toBe(true);
+    expect(shouldRegisterPrimarySubcommand(["node", "openclaw", "status"])).toBe(true);
+    expect(shouldRegisterPrimarySubcommand(["node", "openclaw", "acp", "-v"])).toBe(true);
   });
 });
 
@@ -71,6 +74,16 @@ describe("shouldSkipPluginCommandRegistration", () => {
     ).toBe(true);
   });
 
+  it("skips plugin registration for builtin command runs", () => {
+    expect(
+      shouldSkipPluginCommandRegistration({
+        argv: ["node", "openclaw", "sessions", "--json"],
+        primary: "sessions",
+        hasBuiltinPrimary: true,
+      }),
+    ).toBe(true);
+  });
+
   it("keeps plugin registration for non-builtin help", () => {
     expect(
       shouldSkipPluginCommandRegistration({
@@ -79,5 +92,36 @@ describe("shouldSkipPluginCommandRegistration", () => {
         hasBuiltinPrimary: false,
       }),
     ).toBe(false);
+  });
+
+  it("keeps plugin registration for non-builtin command runs", () => {
+    expect(
+      shouldSkipPluginCommandRegistration({
+        argv: ["node", "openclaw", "voicecall", "status"],
+        primary: "voicecall",
+        hasBuiltinPrimary: false,
+      }),
+    ).toBe(false);
+  });
+});
+
+describe("shouldEnsureCliPath", () => {
+  it("skips path bootstrap for help/version invocations", () => {
+    expect(shouldEnsureCliPath(["node", "openclaw", "--help"])).toBe(false);
+    expect(shouldEnsureCliPath(["node", "openclaw", "-V"])).toBe(false);
+    expect(shouldEnsureCliPath(["node", "openclaw", "-v"])).toBe(false);
+  });
+
+  it("skips path bootstrap for read-only fast paths", () => {
+    expect(shouldEnsureCliPath(["node", "openclaw", "status"])).toBe(false);
+    expect(shouldEnsureCliPath(["node", "openclaw", "sessions", "--json"])).toBe(false);
+    expect(shouldEnsureCliPath(["node", "openclaw", "config", "get", "update"])).toBe(false);
+    expect(shouldEnsureCliPath(["node", "openclaw", "models", "status", "--json"])).toBe(false);
+  });
+
+  it("keeps path bootstrap for mutating or unknown commands", () => {
+    expect(shouldEnsureCliPath(["node", "openclaw", "message", "send"])).toBe(true);
+    expect(shouldEnsureCliPath(["node", "openclaw", "voicecall", "status"])).toBe(true);
+    expect(shouldEnsureCliPath(["node", "openclaw", "acp", "-v"])).toBe(true);
   });
 });

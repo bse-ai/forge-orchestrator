@@ -28,6 +28,6 @@ Notes:
 ## Examples
 
 ```bash
-forge-orchestrator configure
-forge-orchestrator configure --section models --section channels
+openclaw configure
+openclaw configure --section model --section channels
 ```

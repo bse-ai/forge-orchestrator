@@ -72,6 +72,7 @@ export type SignalEventHandlerDeps = {
   cfg: ForgeOrchestratorConfig;
   baseUrl: string;
   account?: string;
+  accountUuid?: string;
   accountId: string;
   blockStreaming?: boolean;
   historyLimit: number;

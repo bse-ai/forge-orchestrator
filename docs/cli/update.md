@@ -15,15 +15,16 @@ If you installed via **npm/pnpm** (global install, no git metadata), updates hap
 ## Usage
 
 ```bash
-forge-orchestrator update
-forge-orchestrator update status
-forge-orchestrator update wizard
-forge-orchestrator update --channel beta
-forge-orchestrator update --channel dev
-forge-orchestrator update --tag beta
-forge-orchestrator update --no-restart
-forge-orchestrator update --json
-forge-orchestrator --update
+openclaw update
+openclaw update status
+openclaw update wizard
+openclaw update --channel beta
+openclaw update --channel dev
+openclaw update --tag beta
+openclaw update --dry-run
+openclaw update --no-restart
+openclaw update --json
+openclaw --update
 ```
 
 ## Options
@@ -31,6 +32,7 @@ forge-orchestrator --update
 - `--no-restart`: skip restarting the Gateway service after a successful update.
 - `--channel <stable|beta|dev>`: set the update channel (git + npm; persisted in config).
 - `--tag <dist-tag|version>`: override the npm dist-tag or version for this update only.
+- `--dry-run`: preview planned update actions (channel/tag/target/restart flow) without writing config, installing, syncing plugins, or restarting.
 - `--json`: print machine-readable `UpdateRunResult` JSON.
 - `--timeout <seconds>`: per-step timeout (default is 1200s).
 
@@ -65,6 +67,8 @@ install method aligned:
 - `dev` → ensures a git checkout (default: `~/forge-orchestrator`, override with `FORGE_ORCH_GIT_DIR`),
   updates it, and installs the global CLI from that checkout.
 - `stable`/`beta` → installs from npm using the matching dist-tag.
+
+The Gateway core auto-updater (when enabled via config) reuses this same update path.
 
 ## Git checkout flow
 

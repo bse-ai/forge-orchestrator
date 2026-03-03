@@ -38,6 +38,8 @@ inside a sandbox workspace under `~/.forge-orchestrator/sandboxes`, not your hos
 
 `forge-orchestrator onboard`, `forge-orchestrator configure`, or `forge-orchestrator setup` will create the
 workspace and seed the bootstrap files if they are missing.
+Sandbox seed copies only accept regular in-workspace files; symlink/hardlink
+aliases that resolve outside the source workspace are ignored.
 
 If you already manage the workspace files yourself, you can disable bootstrap
 file creation:
@@ -116,8 +118,9 @@ See [Memory](/concepts/memory) for the workflow and automatic memory flush.
 
 If any bootstrap file is missing, ForgeOrchestrator injects a "missing file" marker into
 the session and continues. Large bootstrap files are truncated when injected;
-adjust the limit with `agents.defaults.bootstrapMaxChars` (default: 20000).
-`forge-orchestrator setup` can recreate missing defaults without overwriting existing
+adjust limits with `agents.defaults.bootstrapMaxChars` (default: 20000) and
+`agents.defaults.bootstrapTotalMaxChars` (default: 150000).
+`openclaw setup` can recreate missing defaults without overwriting existing
 files.
 
 ## What is NOT in the workspace
