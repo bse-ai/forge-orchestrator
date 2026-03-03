@@ -95,7 +95,7 @@ export function listChatCommands(params?: {
   return [...commands, ...buildSkillCommandDefinitions(params.skillCommands)];
 }
 
-export function isCommandEnabled(cfg: ForgeOrchestratorConfig, commandKey: string): boolean {
+export function isCommandEnabled(cfg: OpenClawConfig, commandKey: string): boolean {
   if (commandKey === "config") {
     return isCommandFlagEnabled(cfg, "config");
   }
@@ -109,7 +109,7 @@ export function isCommandEnabled(cfg: ForgeOrchestratorConfig, commandKey: strin
 }
 
 export function listChatCommandsForConfig(
-  cfg: ForgeOrchestratorConfig,
+  cfg: OpenClawConfig,
   params?: { skillCommands?: SkillCommandSpec[] },
 ): ChatCommandDefinition[] {
   const base = getChatCommands().filter((command) => isCommandEnabled(cfg, command.key));
@@ -172,7 +172,7 @@ export function listNativeCommandSpecs(params?: {
 }
 
 export function listNativeCommandSpecsForConfig(
-  cfg: ForgeOrchestratorConfig,
+  cfg: OpenClawConfig,
   params?: { skillCommands?: SkillCommandSpec[]; provider?: string },
 ): NativeCommandSpec[] {
   return listNativeSpecsFromCommands(listChatCommandsForConfig(cfg, params), params?.provider);
@@ -290,12 +290,12 @@ export function buildCommandTextFromArgs(
   return buildCommandText(commandName, serializeCommandArgs(command, args));
 }
 
-function resolveDefaultCommandContext(cfg?: ForgeOrchestratorConfig): {
+function resolveDefaultCommandContext(cfg?: OpenClawConfig): {
   provider: string;
   model: string;
 } {
   const resolved = resolveConfiguredModelRef({
-    cfg: cfg ?? ({} as ForgeOrchestratorConfig),
+    cfg: cfg ?? ({} as OpenClawConfig),
     defaultProvider: DEFAULT_PROVIDER,
     defaultModel: DEFAULT_MODEL,
   });
@@ -310,7 +310,7 @@ export type ResolvedCommandArgChoice = { value: string; label: string };
 export function resolveCommandArgChoices(params: {
   command: ChatCommandDefinition;
   arg: CommandArgDefinition;
-  cfg?: ForgeOrchestratorConfig;
+  cfg?: OpenClawConfig;
   provider?: string;
   model?: string;
 }): ResolvedCommandArgChoice[] {
@@ -340,7 +340,7 @@ export function resolveCommandArgChoices(params: {
 export function resolveCommandArgMenu(params: {
   command: ChatCommandDefinition;
   args?: CommandArgs;
-  cfg?: ForgeOrchestratorConfig;
+  cfg?: OpenClawConfig;
 }): { arg: CommandArgDefinition; choices: ResolvedCommandArgChoice[]; title?: string } | null {
   const { command, args, cfg } = params;
   if (!command.args || !command.argsMenu) {
@@ -431,7 +431,7 @@ export function isCommandMessage(raw: string): boolean {
   return trimmed.startsWith("/");
 }
 
-export function getCommandDetection(_cfg?: ForgeOrchestratorConfig): CommandDetection {
+export function getCommandDetection(_cfg?: OpenClawConfig): CommandDetection {
   const commands = getChatCommands();
   if (cachedDetection && cachedDetectionCommands === commands) {
     return cachedDetection;
@@ -464,7 +464,7 @@ export function getCommandDetection(_cfg?: ForgeOrchestratorConfig): CommandDete
   return cachedDetection;
 }
 
-export function maybeResolveTextAlias(raw: string, cfg?: ForgeOrchestratorConfig) {
+export function maybeResolveTextAlias(raw: string, cfg?: OpenClawConfig) {
   const trimmed = normalizeCommandBody(raw).trim();
   if (!trimmed.startsWith("/")) {
     return null;
@@ -487,7 +487,7 @@ export function maybeResolveTextAlias(raw: string, cfg?: ForgeOrchestratorConfig
 
 export function resolveTextCommand(
   raw: string,
-  cfg?: ForgeOrchestratorConfig,
+  cfg?: OpenClawConfig,
 ): {
   command: ChatCommandDefinition;
   args?: string;

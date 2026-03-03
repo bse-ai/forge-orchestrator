@@ -37,13 +37,13 @@ export const listSlackAccountIds = listAccountIds;
 export const resolveDefaultSlackAccountId = resolveDefaultAccountId;
 
 function resolveAccountConfig(
-  cfg: ForgeOrchestratorConfig,
+  cfg: OpenClawConfig,
   accountId: string,
 ): SlackAccountConfig | undefined {
   return resolveAccountEntry(cfg.channels?.slack?.accounts, accountId);
 }
 
-function mergeSlackAccountConfig(cfg: ForgeOrchestratorConfig, accountId: string): SlackAccountConfig {
+function mergeSlackAccountConfig(cfg: OpenClawConfig, accountId: string): SlackAccountConfig {
   const { accounts: _ignored, ...base } = (cfg.channels?.slack ?? {}) as SlackAccountConfig & {
     accounts?: unknown;
   };
@@ -52,7 +52,7 @@ function mergeSlackAccountConfig(cfg: ForgeOrchestratorConfig, accountId: string
 }
 
 export function resolveSlackAccount(params: {
-  cfg: ForgeOrchestratorConfig;
+  cfg: OpenClawConfig;
   accountId?: string | null;
 }): ResolvedSlackAccount {
   const accountId = normalizeAccountId(params.accountId);
@@ -99,7 +99,7 @@ export function resolveSlackAccount(params: {
   };
 }
 
-export function listEnabledSlackAccounts(cfg: ForgeOrchestratorConfig): ResolvedSlackAccount[] {
+export function listEnabledSlackAccounts(cfg: OpenClawConfig): ResolvedSlackAccount[] {
   return listSlackAccountIds(cfg)
     .map((accountId) => resolveSlackAccount({ cfg, accountId }))
     .filter((account) => account.enabled);

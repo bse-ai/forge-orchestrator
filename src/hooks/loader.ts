@@ -27,7 +27,7 @@ const log = createSubsystemLogger("hooks:loader");
  * 1. Directory-based discovery (bundled, managed, workspace)
  * 2. Legacy config handlers (backwards compatibility)
  *
- * @param cfg - ForgeOrchestrator configuration
+ * @param cfg - OpenClaw configuration
  * @param workspaceDir - Workspace directory for hook discovery
  * @returns Number of handlers successfully loaded
  *
@@ -40,7 +40,7 @@ const log = createSubsystemLogger("hooks:loader");
  * ```
  */
 export async function loadInternalHooks(
-  cfg: ForgeOrchestratorConfig,
+  cfg: OpenClawConfig,
   workspaceDir: string,
   opts?: {
     managedHooksDir?: string;

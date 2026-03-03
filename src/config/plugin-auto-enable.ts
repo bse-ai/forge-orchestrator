@@ -23,7 +23,7 @@ type PluginEnableChange = {
 };
 
 export type PluginAutoEnableResult = {
-  config: ForgeOrchestratorConfig;
+  config: OpenClawConfig;
   changes: string[];
 };
 
@@ -67,7 +67,7 @@ function accountsHaveKeys(value: unknown, keys: readonly string[]): boolean {
 }
 
 function resolveChannelConfig(
-  cfg: ForgeOrchestratorConfig,
+  cfg: OpenClawConfig,
   channelId: string,
 ): Record<string, unknown> | null {
   const channels = cfg.channels as Record<string, unknown> | undefined;
@@ -169,7 +169,7 @@ function isStructuredChannelConfigured(
   return recordHasKeys(entry);
 }
 
-function isWhatsAppConfigured(cfg: ForgeOrchestratorConfig): boolean {
+function isWhatsAppConfigured(cfg: OpenClawConfig): boolean {
   if (hasAnyWhatsAppAuth(cfg)) {
     return true;
   }
@@ -180,13 +180,13 @@ function isWhatsAppConfigured(cfg: ForgeOrchestratorConfig): boolean {
   return recordHasKeys(entry);
 }
 
-function isGenericChannelConfigured(cfg: ForgeOrchestratorConfig, channelId: string): boolean {
+function isGenericChannelConfigured(cfg: OpenClawConfig, channelId: string): boolean {
   const entry = resolveChannelConfig(cfg, channelId);
   return recordHasKeys(entry);
 }
 
 export function isChannelConfigured(
-  cfg: ForgeOrchestratorConfig,
+  cfg: OpenClawConfig,
   channelId: string,
   env: NodeJS.ProcessEnv = process.env,
 ): boolean {
@@ -200,7 +200,7 @@ export function isChannelConfigured(
   return isGenericChannelConfigured(cfg, channelId);
 }
 
-function collectModelRefs(cfg: ForgeOrchestratorConfig): string[] {
+function collectModelRefs(cfg: OpenClawConfig): string[] {
   const refs: string[] = [];
   const pushModelRef = (value: unknown) => {
     if (typeof value === "string" && value.trim()) {
@@ -254,7 +254,7 @@ function extractProviderFromModelRef(value: string): string | null {
   return normalizeProviderId(trimmed.slice(0, slash));
 }
 
-function isProviderConfigured(cfg: ForgeOrchestratorConfig, providerId: string): boolean {
+function isProviderConfigured(cfg: OpenClawConfig, providerId: string): boolean {
   const normalized = normalizeProviderId(providerId);
 
   const profiles = cfg.auth?.profiles;
@@ -332,7 +332,7 @@ function collectCandidateChannelIds(cfg: OpenClawConfig): string[] {
 }
 
 function resolveConfiguredPlugins(
-  cfg: ForgeOrchestratorConfig,
+  cfg: OpenClawConfig,
   env: NodeJS.ProcessEnv,
   registry: PluginManifestRegistry,
 ): PluginEnableChange[] {
@@ -385,7 +385,7 @@ function isPluginExplicitlyDisabled(cfg: OpenClawConfig, pluginId: string): bool
   return entry?.enabled === false;
 }
 
-function isPluginDenied(cfg: ForgeOrchestratorConfig, pluginId: string): boolean {
+function isPluginDenied(cfg: OpenClawConfig, pluginId: string): boolean {
   const deny = cfg.plugins?.deny;
   return Array.isArray(deny) && deny.includes(pluginId);
 }
@@ -400,7 +400,7 @@ function resolvePreferredOverIds(pluginId: string): string[] {
 }
 
 function shouldSkipPreferredPluginAutoEnable(
-  cfg: ForgeOrchestratorConfig,
+  cfg: OpenClawConfig,
   entry: PluginEnableChange,
   configured: PluginEnableChange[],
 ): boolean {
@@ -469,7 +469,7 @@ function formatAutoEnableChange(entry: PluginEnableChange): string {
 }
 
 export function applyPluginAutoEnable(params: {
-  config: ForgeOrchestratorConfig;
+  config: OpenClawConfig;
   env?: NodeJS.ProcessEnv;
   /** Pre-loaded manifest registry. When omitted, the registry is loaded from
    *  the installed plugins on disk. Pass an explicit registry in tests to

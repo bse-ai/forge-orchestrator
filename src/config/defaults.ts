@@ -69,7 +69,7 @@ function resolveModelCost(
   };
 }
 
-function resolveAnthropicDefaultAuthMode(cfg: ForgeOrchestratorConfig): AnthropicAuthDefaultsMode | null {
+function resolveAnthropicDefaultAuthMode(cfg: OpenClawConfig): AnthropicAuthDefaultsMode | null {
   const profiles = cfg.auth?.profiles ?? {};
   const anthropicProfiles = Object.entries(profiles).filter(
     ([, profile]) => profile?.provider === "anthropic",
@@ -126,7 +126,7 @@ export type SessionDefaultsOptions = {
   warnState?: WarnState;
 };
 
-export function applyMessageDefaults(cfg: ForgeOrchestratorConfig): ForgeOrchestratorConfig {
+export function applyMessageDefaults(cfg: OpenClawConfig): OpenClawConfig {
   const messages = cfg.messages;
   const hasAckScope = messages?.ackReactionScope !== undefined;
   if (hasAckScope) {
@@ -142,9 +142,9 @@ export function applyMessageDefaults(cfg: ForgeOrchestratorConfig): ForgeOrchest
 }
 
 export function applySessionDefaults(
-  cfg: ForgeOrchestratorConfig,
+  cfg: OpenClawConfig,
   options: SessionDefaultsOptions = {},
-): ForgeOrchestratorConfig {
+): OpenClawConfig {
   const session = cfg.session;
   if (!session || session.mainKey === undefined) {
     return cfg;
@@ -154,7 +154,7 @@ export function applySessionDefaults(
   const warn = options.warn ?? console.warn;
   const warnState = options.warnState ?? defaultWarnState;
 
-  const next: ForgeOrchestratorConfig = {
+  const next: OpenClawConfig = {
     ...cfg,
     session: { ...session, mainKey: "main" },
   };
@@ -210,7 +210,7 @@ export function applyTalkConfigNormalization(config: OpenClawConfig): OpenClawCo
   return normalizeTalkConfig(config);
 }
 
-export function applyModelDefaults(cfg: ForgeOrchestratorConfig): ForgeOrchestratorConfig {
+export function applyModelDefaults(cfg: OpenClawConfig): OpenClawConfig {
   let mutated = false;
   let nextCfg = cfg;
 
@@ -346,7 +346,7 @@ export function applyModelDefaults(cfg: ForgeOrchestratorConfig): ForgeOrchestra
   };
 }
 
-export function applyAgentDefaults(cfg: ForgeOrchestratorConfig): ForgeOrchestratorConfig {
+export function applyAgentDefaults(cfg: OpenClawConfig): OpenClawConfig {
   const agents = cfg.agents;
   const defaults = agents?.defaults;
   const hasMax =
@@ -387,7 +387,7 @@ export function applyAgentDefaults(cfg: ForgeOrchestratorConfig): ForgeOrchestra
   };
 }
 
-export function applyLoggingDefaults(cfg: ForgeOrchestratorConfig): ForgeOrchestratorConfig {
+export function applyLoggingDefaults(cfg: OpenClawConfig): OpenClawConfig {
   const logging = cfg.logging;
   if (!logging) {
     return cfg;
@@ -404,7 +404,7 @@ export function applyLoggingDefaults(cfg: ForgeOrchestratorConfig): ForgeOrchest
   };
 }
 
-export function applyContextPruningDefaults(cfg: ForgeOrchestratorConfig): ForgeOrchestratorConfig {
+export function applyContextPruningDefaults(cfg: OpenClawConfig): OpenClawConfig {
   const defaults = cfg.agents?.defaults;
   if (!defaults) {
     return cfg;
@@ -506,7 +506,7 @@ export function applyContextPruningDefaults(cfg: ForgeOrchestratorConfig): Forge
   };
 }
 
-export function applyCompactionDefaults(cfg: ForgeOrchestratorConfig): ForgeOrchestratorConfig {
+export function applyCompactionDefaults(cfg: OpenClawConfig): OpenClawConfig {
   const defaults = cfg.agents?.defaults;
   if (!defaults) {
     return cfg;

@@ -22,10 +22,10 @@ import {
 type GatewayAuthChoice = "token" | "password" | "trusted-proxy";
 
 export async function promptGatewayConfig(
-  cfg: ForgeOrchestratorConfig,
+  cfg: OpenClawConfig,
   runtime: RuntimeEnv,
 ): Promise<{
-  config: ForgeOrchestratorConfig;
+  config: OpenClawConfig;
   port: number;
   token?: string;
 }> {

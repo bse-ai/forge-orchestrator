@@ -29,7 +29,7 @@ import { getFollowupQueueDepth, resolveQueueSettings } from "./queue.js";
 import { resolveSubagentLabel } from "./subagents-utils.js";
 
 export async function buildStatusReply(params: {
-  cfg: ForgeOrchestratorConfig;
+  cfg: OpenClawConfig;
   command: CommandContext;
   sessionEntry?: SessionEntry;
   sessionKey: string;

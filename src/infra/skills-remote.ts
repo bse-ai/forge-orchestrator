@@ -243,7 +243,7 @@ export async function refreshRemoteNodeBins(params: {
   platform?: string;
   deviceFamily?: string;
   commands?: string[];
-  cfg: ForgeOrchestratorConfig;
+  cfg: OpenClawConfig;
   timeoutMs?: number;
 }) {
   if (!remoteRegistry) {
@@ -334,7 +334,7 @@ export function getRemoteSkillEligibility(): SkillEligibilityContext["remote"] |
   };
 }
 
-export async function refreshRemoteBinsForConnectedNodes(cfg: ForgeOrchestratorConfig) {
+export async function refreshRemoteBinsForConnectedNodes(cfg: OpenClawConfig) {
   if (!remoteRegistry) {
     return;
   }

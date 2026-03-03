@@ -35,7 +35,7 @@ export function listReservedChatSlashCommandNames(extraNames: string[] = []): Se
 
 export function listSkillCommandsForWorkspace(params: {
   workspaceDir: string;
-  cfg: ForgeOrchestratorConfig;
+  cfg: OpenClawConfig;
   skillFilter?: string[];
 }): SkillCommandSpec[] {
   return buildWorkspaceSkillCommandSpecs(params.workspaceDir, {
@@ -47,7 +47,7 @@ export function listSkillCommandsForWorkspace(params: {
 }
 
 export function listSkillCommandsForAgents(params: {
-  cfg: ForgeOrchestratorConfig;
+  cfg: OpenClawConfig;
   agentIds?: string[];
 }): SkillCommandSpec[] {
   const mergeSkillFilters = (existing?: string[], incoming?: string[]): string[] | undefined => {

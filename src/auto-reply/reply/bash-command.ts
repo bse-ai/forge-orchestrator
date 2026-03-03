@@ -35,7 +35,7 @@ type ActiveBashJob =
 
 let activeJob: ActiveBashJob | null = null;
 
-function resolveForegroundMs(cfg: ForgeOrchestratorConfig): number {
+function resolveForegroundMs(cfg: OpenClawConfig): number {
   const raw = cfg.commands?.bashForegroundMs;
   if (typeof raw !== "number" || Number.isNaN(raw)) {
     return DEFAULT_FOREGROUND_MS;
@@ -99,7 +99,7 @@ function parseBashRequest(raw: string): BashRequest | null {
 
 function resolveRawCommandBody(params: {
   ctx: MsgContext;
-  cfg: ForgeOrchestratorConfig;
+  cfg: OpenClawConfig;
   agentId?: string;
   isGroup: boolean;
 }) {
@@ -178,7 +178,7 @@ function buildUsageReply(): ReplyPayload {
 
 export async function handleBashChatCommand(params: {
   ctx: MsgContext;
-  cfg: ForgeOrchestratorConfig;
+  cfg: OpenClawConfig;
   agentId?: string;
   sessionKey: string;
   isGroup: boolean;

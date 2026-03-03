@@ -64,7 +64,7 @@ const normalizePluginEntries = (entries: unknown): NormalizedPluginsConfig["entr
 };
 
 export const normalizePluginsConfig = (
-  config?: ForgeOrchestratorConfig["plugins"],
+  config?: OpenClawConfig["plugins"],
 ): NormalizedPluginsConfig => {
   const memorySlot = normalizeSlotValue(config?.slots?.memory);
   return {
@@ -79,13 +79,13 @@ export const normalizePluginsConfig = (
   };
 };
 
-const hasExplicitMemorySlot = (plugins?: ForgeOrchestratorConfig["plugins"]) =>
+const hasExplicitMemorySlot = (plugins?: OpenClawConfig["plugins"]) =>
   Boolean(plugins?.slots && Object.prototype.hasOwnProperty.call(plugins.slots, "memory"));
 
-const hasExplicitMemoryEntry = (plugins?: ForgeOrchestratorConfig["plugins"]) =>
+const hasExplicitMemoryEntry = (plugins?: OpenClawConfig["plugins"]) =>
   Boolean(plugins?.entries && Object.prototype.hasOwnProperty.call(plugins.entries, "memory-core"));
 
-const hasExplicitPluginConfig = (plugins?: ForgeOrchestratorConfig["plugins"]) => {
+const hasExplicitPluginConfig = (plugins?: OpenClawConfig["plugins"]) => {
   if (!plugins) {
     return false;
   }
@@ -111,9 +111,9 @@ const hasExplicitPluginConfig = (plugins?: ForgeOrchestratorConfig["plugins"]) =
 };
 
 export function applyTestPluginDefaults(
-  cfg: ForgeOrchestratorConfig,
+  cfg: OpenClawConfig,
   env: NodeJS.ProcessEnv = process.env,
-): ForgeOrchestratorConfig {
+): OpenClawConfig {
   if (!env.VITEST) {
     return cfg;
   }
@@ -149,7 +149,7 @@ export function applyTestPluginDefaults(
 }
 
 export function isTestDefaultMemorySlotDisabled(
-  cfg: ForgeOrchestratorConfig,
+  cfg: OpenClawConfig,
   env: NodeJS.ProcessEnv = process.env,
 ): boolean {
   if (!env.VITEST) {

@@ -88,7 +88,7 @@ function resolveSessionEntry(params: {
 }
 
 function resolveSessionKeyFromSessionId(params: {
-  cfg: ForgeOrchestratorConfig;
+  cfg: OpenClawConfig;
   sessionId: string;
   agentId?: string;
 }): string | null {
@@ -110,7 +110,7 @@ function resolveSessionKeyFromSessionId(params: {
 }
 
 async function resolveModelOverride(params: {
-  cfg: ForgeOrchestratorConfig;
+  cfg: OpenClawConfig;
   raw: string;
   sessionEntry?: SessionEntry;
   agentId: string;
@@ -174,7 +174,7 @@ async function resolveModelOverride(params: {
 
 export function createSessionStatusTool(opts?: {
   agentSessionKey?: string;
-  config?: ForgeOrchestratorConfig;
+  config?: OpenClawConfig;
 }): AnyAgentTool {
   return {
     label: "Session Status",

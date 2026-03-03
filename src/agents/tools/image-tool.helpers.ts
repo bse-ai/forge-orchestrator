@@ -64,7 +64,7 @@ export function coerceImageModelConfig(cfg?: OpenClawConfig): ImageModelConfig {
 }
 
 export function resolveProviderVisionModelFromConfig(params: {
-  cfg?: ForgeOrchestratorConfig;
+  cfg?: OpenClawConfig;
   provider: string;
 }): string | null {
   const providerCfg = params.cfg?.models?.providers?.[params.provider] as unknown as

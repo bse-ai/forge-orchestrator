@@ -211,7 +211,7 @@ async function tryWriteRestartSentinelPayload(
 function loadSchemaWithPlugins(): ConfigSchemaResponse {
   const cfg = loadConfig();
   const workspaceDir = resolveAgentWorkspaceDir(cfg, resolveDefaultAgentId(cfg));
-  const pluginRegistry = loadForgeOrchestratorPlugins({
+  const pluginRegistry = loadOpenClawPlugins({
     config: cfg,
     cache: true,
     workspaceDir,
@@ -223,7 +223,7 @@ function loadSchemaWithPlugins(): ConfigSchemaResponse {
     },
   });
   // Note: We can't easily cache this, as there are no callback that can invalidate
-  // our cache. However, both loadConfig() and loadForgeOrchestratorPlugins() already cache
+  // our cache. However, both loadConfig() and loadOpenClawPlugins() already cache
   // their results, and buildConfigSchema() is just a cheap transformation.
   return buildConfigSchema({
     plugins: pluginRegistry.plugins.map((plugin) => ({

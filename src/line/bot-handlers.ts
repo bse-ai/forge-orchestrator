@@ -43,7 +43,7 @@ interface MediaRef {
 }
 
 export interface LineHandlerContext {
-  cfg: ForgeOrchestratorConfig;
+  cfg: OpenClawConfig;
   account: ResolvedLineAccount;
   runtime: RuntimeEnv;
   mediaMaxBytes: number;

@@ -1,4 +1,4 @@
-import type { ForgeOrchestratorConfig } from "../config/config.js";
+import type { OpenClawConfig } from "../config/config.js";
 import type { RuntimeEnv } from "../runtime.js";
 import { requireValidConfigSnapshot } from "./config-validation.js";
 

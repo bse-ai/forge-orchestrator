@@ -86,7 +86,7 @@ type TelegramCommandAuthResult = {
 };
 
 export type RegisterTelegramHandlerParams = {
-  cfg: ForgeOrchestratorConfig;
+  cfg: OpenClawConfig;
   accountId: string;
   bot: Bot;
   mediaMaxBytes: number;
@@ -116,7 +116,7 @@ export type RegisterTelegramHandlerParams = {
 
 type RegisterTelegramNativeCommandsParams = {
   bot: Bot;
-  cfg: ForgeOrchestratorConfig;
+  cfg: OpenClawConfig;
   runtime: RuntimeEnv;
   accountId: string;
   telegramCfg: TelegramAccountConfig;

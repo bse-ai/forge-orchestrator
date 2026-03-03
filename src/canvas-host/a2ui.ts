@@ -5,11 +5,11 @@ import { fileURLToPath } from "node:url";
 import { detectMime } from "../media/mime.js";
 import { resolveFileWithinRoot } from "./file-resolver.js";
 
-export const A2UI_PATH = "/__forgeOrch__/a2ui";
+export const A2UI_PATH = "/__openclaw__/a2ui";
 
-export const CANVAS_HOST_PATH = "/__forgeOrch__/canvas";
+export const CANVAS_HOST_PATH = "/__openclaw__/canvas";
 
-export const CANVAS_WS_PATH = "/__forgeOrch__/ws";
+export const CANVAS_WS_PATH = "/__openclaw__/ws";
 
 let cachedA2uiRootReal: string | null | undefined;
 let resolvingA2uiRoot: Promise<string | null> | null = null;
@@ -84,9 +84,9 @@ export function injectCanvasLiveReload(html: string): string {
 (() => {
   // Cross-platform action bridge helper.
   // Works on:
-  // - iOS: window.webkit.messageHandlers.forgeOrchCanvasA2UIAction.postMessage(...)
-  // - Android: window.forgeOrchCanvasA2UIAction.postMessage(...)
-  const handlerNames = ["forgeOrchCanvasA2UIAction"];
+  // - iOS: window.webkit.messageHandlers.openclawCanvasA2UIAction.postMessage(...)
+  // - Android: window.openclawCanvasA2UIAction.postMessage(...)
+  const handlerNames = ["openclawCanvasA2UIAction"];
   function postToNode(payload) {
     try {
       const raw = typeof payload === "string" ? payload : JSON.stringify(payload);
@@ -113,11 +113,11 @@ export function injectCanvasLiveReload(html: string): string {
     const action = { ...userAction, id };
     return postToNode({ userAction: action });
   }
-  globalThis.ForgeOrchestrator = globalThis.ForgeOrchestrator ?? {};
-  globalThis.ForgeOrchestrator.postMessage = postToNode;
-  globalThis.ForgeOrchestrator.sendUserAction = sendUserAction;
-  globalThis.forgeOrchPostMessage = postToNode;
-  globalThis.forgeOrchSendUserAction = sendUserAction;
+  globalThis.OpenClaw = globalThis.OpenClaw ?? {};
+  globalThis.OpenClaw.postMessage = postToNode;
+  globalThis.OpenClaw.sendUserAction = sendUserAction;
+  globalThis.openclawPostMessage = postToNode;
+  globalThis.openclawSendUserAction = sendUserAction;
 
   try {
     const cap = new URLSearchParams(location.search).get("oc_cap");

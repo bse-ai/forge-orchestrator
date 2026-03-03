@@ -15,7 +15,7 @@ import type { WizardPrompter } from "../../wizard/prompts.js";
 type InstallChoice = "npm" | "local" | "skip";
 
 type InstallResult = {
-  cfg: ForgeOrchestratorConfig;
+  cfg: OpenClawConfig;
   installed: boolean;
 };
 
@@ -58,7 +58,7 @@ function resolveLocalPath(
   return null;
 }
 
-function addPluginLoadPath(cfg: ForgeOrchestratorConfig, pluginPath: string): ForgeOrchestratorConfig {
+function addPluginLoadPath(cfg: OpenClawConfig, pluginPath: string): OpenClawConfig {
   const existing = cfg.plugins?.load?.paths ?? [];
   const merged = Array.from(new Set([...existing, pluginPath]));
   return {
@@ -104,7 +104,7 @@ async function promptInstallChoice(params: {
 }
 
 function resolveInstallDefaultChoice(params: {
-  cfg: ForgeOrchestratorConfig;
+  cfg: OpenClawConfig;
   entry: ChannelPluginCatalogEntry;
   localPath?: string | null;
 }): InstallChoice {
@@ -127,7 +127,7 @@ function resolveInstallDefaultChoice(params: {
 }
 
 export async function ensureOnboardingPluginInstalled(params: {
-  cfg: ForgeOrchestratorConfig;
+  cfg: OpenClawConfig;
   entry: ChannelPluginCatalogEntry;
   prompter: WizardPrompter;
   runtime: RuntimeEnv;
@@ -202,14 +202,14 @@ export async function ensureOnboardingPluginInstalled(params: {
 }
 
 export function reloadOnboardingPluginRegistry(params: {
-  cfg: ForgeOrchestratorConfig;
+  cfg: OpenClawConfig;
   runtime: RuntimeEnv;
   workspaceDir?: string;
 }): void {
   const workspaceDir =
     params.workspaceDir ?? resolveAgentWorkspaceDir(params.cfg, resolveDefaultAgentId(params.cfg));
   const log = createSubsystemLogger("plugins");
-  loadForgeOrchestratorPlugins({
+  loadOpenClawPlugins({
     config: params.cfg,
     workspaceDir,
     cache: false,

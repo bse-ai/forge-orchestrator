@@ -92,7 +92,7 @@ function resolveAndApplyOutboundThreadId(
 }
 
 export type RunMessageActionParams = {
-  cfg: ForgeOrchestratorConfig;
+  cfg: OpenClawConfig;
   action: ChannelMessageActionName;
   params: Record<string, unknown>;
   defaultAccountId?: string;
@@ -186,7 +186,7 @@ function applyCrossContextMessageDecoration({
 }
 
 async function maybeApplyCrossContextMarker(params: {
-  cfg: ForgeOrchestratorConfig;
+  cfg: OpenClawConfig;
   channel: ChannelId;
   action: ChannelMessageActionName;
   target: string;
@@ -217,7 +217,7 @@ async function maybeApplyCrossContextMarker(params: {
   });
 }
 
-async function resolveChannel(cfg: ForgeOrchestratorConfig, params: Record<string, unknown>) {
+async function resolveChannel(cfg: OpenClawConfig, params: Record<string, unknown>) {
   const channelHint = readStringParam(params, "channel");
   const selection = await resolveMessageChannelSelection({
     cfg,
@@ -227,7 +227,7 @@ async function resolveChannel(cfg: ForgeOrchestratorConfig, params: Record<strin
 }
 
 async function resolveActionTarget(params: {
-  cfg: ForgeOrchestratorConfig;
+  cfg: OpenClawConfig;
   channel: ChannelId;
   action: ChannelMessageActionName;
   args: Record<string, unknown>;
@@ -272,7 +272,7 @@ async function resolveActionTarget(params: {
 }
 
 type ResolvedActionContext = {
-  cfg: ForgeOrchestratorConfig;
+  cfg: OpenClawConfig;
   params: Record<string, unknown>;
   channel: ChannelId;
   accountId?: string | null;

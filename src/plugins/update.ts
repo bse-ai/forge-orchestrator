@@ -30,7 +30,7 @@ export type PluginUpdateOutcome = {
 };
 
 export type PluginUpdateSummary = {
-  config: ForgeOrchestratorConfig;
+  config: OpenClawConfig;
   changed: boolean;
   outcomes: PluginUpdateOutcome[];
 };
@@ -53,7 +53,7 @@ export type PluginChannelSyncSummary = {
 };
 
 export type PluginChannelSyncResult = {
-  config: ForgeOrchestratorConfig;
+  config: OpenClawConfig;
   changed: boolean;
   summary: PluginChannelSyncSummary;
 };
@@ -173,7 +173,7 @@ function createPluginUpdateIntegrityDriftHandler(params: {
 }
 
 export async function updateNpmInstalledPlugins(params: {
-  config: ForgeOrchestratorConfig;
+  config: OpenClawConfig;
   logger?: PluginUpdateLogger;
   pluginIds?: string[];
   skipIds?: Set<string>;
@@ -372,7 +372,7 @@ export async function updateNpmInstalledPlugins(params: {
 }
 
 export async function syncPluginsForUpdateChannel(params: {
-  config: ForgeOrchestratorConfig;
+  config: OpenClawConfig;
   channel: UpdateChannel;
   workspaceDir?: string;
   logger?: PluginUpdateLogger;

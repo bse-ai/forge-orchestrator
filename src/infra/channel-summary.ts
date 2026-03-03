@@ -43,7 +43,7 @@ const accountLine = (label: string, details: string[]) =>
 const buildAccountDetails = (params: {
   entry: ChannelAccountEntry;
   plugin: ChannelPlugin;
-  cfg: ForgeOrchestratorConfig;
+  cfg: OpenClawConfig;
   includeAllowFrom: boolean;
 }): string[] => {
   const details: string[] = [];
@@ -91,7 +91,7 @@ const buildAccountDetails = (params: {
 };
 
 export async function buildChannelSummary(
-  cfg?: ForgeOrchestratorConfig,
+  cfg?: OpenClawConfig,
   options?: ChannelSummaryOptions,
 ): Promise<string[]> {
   const effective = cfg ?? loadConfig();

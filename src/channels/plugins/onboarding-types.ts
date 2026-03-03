@@ -1,4 +1,4 @@
-import type { ForgeOrchestratorConfig } from "../../config/config.js";
+import type { OpenClawConfig } from "../../config/config.js";
 import type { DmPolicy } from "../../config/types.js";
 import type { RuntimeEnv } from "../../runtime.js";
 import type { WizardPrompter } from "../../wizard/prompts.js";
@@ -23,11 +23,11 @@ export type SetupChannelsOptions = {
 };
 
 export type PromptAccountIdParams = {
-  cfg: ForgeOrchestratorConfig;
+  cfg: OpenClawConfig;
   prompter: WizardPrompter;
   label: string;
   currentId?: string;
-  listAccountIds: (cfg: ForgeOrchestratorConfig) => string[];
+  listAccountIds: (cfg: OpenClawConfig) => string[];
   defaultAccountId: string;
 };
 
@@ -42,13 +42,13 @@ export type ChannelOnboardingStatus = {
 };
 
 export type ChannelOnboardingStatusContext = {
-  cfg: ForgeOrchestratorConfig;
+  cfg: OpenClawConfig;
   options?: SetupChannelsOptions;
   accountOverrides: Partial<Record<ChannelId, string>>;
 };
 
 export type ChannelOnboardingConfigureContext = {
-  cfg: ForgeOrchestratorConfig;
+  cfg: OpenClawConfig;
   runtime: RuntimeEnv;
   prompter: WizardPrompter;
   options?: SetupChannelsOptions;
@@ -58,7 +58,7 @@ export type ChannelOnboardingConfigureContext = {
 };
 
 export type ChannelOnboardingResult = {
-  cfg: ForgeOrchestratorConfig;
+  cfg: OpenClawConfig;
   accountId?: string;
 };
 
@@ -74,13 +74,13 @@ export type ChannelOnboardingDmPolicy = {
   channel: ChannelId;
   policyKey: string;
   allowFromKey: string;
-  getCurrent: (cfg: ForgeOrchestratorConfig) => DmPolicy;
-  setPolicy: (cfg: ForgeOrchestratorConfig, policy: DmPolicy) => ForgeOrchestratorConfig;
+  getCurrent: (cfg: OpenClawConfig) => DmPolicy;
+  setPolicy: (cfg: OpenClawConfig, policy: DmPolicy) => OpenClawConfig;
   promptAllowFrom?: (params: {
-    cfg: ForgeOrchestratorConfig;
+    cfg: OpenClawConfig;
     prompter: WizardPrompter;
     accountId?: string;
-  }) => Promise<ForgeOrchestratorConfig>;
+  }) => Promise<OpenClawConfig>;
 };
 
 export type ChannelOnboardingAdapter = {
@@ -95,5 +95,5 @@ export type ChannelOnboardingAdapter = {
   ) => Promise<ChannelOnboardingConfiguredResult>;
   dmPolicy?: ChannelOnboardingDmPolicy;
   onAccountRecorded?: (accountId: string, options?: SetupChannelsOptions) => void;
-  disable?: (cfg: ForgeOrchestratorConfig) => ForgeOrchestratorConfig;
+  disable?: (cfg: OpenClawConfig) => OpenClawConfig;
 };

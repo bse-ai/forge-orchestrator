@@ -213,7 +213,7 @@ export function resolveAllowlistModelKey(raw: string, defaultProvider: string): 
 }
 
 export function buildConfiguredAllowlistKeys(params: {
-  cfg: ForgeOrchestratorConfig | undefined;
+  cfg: OpenClawConfig | undefined;
   defaultProvider: string;
 }): Set<string> | null {
   const rawAllowlist = Object.keys(params.cfg?.agents?.defaults?.models ?? {});
@@ -232,7 +232,7 @@ export function buildConfiguredAllowlistKeys(params: {
 }
 
 export function buildModelAliasIndex(params: {
-  cfg: ForgeOrchestratorConfig;
+  cfg: OpenClawConfig;
   defaultProvider: string;
 }): ModelAliasIndex {
   const byAlias = new Map<string, { alias: string; ref: ModelRef }>();
@@ -283,7 +283,7 @@ export function resolveModelRefFromString(params: {
 }
 
 export function resolveConfiguredModelRef(params: {
-  cfg: ForgeOrchestratorConfig;
+  cfg: OpenClawConfig;
   defaultProvider: string;
   defaultModel: string;
 }): ModelRef {
@@ -321,7 +321,7 @@ export function resolveConfiguredModelRef(params: {
 }
 
 export function resolveDefaultModelForAgent(params: {
-  cfg: ForgeOrchestratorConfig;
+  cfg: OpenClawConfig;
   agentId?: string;
 }): ModelRef {
   const agentModelOverride = params.agentId
@@ -383,7 +383,7 @@ export function resolveSubagentSpawnModelSelection(params: {
 }
 
 export function buildAllowedModelSet(params: {
-  cfg: ForgeOrchestratorConfig;
+  cfg: OpenClawConfig;
   catalog: ModelCatalogEntry[];
   defaultProvider: string;
   defaultModel?: string;
@@ -468,7 +468,7 @@ export type ModelRefStatus = {
 };
 
 export function getModelRefStatus(params: {
-  cfg: ForgeOrchestratorConfig;
+  cfg: OpenClawConfig;
   catalog: ModelCatalogEntry[];
   ref: ModelRef;
   defaultProvider: string;
@@ -490,7 +490,7 @@ export function getModelRefStatus(params: {
 }
 
 export function resolveAllowedModelRef(params: {
-  cfg: ForgeOrchestratorConfig;
+  cfg: OpenClawConfig;
   catalog: ModelCatalogEntry[];
   raw: string;
   defaultProvider: string;
@@ -533,7 +533,7 @@ export function resolveAllowedModelRef(params: {
 }
 
 export function resolveThinkingDefault(params: {
-  cfg: ForgeOrchestratorConfig;
+  cfg: OpenClawConfig;
   provider: string;
   model: string;
   catalog?: ModelCatalogEntry[];
@@ -595,7 +595,7 @@ export function resolveReasoningDefault(params: {
  * Returns null if hooks.gmail.model is not set.
  */
 export function resolveHooksGmailModel(params: {
-  cfg: ForgeOrchestratorConfig;
+  cfg: OpenClawConfig;
   defaultProvider: string;
 }): ModelRef | null {
   const hooksModel = params.cfg.hooks?.gmail?.model;

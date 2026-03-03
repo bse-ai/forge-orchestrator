@@ -7,7 +7,7 @@ import { stripMentions } from "./mentions.js";
 
 export function buildCommandContext(params: {
   ctx: MsgContext;
-  cfg: ForgeOrchestratorConfig;
+  cfg: OpenClawConfig;
   agentId?: string;
   sessionKey?: string;
   isGroup: boolean;

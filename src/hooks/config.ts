@@ -22,7 +22,7 @@ export function isConfigPathTruthy(config: OpenClawConfig | undefined, pathStr: 
 }
 
 export function resolveHookConfig(
-  config: ForgeOrchestratorConfig | undefined,
+  config: OpenClawConfig | undefined,
   hookKey: string,
 ): HookConfig | undefined {
   const hooks = config?.hooks?.internal?.entries;
@@ -62,7 +62,7 @@ function evaluateHookRuntimeEligibility(params: {
 
 export function shouldIncludeHook(params: {
   entry: HookEntry;
-  config?: ForgeOrchestratorConfig;
+  config?: OpenClawConfig;
   eligibility?: HookEligibilityContext;
 }): boolean {
   const { entry, config, eligibility } = params;

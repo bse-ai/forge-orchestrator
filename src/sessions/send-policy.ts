@@ -51,7 +51,7 @@ function deriveChatTypeFromKey(key?: string): SessionChatType | undefined {
 }
 
 export function resolveSendPolicy(params: {
-  cfg: ForgeOrchestratorConfig;
+  cfg: OpenClawConfig;
   entry?: SessionEntry;
   sessionKey?: string;
   channel?: string;

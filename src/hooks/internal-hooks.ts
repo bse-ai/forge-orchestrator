@@ -1,5 +1,5 @@
 /**
- * Hook system for ForgeOrchestrator agent events
+ * Hook system for OpenClaw agent events
  *
  * Provides an extensible event-driven hook system for agent events
  * like command processing, session lifecycle, etc.
@@ -15,7 +15,7 @@ export type InternalHookEventType = "command" | "session" | "agent" | "gateway" 
 export type AgentBootstrapHookContext = {
   workspaceDir: string;
   bootstrapFiles: WorkspaceBootstrapFile[];
-  cfg?: ForgeOrchestratorConfig;
+  cfg?: OpenClawConfig;
   sessionKey?: string;
   sessionId?: string;
   agentId?: string;

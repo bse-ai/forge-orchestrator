@@ -13,7 +13,7 @@ function resolveAccountConfig(accounts: ChannelConfigWithAccounts["accounts"], a
 }
 
 export function resolveChannelConfigWrites(params: {
-  cfg: ForgeOrchestratorConfig;
+  cfg: OpenClawConfig;
   channelId?: ChannelId | null;
   accountId?: string | null;
 }): boolean {

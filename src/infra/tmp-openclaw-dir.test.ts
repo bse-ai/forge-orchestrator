@@ -1,6 +1,6 @@
 import path from "node:path";
 import { describe, expect, it, vi } from "vitest";
-import { POSIX_FORGE_ORCH_TMP_DIR, resolvePreferredForgeOrchestratorTmpDir } from "./tmp-forge-orchestrator-dir.js";
+import { POSIX_OPENCLAW_TMP_DIR, resolvePreferredOpenClawTmpDir } from "./tmp-openclaw-dir.js";
 
 type TmpDirOptions = NonNullable<Parameters<typeof resolvePreferredOpenClawTmpDir>[0]>;
 
@@ -142,7 +142,7 @@ describe("resolvePreferredOpenClawTmpDir", () => {
 
     expect(lstatSync).toHaveBeenCalledTimes(1);
     expect(accessSync).toHaveBeenCalledTimes(1);
-    expect(resolved).toBe(POSIX_FORGE_ORCH_TMP_DIR);
+    expect(resolved).toBe(POSIX_OPENCLAW_TMP_DIR);
     expect(tmpdir).not.toHaveBeenCalled();
   });
 
@@ -153,7 +153,7 @@ describe("resolvePreferredOpenClawTmpDir", () => {
       lstatSync: lstatSyncMock,
     });
 
-    expect(resolved).toBe(POSIX_FORGE_ORCH_TMP_DIR);
+    expect(resolved).toBe(POSIX_OPENCLAW_TMP_DIR);
     expect(accessSync).toHaveBeenCalledWith("/tmp", expect.any(Number));
     expect(mkdirSync).toHaveBeenCalledWith(POSIX_OPENCLAW_TMP_DIR, expect.any(Object));
     expect(tmpdir).not.toHaveBeenCalled();
@@ -167,7 +167,7 @@ describe("resolvePreferredOpenClawTmpDir", () => {
     expect(tmpdir).toHaveBeenCalled();
   });
 
-  it("falls back to os.tmpdir()/forge-orchestrator when /tmp is not writable", () => {
+  it("falls back to os.tmpdir()/openclaw when /tmp is not writable", () => {
     const accessSync = vi.fn((target: string) => {
       if (target === "/tmp") {
         throw new Error("read-only");

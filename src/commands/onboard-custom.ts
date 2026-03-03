@@ -64,14 +64,14 @@ function transformAzureUrl(baseUrl: string, modelId: string): string {
 export type CustomApiCompatibility = "openai" | "anthropic";
 type CustomApiCompatibilityChoice = CustomApiCompatibility | "unknown";
 export type CustomApiResult = {
-  config: ForgeOrchestratorConfig;
+  config: OpenClawConfig;
   providerId?: string;
   modelId?: string;
   providerIdRenamedFrom?: string;
 };
 
 export type ApplyCustomApiConfigParams = {
-  config: ForgeOrchestratorConfig;
+  config: OpenClawConfig;
   baseUrl: string;
   modelId: string;
   compatibility: CustomApiCompatibility;
@@ -115,7 +115,7 @@ export class CustomApiError extends Error {
 }
 
 export type ResolveCustomProviderIdParams = {
-  config: ForgeOrchestratorConfig;
+  config: OpenClawConfig;
   baseUrl: string;
   providerId?: string;
 };
@@ -188,7 +188,7 @@ function resolveUniqueEndpointId(params: {
 
 function resolveAliasError(params: {
   raw: string;
-  cfg: ForgeOrchestratorConfig;
+  cfg: OpenClawConfig;
   modelRef: string;
 }): string | undefined {
   const trimmed = params.raw.trim();
@@ -621,7 +621,7 @@ export function applyCustomApiConfig(params: ApplyCustomApiConfigParams): Custom
     normalizeOptionalProviderApiKey(params.apiKey) ??
     normalizeOptionalProviderApiKey(existingApiKey);
 
-  let config: ForgeOrchestratorConfig = {
+  let config: OpenClawConfig = {
     ...params.config,
     models: {
       ...params.config.models,

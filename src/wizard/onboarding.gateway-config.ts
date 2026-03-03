@@ -25,8 +25,8 @@ import type { WizardPrompter } from "./prompts.js";
 
 type ConfigureGatewayOptions = {
   flow: WizardFlow;
-  baseConfig: ForgeOrchestratorConfig;
-  nextConfig: ForgeOrchestratorConfig;
+  baseConfig: OpenClawConfig;
+  nextConfig: OpenClawConfig;
   localPort: number;
   quickstartGateway: QuickstartGatewayDefaults;
   prompter: WizardPrompter;
@@ -34,7 +34,7 @@ type ConfigureGatewayOptions = {
 };
 
 type ConfigureGatewayResult = {
-  nextConfig: ForgeOrchestratorConfig;
+  nextConfig: OpenClawConfig;
   settings: GatewayWizardSettings;
 };
 

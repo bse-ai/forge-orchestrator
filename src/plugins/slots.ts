@@ -1,4 +1,4 @@
-import type { ForgeOrchestratorConfig } from "../config/config.js";
+import type { OpenClawConfig } from "../config/config.js";
 import type { PluginSlotsConfig } from "../config/types.plugins.js";
 import type { PluginKind } from "./types.js";
 
@@ -29,13 +29,13 @@ export function defaultSlotIdForKey(slotKey: PluginSlotKey): string {
 }
 
 export type SlotSelectionResult = {
-  config: ForgeOrchestratorConfig;
+  config: OpenClawConfig;
   warnings: string[];
   changed: boolean;
 };
 
 export function applyExclusiveSlotSelection(params: {
-  config: ForgeOrchestratorConfig;
+  config: OpenClawConfig;
   selectedId: string;
   selectedKind?: PluginKind;
   registry?: { plugins: SlotPluginRecord[] };

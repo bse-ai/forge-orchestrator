@@ -3,10 +3,10 @@ import { resolveAllowlistModelKey } from "../agents/model-selection.js";
 import type { OpenClawConfig } from "../config/config.js";
 
 export function ensureModelAllowlistEntry(params: {
-  cfg: ForgeOrchestratorConfig;
+  cfg: OpenClawConfig;
   modelRef: string;
   defaultProvider?: string;
-}): ForgeOrchestratorConfig {
+}): OpenClawConfig {
   const rawModelRef = params.modelRef.trim();
   if (!rawModelRef) {
     return params.cfg;

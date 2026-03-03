@@ -15,7 +15,7 @@ export function normalizeCompatibilityConfigValues(cfg: OpenClawConfig): {
   changes: string[];
 } {
   const changes: string[] = [];
-  let next: ForgeOrchestratorConfig = cfg;
+  let next: OpenClawConfig = cfg;
 
   const isRecord = (value: unknown): value is Record<string, unknown> =>
     Boolean(value) && typeof value === "object" && !Array.isArray(value);

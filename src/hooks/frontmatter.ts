@@ -10,7 +10,7 @@ import {
   resolveOpenClawManifestRequires,
 } from "../shared/frontmatter.js";
 import type {
-  ForgeOrchestratorHookMetadata,
+  OpenClawHookMetadata,
   HookEntry,
   HookInstallSpec,
   HookInvocationPolicy,

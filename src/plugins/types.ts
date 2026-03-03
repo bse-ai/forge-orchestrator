@@ -7,7 +7,7 @@ import type { ReplyPayload } from "../auto-reply/types.js";
 import type { ChannelDock } from "../channels/dock.js";
 import type { ChannelId, ChannelPlugin } from "../channels/plugins/types.js";
 import type { createVpsAwareOAuthHandlers } from "../commands/oauth-flow.js";
-import type { ForgeOrchestratorConfig } from "../config/config.js";
+import type { OpenClawConfig } from "../config/config.js";
 import type { ModelProviderConfig } from "../config/types.js";
 import type { GatewayRequestHandler } from "../gateway/server-methods/types.js";
 import type { InternalHookHandler } from "../hooks/internal-hooks.js";
@@ -41,7 +41,7 @@ export type PluginConfigValidation =
   | { ok: true; value?: unknown }
   | { ok: false; errors: string[] };
 
-export type ForgeOrchestratorPluginConfigSchema = {
+export type OpenClawPluginConfigSchema = {
   safeParse?: (value: unknown) => {
     success: boolean;
     data?: unknown;
@@ -55,8 +55,8 @@ export type ForgeOrchestratorPluginConfigSchema = {
   jsonSchema?: Record<string, unknown>;
 };
 
-export type ForgeOrchestratorPluginToolContext = {
-  config?: ForgeOrchestratorConfig;
+export type OpenClawPluginToolContext = {
+  config?: OpenClawConfig;
   workspaceDir?: string;
   agentDir?: string;
   agentId?: string;
@@ -72,17 +72,17 @@ export type ForgeOrchestratorPluginToolContext = {
   sandboxed?: boolean;
 };
 
-export type ForgeOrchestratorPluginToolFactory = (
-  ctx: ForgeOrchestratorPluginToolContext,
+export type OpenClawPluginToolFactory = (
+  ctx: OpenClawPluginToolContext,
 ) => AnyAgentTool | AnyAgentTool[] | null | undefined;
 
-export type ForgeOrchestratorPluginToolOptions = {
+export type OpenClawPluginToolOptions = {
   name?: string;
   names?: string[];
   optional?: boolean;
 };
 
-export type ForgeOrchestratorPluginHookOptions = {
+export type OpenClawPluginHookOptions = {
   entry?: HookEntry;
   name?: string;
   description?: string;
@@ -93,13 +93,13 @@ export type ProviderAuthKind = "oauth" | "api_key" | "token" | "device_code" | "
 
 export type ProviderAuthResult = {
   profiles: Array<{ profileId: string; credential: AuthProfileCredential }>;
-  configPatch?: Partial<ForgeOrchestratorConfig>;
+  configPatch?: Partial<OpenClawConfig>;
   defaultModel?: string;
   notes?: string[];
 };
 
 export type ProviderAuthContext = {
-  config: ForgeOrchestratorConfig;
+  config: OpenClawConfig;
   agentDir?: string;
   workspaceDir?: string;
   prompter: WizardPrompter;
@@ -131,7 +131,7 @@ export type ProviderPlugin = {
   refreshOAuth?: (cred: OAuthCredential) => Promise<OAuthCredential>;
 };
 
-export type ForgeOrchestratorPluginGatewayMethod = {
+export type OpenClawPluginGatewayMethod = {
   method: string;
   handler: GatewayRequestHandler;
 };
@@ -156,8 +156,8 @@ export type PluginCommandContext = {
   args?: string;
   /** The full normalized command body */
   commandBody: string;
-  /** Current ForgeOrchestrator configuration */
-  config: ForgeOrchestratorConfig;
+  /** Current OpenClaw configuration */
+  config: OpenClawConfig;
   /** Raw "From" value (channel-scoped id) */
   from?: string;
   /** Raw "To" value (channel-scoped id) */
@@ -183,7 +183,7 @@ export type PluginCommandHandler = (
 /**
  * Definition for a plugin-registered command.
  */
-export type ForgeOrchestratorPluginCommandDefinition = {
+export type OpenClawPluginCommandDefinition = {
   /** Command name without leading slash (e.g., "tts") */
   name: string;
   /** Description shown in /help and command menus */
@@ -199,7 +199,7 @@ export type ForgeOrchestratorPluginCommandDefinition = {
 export type OpenClawPluginHttpRouteAuth = "gateway" | "plugin";
 export type OpenClawPluginHttpRouteMatch = "exact" | "prefix";
 
-export type ForgeOrchestratorPluginHttpRouteHandler = (
+export type OpenClawPluginHttpRouteHandler = (
   req: IncomingMessage,
   res: ServerResponse,
 ) => Promise<boolean | void> | boolean | void;
@@ -212,79 +212,79 @@ export type OpenClawPluginHttpRouteParams = {
   replaceExisting?: boolean;
 };
 
-export type ForgeOrchestratorPluginCliContext = {
+export type OpenClawPluginCliContext = {
   program: Command;
-  config: ForgeOrchestratorConfig;
+  config: OpenClawConfig;
   workspaceDir?: string;
   logger: PluginLogger;
 };
 
-export type ForgeOrchestratorPluginCliRegistrar = (ctx: ForgeOrchestratorPluginCliContext) => void | Promise<void>;
+export type OpenClawPluginCliRegistrar = (ctx: OpenClawPluginCliContext) => void | Promise<void>;
 
-export type ForgeOrchestratorPluginServiceContext = {
-  config: ForgeOrchestratorConfig;
+export type OpenClawPluginServiceContext = {
+  config: OpenClawConfig;
   workspaceDir?: string;
   stateDir: string;
   logger: PluginLogger;
 };
 
-export type ForgeOrchestratorPluginService = {
+export type OpenClawPluginService = {
   id: string;
-  start: (ctx: ForgeOrchestratorPluginServiceContext) => void | Promise<void>;
-  stop?: (ctx: ForgeOrchestratorPluginServiceContext) => void | Promise<void>;
+  start: (ctx: OpenClawPluginServiceContext) => void | Promise<void>;
+  stop?: (ctx: OpenClawPluginServiceContext) => void | Promise<void>;
 };
 
-export type ForgeOrchestratorPluginChannelRegistration = {
+export type OpenClawPluginChannelRegistration = {
   plugin: ChannelPlugin;
   dock?: ChannelDock;
 };
 
-export type ForgeOrchestratorPluginDefinition = {
+export type OpenClawPluginDefinition = {
   id?: string;
   name?: string;
   description?: string;
   version?: string;
   kind?: PluginKind;
-  configSchema?: ForgeOrchestratorPluginConfigSchema;
-  register?: (api: ForgeOrchestratorPluginApi) => void | Promise<void>;
-  activate?: (api: ForgeOrchestratorPluginApi) => void | Promise<void>;
+  configSchema?: OpenClawPluginConfigSchema;
+  register?: (api: OpenClawPluginApi) => void | Promise<void>;
+  activate?: (api: OpenClawPluginApi) => void | Promise<void>;
 };
 
-export type ForgeOrchestratorPluginModule =
-  | ForgeOrchestratorPluginDefinition
-  | ((api: ForgeOrchestratorPluginApi) => void | Promise<void>);
+export type OpenClawPluginModule =
+  | OpenClawPluginDefinition
+  | ((api: OpenClawPluginApi) => void | Promise<void>);
 
-export type ForgeOrchestratorPluginApi = {
+export type OpenClawPluginApi = {
   id: string;
   name: string;
   version?: string;
   description?: string;
   source: string;
-  config: ForgeOrchestratorConfig;
+  config: OpenClawConfig;
   pluginConfig?: Record<string, unknown>;
   runtime: PluginRuntime;
   logger: PluginLogger;
   registerTool: (
-    tool: AnyAgentTool | ForgeOrchestratorPluginToolFactory,
-    opts?: ForgeOrchestratorPluginToolOptions,
+    tool: AnyAgentTool | OpenClawPluginToolFactory,
+    opts?: OpenClawPluginToolOptions,
   ) => void;
   registerHook: (
     events: string | string[],
     handler: InternalHookHandler,
-    opts?: ForgeOrchestratorPluginHookOptions,
+    opts?: OpenClawPluginHookOptions,
   ) => void;
   registerHttpRoute: (params: OpenClawPluginHttpRouteParams) => void;
   registerChannel: (registration: OpenClawPluginChannelRegistration | ChannelPlugin) => void;
   registerGatewayMethod: (method: string, handler: GatewayRequestHandler) => void;
-  registerCli: (registrar: ForgeOrchestratorPluginCliRegistrar, opts?: { commands?: string[] }) => void;
-  registerService: (service: ForgeOrchestratorPluginService) => void;
+  registerCli: (registrar: OpenClawPluginCliRegistrar, opts?: { commands?: string[] }) => void;
+  registerService: (service: OpenClawPluginService) => void;
   registerProvider: (provider: ProviderPlugin) => void;
   /**
    * Register a custom command that bypasses the LLM agent.
    * Plugin commands are processed before built-in commands and before agent invocation.
    * Use this for simple state-toggling or status commands that don't need AI reasoning.
    */
-  registerCommand: (command: ForgeOrchestratorPluginCommandDefinition) => void;
+  registerCommand: (command: OpenClawPluginCommandDefinition) => void;
   resolvePath: (input: string) => string;
   /** Register a lifecycle hook handler */
   on: <K extends PluginHookName>(

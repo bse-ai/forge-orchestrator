@@ -1,4 +1,4 @@
-export type ForgeOrchestratorVersion = {
+export type OpenClawVersion = {
   major: number;
   minor: number;
   patch: number;
@@ -7,7 +7,7 @@ export type ForgeOrchestratorVersion = {
 
 const VERSION_RE = /^v?(\d+)\.(\d+)\.(\d+)(?:-(\d+))?/;
 
-export function parseForgeOrchestratorVersion(raw: string | null | undefined): ForgeOrchestratorVersion | null {
+export function parseOpenClawVersion(raw: string | null | undefined): OpenClawVersion | null {
   if (!raw) {
     return null;
   }
@@ -24,12 +24,12 @@ export function parseForgeOrchestratorVersion(raw: string | null | undefined): F
   };
 }
 
-export function compareForgeOrchestratorVersions(
+export function compareOpenClawVersions(
   a: string | null | undefined,
   b: string | null | undefined,
 ): number | null {
-  const parsedA = parseForgeOrchestratorVersion(a);
-  const parsedB = parseForgeOrchestratorVersion(b);
+  const parsedA = parseOpenClawVersion(a);
+  const parsedB = parseOpenClawVersion(b);
   if (!parsedA || !parsedB) {
     return null;
   }

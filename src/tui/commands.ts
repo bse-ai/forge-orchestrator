@@ -15,7 +15,7 @@ export type ParsedCommand = {
 };
 
 export type SlashCommandOptions = {
-  cfg?: ForgeOrchestratorConfig;
+  cfg?: OpenClawConfig;
   provider?: string;
   model?: string;
 };

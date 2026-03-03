@@ -4,7 +4,7 @@ import { ensurePluginAllowlisted } from "../config/plugins-allowlist.js";
 import { setPluginEnabledInConfig } from "./toggle-config.js";
 
 export type PluginEnableResult = {
-  config: ForgeOrchestratorConfig;
+  config: OpenClawConfig;
   enabled: boolean;
   reason?: string;
 };

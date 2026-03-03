@@ -162,7 +162,7 @@ type QmdManagerMode = "full" | "status";
 
 export class QmdMemoryManager implements MemorySearchManager {
   static async create(params: {
-    cfg: ForgeOrchestratorConfig;
+    cfg: OpenClawConfig;
     agentId: string;
     resolved: ResolvedMemoryBackendConfig;
     mode?: QmdManagerMode;
@@ -176,7 +176,7 @@ export class QmdMemoryManager implements MemorySearchManager {
     return manager;
   }
 
-  private readonly cfg: ForgeOrchestratorConfig;
+  private readonly cfg: OpenClawConfig;
   private readonly agentId: string;
   private readonly qmd: ResolvedQmdConfig;
   private readonly workspaceDir: string;
@@ -217,7 +217,7 @@ export class QmdMemoryManager implements MemorySearchManager {
   private attemptedNullByteCollectionRepair = false;
 
   private constructor(params: {
-    cfg: ForgeOrchestratorConfig;
+    cfg: OpenClawConfig;
     agentId: string;
     resolved: ResolvedQmdConfig;
   }) {

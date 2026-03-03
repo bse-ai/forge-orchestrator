@@ -9,7 +9,7 @@ import {
 } from "../../config/sessions.js";
 
 export function resolveCronSession(params: {
-  cfg: ForgeOrchestratorConfig;
+  cfg: OpenClawConfig;
   sessionKey: string;
   nowMs: number;
   agentId: string;

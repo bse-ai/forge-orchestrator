@@ -20,7 +20,7 @@ import { incrementCompactionCount } from "./session-updates.js";
 function extractCompactInstructions(params: {
   rawBody?: string;
   ctx: import("../templating.js").MsgContext;
-  cfg: ForgeOrchestratorConfig;
+  cfg: OpenClawConfig;
   agentId?: string;
   isGroup: boolean;
 }): string | undefined {

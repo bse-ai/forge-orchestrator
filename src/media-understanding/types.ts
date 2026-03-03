@@ -98,7 +98,7 @@ export type ImageDescriptionRequest = {
   profile?: string;
   preferredProfile?: string;
   agentDir: string;
-  cfg: import("../config/config.js").ForgeOrchestratorConfig;
+  cfg: import("../config/config.js").OpenClawConfig;
 };
 
 export type ImageDescriptionResult = {

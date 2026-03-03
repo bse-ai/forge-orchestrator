@@ -6,11 +6,11 @@ import { normalizeAccountId } from "../../routing/session-key.js";
 type ChatChannel = ChannelId;
 
 export function applyAccountName(params: {
-  cfg: ForgeOrchestratorConfig;
+  cfg: OpenClawConfig;
   channel: ChatChannel;
   accountId: string;
   name?: string;
-}): ForgeOrchestratorConfig {
+}): OpenClawConfig {
   const accountId = normalizeAccountId(params.accountId);
   const plugin = getChannelPlugin(params.channel);
   const apply = plugin?.setup?.applyAccountName;
@@ -18,7 +18,7 @@ export function applyAccountName(params: {
 }
 
 export function applyChannelAccountConfig(params: {
-  cfg: ForgeOrchestratorConfig;
+  cfg: OpenClawConfig;
   channel: ChatChannel;
   accountId: string;
   input: ChannelSetupInput;

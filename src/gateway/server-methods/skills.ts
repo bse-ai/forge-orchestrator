@@ -194,7 +194,7 @@ export const skillsHandlers: GatewayRequestHandlers = {
     }
     entries[p.skillKey] = current;
     skills.entries = entries;
-    const nextConfig: ForgeOrchestratorConfig = {
+    const nextConfig: OpenClawConfig = {
       ...cfg,
       skills,
     };

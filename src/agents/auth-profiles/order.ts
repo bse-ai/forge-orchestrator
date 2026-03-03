@@ -13,7 +13,7 @@ import {
 } from "./usage.js";
 
 export function resolveAuthProfileOrder(params: {
-  cfg?: ForgeOrchestratorConfig;
+  cfg?: OpenClawConfig;
   store: AuthProfileStore;
   provider: string;
   preferredProfile?: string;

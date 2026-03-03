@@ -52,7 +52,7 @@ function listConfiguredAccountIds(cfg: OpenClawConfig): string[] {
   });
 }
 
-export function listTelegramAccountIds(cfg: ForgeOrchestratorConfig): string[] {
+export function listTelegramAccountIds(cfg: OpenClawConfig): string[] {
   const ids = Array.from(
     new Set([...listConfiguredAccountIds(cfg), ...listBoundAccountIds(cfg, "telegram")]),
   );
@@ -63,7 +63,7 @@ export function listTelegramAccountIds(cfg: ForgeOrchestratorConfig): string[] {
   return ids.toSorted((a, b) => a.localeCompare(b));
 }
 
-export function resolveDefaultTelegramAccountId(cfg: ForgeOrchestratorConfig): string {
+export function resolveDefaultTelegramAccountId(cfg: OpenClawConfig): string {
   const boundDefault = resolveDefaultAgentBoundAccountId(cfg, "telegram");
   if (boundDefault) {
     return boundDefault;
@@ -83,7 +83,7 @@ export function resolveDefaultTelegramAccountId(cfg: ForgeOrchestratorConfig): s
 }
 
 function resolveAccountConfig(
-  cfg: ForgeOrchestratorConfig,
+  cfg: OpenClawConfig,
   accountId: string,
 ): TelegramAccountConfig | undefined {
   const normalized = normalizeAccountId(accountId);
@@ -128,7 +128,7 @@ export function createTelegramActionGate(params: {
 }
 
 export function resolveTelegramAccount(params: {
-  cfg: ForgeOrchestratorConfig;
+  cfg: OpenClawConfig;
   accountId?: string | null;
 }): ResolvedTelegramAccount {
   const baseEnabled = params.cfg.channels?.telegram?.enabled !== false;
@@ -165,7 +165,7 @@ export function resolveTelegramAccount(params: {
   });
 }
 
-export function listEnabledTelegramAccounts(cfg: ForgeOrchestratorConfig): ResolvedTelegramAccount[] {
+export function listEnabledTelegramAccounts(cfg: OpenClawConfig): ResolvedTelegramAccount[] {
   return listTelegramAccountIds(cfg)
     .map((accountId) => resolveTelegramAccount({ cfg, accountId }))
     .filter((account) => account.enabled);

@@ -17,7 +17,7 @@ import type { MediaUnderstandingProvider } from "./types.js";
  */
 export async function transcribeFirstAudio(params: {
   ctx: MsgContext;
-  cfg: ForgeOrchestratorConfig;
+  cfg: OpenClawConfig;
   agentDir?: string;
   providers?: Record<string, MediaUnderstandingProvider>;
   activeModel?: ActiveMediaModel;

@@ -22,7 +22,7 @@ export function buildPluginStatusReport(params?: {
     : (resolveAgentWorkspaceDir(config, resolveDefaultAgentId(config)) ??
       resolveDefaultAgentWorkspaceDir());
 
-  const registry = loadForgeOrchestratorPlugins({
+  const registry = loadOpenClawPlugins({
     config,
     workspaceDir,
     logger: createPluginLoaderLogger(log),

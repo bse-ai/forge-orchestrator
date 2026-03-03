@@ -21,7 +21,7 @@ function parseEnvVarNameFromSourceLabel(source: string | undefined): string | un
 
 async function resolveApiKeyFromProfiles(params: {
   provider: string;
-  cfg: ForgeOrchestratorConfig;
+  cfg: OpenClawConfig;
   agentDir?: string;
 }): Promise<string | null> {
   const store = ensureAuthProfileStore(params.agentDir);
@@ -50,7 +50,7 @@ async function resolveApiKeyFromProfiles(params: {
 
 export async function resolveNonInteractiveApiKey(params: {
   provider: string;
-  cfg: ForgeOrchestratorConfig;
+  cfg: OpenClawConfig;
   flagValue?: string;
   flagName: string;
   envVar: string;

@@ -30,7 +30,7 @@ function formatProfileSecretLabel(params: {
 
 export function resolveProviderAuthOverview(params: {
   provider: string;
-  cfg: ForgeOrchestratorConfig;
+  cfg: OpenClawConfig;
   store: AuthProfileStore;
   modelsPath: string;
 }): ProviderAuthOverview {

@@ -8,7 +8,7 @@ const DEFAULT_TELEGRAM_DRAFT_STREAM_MIN = 200;
 const DEFAULT_TELEGRAM_DRAFT_STREAM_MAX = 800;
 
 export function resolveTelegramDraftStreamingChunking(
-  cfg: ForgeOrchestratorConfig | undefined,
+  cfg: OpenClawConfig | undefined,
   accountId?: string | null,
 ): {
   minChars: number;

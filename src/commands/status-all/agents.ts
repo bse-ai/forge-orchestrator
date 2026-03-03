@@ -14,7 +14,7 @@ async function fileExists(p: string): Promise<boolean> {
   }
 }
 
-export async function getAgentLocalStatuses(cfg: ForgeOrchestratorConfig) {
+export async function getAgentLocalStatuses(cfg: OpenClawConfig) {
   const agentList = listAgentsForGateway(cfg);
   const now = Date.now();
 

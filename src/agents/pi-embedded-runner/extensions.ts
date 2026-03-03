@@ -13,7 +13,7 @@ import { ensurePiCompactionReserveTokens } from "../pi-settings.js";
 import { isCacheTtlEligibleProvider, readLastCacheTtlTimestamp } from "./cache-ttl.js";
 
 function resolveContextWindowTokens(params: {
-  cfg: ForgeOrchestratorConfig | undefined;
+  cfg: OpenClawConfig | undefined;
   provider: string;
   modelId: string;
   model: Model<Api> | undefined;
@@ -57,7 +57,7 @@ function buildContextPruningFactory(params: {
   return contextPruningExtension;
 }
 
-function resolveCompactionMode(cfg?: ForgeOrchestratorConfig): "default" | "safeguard" {
+function resolveCompactionMode(cfg?: OpenClawConfig): "default" | "safeguard" {
   return cfg?.agents?.defaults?.compaction?.mode === "safeguard" ? "safeguard" : "default";
 }
 

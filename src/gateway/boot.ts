@@ -136,7 +136,7 @@ async function restoreMainSessionMapping(
 }
 
 export async function runBootOnce(params: {
-  cfg: ForgeOrchestratorConfig;
+  cfg: OpenClawConfig;
   deps: CliDeps;
   workspaceDir: string;
   agentId?: string;

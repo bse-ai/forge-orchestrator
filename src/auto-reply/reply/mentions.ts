@@ -37,7 +37,7 @@ function normalizeMentionPatterns(patterns: string[]): string[] {
   return patterns.map(normalizeMentionPattern);
 }
 
-function resolveMentionPatterns(cfg: ForgeOrchestratorConfig | undefined, agentId?: string): string[] {
+function resolveMentionPatterns(cfg: OpenClawConfig | undefined, agentId?: string): string[] {
   if (!cfg) {
     return [];
   }
@@ -54,7 +54,7 @@ function resolveMentionPatterns(cfg: ForgeOrchestratorConfig | undefined, agentI
   return derived.length > 0 ? derived : [];
 }
 
-export function buildMentionRegexes(cfg: ForgeOrchestratorConfig | undefined, agentId?: string): RegExp[] {
+export function buildMentionRegexes(cfg: OpenClawConfig | undefined, agentId?: string): RegExp[] {
   const patterns = normalizeMentionPatterns(resolveMentionPatterns(cfg, agentId));
   if (patterns.length === 0) {
     return [];
@@ -147,7 +147,7 @@ export function stripStructuralPrefixes(text: string): string {
 export function stripMentions(
   text: string,
   ctx: MsgContext,
-  cfg: ForgeOrchestratorConfig | undefined,
+  cfg: OpenClawConfig | undefined,
   agentId?: string,
 ): string {
   let result = text;

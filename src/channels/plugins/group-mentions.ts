@@ -40,7 +40,7 @@ function parseTelegramGroupId(value?: string | null) {
 }
 
 function resolveTelegramRequireMention(params: {
-  cfg: ForgeOrchestratorConfig;
+  cfg: OpenClawConfig;
   chatId?: string;
   topicId?: string;
 }): boolean | undefined {

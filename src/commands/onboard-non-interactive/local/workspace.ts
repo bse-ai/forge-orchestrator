@@ -4,7 +4,7 @@ import type { OnboardOptions } from "../../onboard-types.js";
 
 export function resolveNonInteractiveWorkspaceDir(params: {
   opts: OnboardOptions;
-  baseConfig: ForgeOrchestratorConfig;
+  baseConfig: OpenClawConfig;
   defaultWorkspaceDir: string;
 }) {
   const raw = (

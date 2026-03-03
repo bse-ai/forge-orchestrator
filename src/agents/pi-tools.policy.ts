@@ -197,7 +197,7 @@ function resolveProviderToolPolicy(params: {
 }
 
 export function resolveEffectiveToolPolicy(params: {
-  config?: ForgeOrchestratorConfig;
+  config?: OpenClawConfig;
   sessionKey?: string;
   agentId?: string;
   modelProvider?: string;
@@ -249,7 +249,7 @@ export function resolveEffectiveToolPolicy(params: {
 }
 
 export function resolveGroupToolPolicy(params: {
-  config?: ForgeOrchestratorConfig;
+  config?: OpenClawConfig;
   sessionKey?: string;
   spawnedBy?: string | null;
   messageProvider?: string;

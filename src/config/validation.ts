@@ -31,7 +31,7 @@ function isWorkspaceAvatarPath(value: string, workspaceDir: string): boolean {
   return isPathWithinRoot(workspaceRoot, resolved);
 }
 
-function validateIdentityAvatar(config: ForgeOrchestratorConfig): ConfigValidationIssue[] {
+function validateIdentityAvatar(config: OpenClawConfig): ConfigValidationIssue[] {
   const agents = config.agents?.list;
   if (!Array.isArray(agents) || agents.length === 0) {
     return [];
@@ -114,7 +114,7 @@ function validateGatewayTailscaleBind(config: OpenClawConfig): ConfigValidationI
  */
 export function validateConfigObjectRaw(
   raw: unknown,
-): { ok: true; config: ForgeOrchestratorConfig } | { ok: false; issues: ConfigValidationIssue[] } {
+): { ok: true; config: OpenClawConfig } | { ok: false; issues: ConfigValidationIssue[] } {
   const legacyIssues = findLegacyConfigIssues(raw);
   if (legacyIssues.length > 0) {
     return {
@@ -125,7 +125,7 @@ export function validateConfigObjectRaw(
       })),
     };
   }
-  const validated = ForgeOrchestratorSchema.safeParse(raw);
+  const validated = OpenClawSchema.safeParse(raw);
   if (!validated.success) {
     return {
       ok: false,
@@ -135,7 +135,7 @@ export function validateConfigObjectRaw(
       })),
     };
   }
-  const duplicates = findDuplicateAgentDirs(validated.data as ForgeOrchestratorConfig);
+  const duplicates = findDuplicateAgentDirs(validated.data as OpenClawConfig);
   if (duplicates.length > 0) {
     return {
       ok: false,
@@ -147,7 +147,7 @@ export function validateConfigObjectRaw(
       ],
     };
   }
-  const avatarIssues = validateIdentityAvatar(validated.data as ForgeOrchestratorConfig);
+  const avatarIssues = validateIdentityAvatar(validated.data as OpenClawConfig);
   if (avatarIssues.length > 0) {
     return { ok: false, issues: avatarIssues };
   }
@@ -157,13 +157,13 @@ export function validateConfigObjectRaw(
   }
   return {
     ok: true,
-    config: validated.data as ForgeOrchestratorConfig,
+    config: validated.data as OpenClawConfig,
   };
 }
 
 export function validateConfigObject(
   raw: unknown,
-): { ok: true; config: ForgeOrchestratorConfig } | { ok: false; issues: ConfigValidationIssue[] } {
+): { ok: true; config: OpenClawConfig } | { ok: false; issues: ConfigValidationIssue[] } {
   const result = validateConfigObjectRaw(raw);
   if (!result.ok) {
     return result;
@@ -177,7 +177,7 @@ export function validateConfigObject(
 export function validateConfigObjectWithPlugins(raw: unknown):
   | {
       ok: true;
-      config: ForgeOrchestratorConfig;
+      config: OpenClawConfig;
       warnings: ConfigValidationIssue[];
     }
   | {
@@ -191,7 +191,7 @@ export function validateConfigObjectWithPlugins(raw: unknown):
 export function validateConfigObjectRawWithPlugins(raw: unknown):
   | {
       ok: true;
-      config: ForgeOrchestratorConfig;
+      config: OpenClawConfig;
       warnings: ConfigValidationIssue[];
     }
   | {
@@ -208,7 +208,7 @@ function validateConfigObjectWithPluginsBase(
 ):
   | {
       ok: true;
-      config: ForgeOrchestratorConfig;
+      config: OpenClawConfig;
       warnings: ConfigValidationIssue[];
     }
   | {

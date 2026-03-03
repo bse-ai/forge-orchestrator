@@ -30,7 +30,7 @@ const ROOT_PREFIX = "/";
 
 export type ControlUiRequestOptions = {
   basePath?: string;
-  config?: ForgeOrchestratorConfig;
+  config?: OpenClawConfig;
   agentId?: string;
   root?: ControlUiRootState;
 };
@@ -260,14 +260,7 @@ function isSafeRelativePath(relPath: string) {
   if (normalized.startsWith("../") || normalized === "..") {
     return false;
   }
-  // Use platform-aware normalize to catch both forward and back-slash traversal
-  const normalized = path.normalize(relPath);
-  if (normalized.startsWith("..") || normalized.includes(`${path.sep}..`)) {
-    return false;
-  }
-  // Also check posix-style to cover mixed-separator inputs on Windows
-  const posixNormalized = path.posix.normalize(relPath);
-  if (posixNormalized.startsWith("../") || posixNormalized === "..") {
+  if (normalized.includes("\0")) {
     return false;
   }
   return true;

@@ -15,7 +15,7 @@ const TtsToolSchema = Type.Object({
 });
 
 export function createTtsTool(opts?: {
-  config?: ForgeOrchestratorConfig;
+  config?: OpenClawConfig;
   agentChannel?: GatewayMessageChannel;
 }): AnyAgentTool {
   return {

@@ -56,7 +56,7 @@ function emit(event: SkillsChangeEvent) {
   }
 }
 
-function resolveWatchPaths(workspaceDir: string, config?: ForgeOrchestratorConfig): string[] {
+function resolveWatchPaths(workspaceDir: string, config?: OpenClawConfig): string[] {
   const paths: string[] = [];
   if (workspaceDir.trim()) {
     paths.push(path.join(workspaceDir, "skills"));
@@ -129,7 +129,7 @@ export function getSkillsSnapshotVersion(workspaceDir?: string): number {
   return Math.max(globalVersion, local);
 }
 
-export function ensureSkillsWatcher(params: { workspaceDir: string; config?: ForgeOrchestratorConfig }) {
+export function ensureSkillsWatcher(params: { workspaceDir: string; config?: OpenClawConfig }) {
   const workspaceDir = params.workspaceDir.trim();
   if (!workspaceDir) {
     return;

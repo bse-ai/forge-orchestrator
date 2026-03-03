@@ -20,7 +20,7 @@ interface MediaRef {
 interface BuildLineMessageContextParams {
   event: MessageEvent;
   allMedia: MediaRef[];
-  cfg: ForgeOrchestratorConfig;
+  cfg: OpenClawConfig;
   account: ResolvedLineAccount;
 }
 
@@ -416,7 +416,7 @@ export async function buildLineMessageContext(params: BuildLineMessageContextPar
 
 export async function buildLinePostbackContext(params: {
   event: PostbackEvent;
-  cfg: ForgeOrchestratorConfig;
+  cfg: OpenClawConfig;
   account: ResolvedLineAccount;
 }) {
   const { event, cfg, account } = params;

@@ -496,7 +496,7 @@ function buildChatCommands(): ChatCommandDefinition[] {
     defineChatCommand({
       key: "restart",
       nativeName: "restart",
-      description: "Restart ForgeOrchestrator.",
+      description: "Restart OpenClaw.",
       textAlias: "/restart",
       category: "tools",
     }),

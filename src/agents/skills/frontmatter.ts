@@ -12,7 +12,7 @@ import {
   resolveOpenClawManifestRequires,
 } from "../../shared/frontmatter.js";
 import type {
-  ForgeOrchestratorSkillMetadata,
+  OpenClawSkillMetadata,
   ParsedSkillFrontmatter,
   SkillEntry,
   SkillInstallSpec,

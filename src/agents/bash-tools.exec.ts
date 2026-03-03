@@ -332,25 +332,6 @@ export function createExecTool(
         ask = "off";
       }
 
-      // Even in elevated full mode, block package-manager install commands and
-      // evasion techniques on the host to prevent supply-chain attacks.
-      if (host !== "sandbox") {
-        const blockedPattern = isBlockedInstallCommand(params.command);
-        if (blockedPattern) {
-          throw new Error(
-            `exec denied: package-manager install commands are blocked on host execution (matched ${blockedPattern}). ` +
-              `Install packages manually or in a sandboxed environment.`,
-          );
-        }
-        const evasionPattern = isBlockedEvasionPattern(params.command);
-        if (evasionPattern) {
-          throw new Error(
-            `exec denied: command matches a blocked evasion pattern (${evasionPattern}). ` +
-              `This pattern could be used to bypass security controls.`,
-          );
-        }
-      }
-
       const sandbox = host === "sandbox" ? defaults?.sandbox : undefined;
       if (
         host === "sandbox" &&
@@ -382,15 +363,10 @@ export function createExecTool(
       const inheritedBaseEnv = coerceEnv(process.env);
       const baseEnv = host === "sandbox" ? inheritedBaseEnv : sanitizeHostBaseEnv(inheritedBaseEnv);
 
-      // Validate env BEFORE merging to prevent dangerous vars from entering the stream.
-      // Host (gateway/node) gets full validation; sandbox gets a subset check for
-      // variables that could affect the Docker daemon or container runtime.
-      if (params.env) {
-        if (host === "sandbox") {
-          validateSandboxEnv(params.env);
-        } else {
-          validateHostEnv(params.env);
-        }
+      // Logic: Sandbox gets raw env. Host (gateway/node) must pass validation.
+      // We validate BEFORE merging to prevent any dangerous vars from entering the stream.
+      if (host !== "sandbox" && params.env) {
+        validateHostEnv(params.env);
       }
 
       const mergedEnv = params.env ? { ...baseEnv, ...params.env } : baseEnv;

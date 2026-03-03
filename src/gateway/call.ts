@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import type { ForgeOrchestratorConfig } from "../config/config.js";
+import type { OpenClawConfig } from "../config/config.js";
 import {
   loadConfig,
   resolveConfigPath,
@@ -29,7 +29,7 @@ type CallGatewayBaseOptions = {
   token?: string;
   password?: string;
   tlsFingerprint?: string;
-  config?: ForgeOrchestratorConfig;
+  config?: OpenClawConfig;
   method: string;
   params?: unknown;
   expectFinal?: boolean;

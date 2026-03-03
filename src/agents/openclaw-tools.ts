@@ -24,7 +24,7 @@ import { createTtsTool } from "./tools/tts-tool.js";
 import { createWebFetchTool, createWebSearchTool } from "./tools/web-tools.js";
 import { resolveWorkspaceRoot } from "./workspace-dir.js";
 
-export function createForgeOrchestratorTools(options?: {
+export function createOpenClawTools(options?: {
   sandboxBrowserBridgeUrl?: string;
   allowHostBrowserControl?: boolean;
   agentSessionKey?: string;
@@ -46,7 +46,7 @@ export function createForgeOrchestratorTools(options?: {
   fsPolicy?: ToolFsPolicy;
   workspaceDir?: string;
   sandboxed?: boolean;
-  config?: ForgeOrchestratorConfig;
+  config?: OpenClawConfig;
   pluginToolAllowlist?: string[];
   /** Current channel ID for auto-threading (Slack). */
   currentChannelId?: string;
@@ -106,18 +106,6 @@ export function createForgeOrchestratorTools(options?: {
   const webFetchTool = createWebFetchTool({
     config: options?.config,
     sandboxed: options?.sandboxed,
-  });
-  const graphitiSearchTool = createGraphitiSearchTool({
-    config: options?.config,
-    agentSessionKey: options?.agentSessionKey,
-  });
-  const lightragQueryTool = createLightRAGQueryTool({
-    config: options?.config,
-    agentSessionKey: options?.agentSessionKey,
-  });
-  const memoryServiceQueryTool = createMemoryServiceQueryTool({
-    config: options?.config,
-    agentSessionKey: options?.agentSessionKey,
   });
   const messageTool = options?.disableMessageTool
     ? null

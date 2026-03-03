@@ -62,7 +62,7 @@ const WebFetchSchema = Type.Object({
   ),
 });
 
-type WebFetchConfig = NonNullable<ForgeOrchestratorConfig["tools"]>["web"] extends infer Web
+type WebFetchConfig = NonNullable<OpenClawConfig["tools"]>["web"] extends infer Web
   ? Web extends { fetch?: infer Fetch }
     ? Fetch
     : undefined
@@ -79,7 +79,7 @@ type FirecrawlFetchConfig =
     }
   | undefined;
 
-function resolveFetchConfig(cfg?: ForgeOrchestratorConfig): WebFetchConfig {
+function resolveFetchConfig(cfg?: OpenClawConfig): WebFetchConfig {
   const fetch = cfg?.tools?.web?.fetch;
   if (!fetch || typeof fetch !== "object") {
     return undefined;
@@ -348,37 +348,6 @@ function normalizeContentType(value: string | null | undefined): string | undefi
   return trimmed || undefined;
 }
 
-/**
- * When Firecrawl is self-hosted (not the default SaaS endpoint), the SSRF
- * protections from fetchWithSsrFGuard do not apply because Firecrawl fetches
- * the URL server-side. Validate the target URL before delegating to Firecrawl.
- */
-function validateFirecrawlTargetUrl(targetUrl: string, firecrawlBaseUrl: string): void {
-  const isSelfHosted =
-    firecrawlBaseUrl.trim() !== "" &&
-    !firecrawlBaseUrl.trim().startsWith("https://api.firecrawl.dev");
-  if (!isSelfHosted) {
-    return; // SaaS Firecrawl has its own SSRF protection
-  }
-  let parsed: URL;
-  try {
-    parsed = new URL(targetUrl);
-  } catch {
-    throw new SsrFBlockedError("Firecrawl: invalid target URL");
-  }
-  const hostname = parsed.hostname;
-  if (isBlockedHostname(hostname)) {
-    throw new SsrFBlockedError(
-      `Firecrawl: target hostname '${hostname}' is blocked (self-hosted Firecrawl SSRF guard).`,
-    );
-  }
-  if (isPrivateIpAddress(hostname)) {
-    throw new SsrFBlockedError(
-      `Firecrawl: target IP '${hostname}' is a private address (self-hosted Firecrawl SSRF guard).`,
-    );
-  }
-}
-
 export async function fetchFirecrawlContent(params: {
   url: string;
   extractMode: ExtractMode;
@@ -396,7 +365,6 @@ export async function fetchFirecrawlContent(params: {
   status?: number;
   warning?: string;
 }> {
-  validateFirecrawlTargetUrl(params.url, params.baseUrl);
   const endpoint = resolveFirecrawlEndpoint(params.baseUrl);
   const body: Record<string, unknown> = {
     url: params.url,
@@ -742,7 +710,7 @@ function resolveFirecrawlEndpoint(baseUrl: string): string {
 }
 
 export function createWebFetchTool(options?: {
-  config?: ForgeOrchestratorConfig;
+  config?: OpenClawConfig;
   sandboxed?: boolean;
 }): AnyAgentTool | null {
   const fetch = resolveFetchConfig(options?.config);

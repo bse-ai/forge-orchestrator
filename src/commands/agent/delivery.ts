@@ -65,7 +65,7 @@ function logNestedOutput(
 }
 
 export async function deliverAgentCommandResult(params: {
-  cfg: ForgeOrchestratorConfig;
+  cfg: OpenClawConfig;
   deps: CliDeps;
   runtime: RuntimeEnv;
   opts: AgentCommandOpts;

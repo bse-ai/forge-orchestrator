@@ -170,7 +170,7 @@ export function applySkillEnvOverrides(params: { skills: SkillEntry[]; config?: 
 
 export function applySkillEnvOverridesFromSnapshot(params: {
   snapshot?: SkillSnapshot;
-  config?: ForgeOrchestratorConfig;
+  config?: OpenClawConfig;
 }) {
   const { snapshot, config } = params;
   if (!snapshot) {

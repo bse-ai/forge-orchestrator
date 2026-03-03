@@ -12,7 +12,7 @@ import {
   VERCEL_AI_GATEWAY_DEFAULT_MODEL_REF,
 } from "./onboard-auth.credentials.js";
 
-export function applyVercelAiGatewayProviderConfig(cfg: ForgeOrchestratorConfig): ForgeOrchestratorConfig {
+export function applyVercelAiGatewayProviderConfig(cfg: OpenClawConfig): OpenClawConfig {
   const models = { ...cfg.agents?.defaults?.models };
   models[VERCEL_AI_GATEWAY_DEFAULT_MODEL_REF] = {
     ...models[VERCEL_AI_GATEWAY_DEFAULT_MODEL_REF],
@@ -32,9 +32,9 @@ export function applyVercelAiGatewayProviderConfig(cfg: ForgeOrchestratorConfig)
 }
 
 export function applyCloudflareAiGatewayProviderConfig(
-  cfg: ForgeOrchestratorConfig,
+  cfg: OpenClawConfig,
   params?: { accountId?: string; gatewayId?: string },
-): ForgeOrchestratorConfig {
+): OpenClawConfig {
   const models = { ...cfg.agents?.defaults?.models };
   models[CLOUDFLARE_AI_GATEWAY_DEFAULT_MODEL_REF] = {
     ...models[CLOUDFLARE_AI_GATEWAY_DEFAULT_MODEL_REF],
@@ -77,15 +77,15 @@ export function applyCloudflareAiGatewayProviderConfig(
   });
 }
 
-export function applyVercelAiGatewayConfig(cfg: ForgeOrchestratorConfig): ForgeOrchestratorConfig {
+export function applyVercelAiGatewayConfig(cfg: OpenClawConfig): OpenClawConfig {
   const next = applyVercelAiGatewayProviderConfig(cfg);
   return applyAgentDefaultModelPrimary(next, VERCEL_AI_GATEWAY_DEFAULT_MODEL_REF);
 }
 
 export function applyCloudflareAiGatewayConfig(
-  cfg: ForgeOrchestratorConfig,
+  cfg: OpenClawConfig,
   params?: { accountId?: string; gatewayId?: string },
-): ForgeOrchestratorConfig {
+): OpenClawConfig {
   const next = applyCloudflareAiGatewayProviderConfig(cfg, params);
   return applyAgentDefaultModelPrimary(next, CLOUDFLARE_AI_GATEWAY_DEFAULT_MODEL_REF);
 }

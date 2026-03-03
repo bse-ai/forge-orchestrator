@@ -67,7 +67,7 @@ const GatewayToolSchema = Type.Object({
 
 export function createGatewayTool(opts?: {
   agentSessionKey?: string;
-  config?: ForgeOrchestratorConfig;
+  config?: OpenClawConfig;
 }): AnyAgentTool {
   return {
     label: "Gateway",

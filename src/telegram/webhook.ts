@@ -77,7 +77,7 @@ async function initializeTelegramWebhookBot(params: {
 export async function startTelegramWebhook(opts: {
   token: string;
   accountId?: string;
-  config?: ForgeOrchestratorConfig;
+  config?: OpenClawConfig;
   path?: string;
   port?: number;
   host?: string;

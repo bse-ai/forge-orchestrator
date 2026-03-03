@@ -16,7 +16,7 @@ function requiresTrustedRequesterSender(ctx: ChannelMessageActionContext): boole
   return Boolean(actions?.has(ctx.action) && ctx.toolContext);
 }
 
-export function listChannelMessageActions(cfg: ForgeOrchestratorConfig): ChannelMessageActionName[] {
+export function listChannelMessageActions(cfg: OpenClawConfig): ChannelMessageActionName[] {
   const actions = new Set<ChannelMessageActionName>(["send", "broadcast"]);
   for (const plugin of listChannelPlugins()) {
     const list = plugin.actions?.listActions?.({ cfg });

@@ -184,7 +184,7 @@ async function safeAclReset(params: {
 }
 
 function setGroupPolicyAllowlist(params: {
-  cfg: ForgeOrchestratorConfig;
+  cfg: OpenClawConfig;
   channel: string;
   changes: string[];
   policyFlips: Set<string>;
@@ -192,7 +192,7 @@ function setGroupPolicyAllowlist(params: {
   if (!params.cfg.channels) {
     return;
   }
-  const section = params.cfg.channels[params.channel as keyof ForgeOrchestratorConfig["channels"]] as
+  const section = params.cfg.channels[params.channel as keyof OpenClawConfig["channels"]] as
     | Record<string, unknown>
     | undefined;
   if (!section || typeof section !== "object") {
@@ -229,7 +229,7 @@ function setGroupPolicyAllowlist(params: {
 }
 
 function setWhatsAppGroupAllowFromFromStore(params: {
-  cfg: ForgeOrchestratorConfig;
+  cfg: OpenClawConfig;
   storeAllowFrom: string[];
   changes: string[];
   policyFlips: Set<string>;
@@ -273,8 +273,8 @@ function setWhatsAppGroupAllowFromFromStore(params: {
   }
 }
 
-function applyConfigFixes(params: { cfg: ForgeOrchestratorConfig; env: NodeJS.ProcessEnv }): {
-  cfg: ForgeOrchestratorConfig;
+function applyConfigFixes(params: { cfg: OpenClawConfig; env: NodeJS.ProcessEnv }): {
+  cfg: OpenClawConfig;
   changes: string[];
   policyFlips: Set<string>;
 } {
@@ -305,7 +305,7 @@ function applyConfigFixes(params: { cfg: ForgeOrchestratorConfig; env: NodeJS.Pr
 async function chmodCredentialsAndAgentState(params: {
   env: NodeJS.ProcessEnv;
   stateDir: string;
-  cfg: ForgeOrchestratorConfig;
+  cfg: OpenClawConfig;
   actions: SecurityFixAction[];
   applyPerms: (params: {
     path: string;
