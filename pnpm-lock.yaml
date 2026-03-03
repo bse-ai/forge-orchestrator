@@ -493,18 +493,6 @@ importers:
         specifier: 2.1.1
         version: 2.1.1
 
-  packages/clawdbot:
-    dependencies:
-      openclaw:
-        specifier: workspace:*
-        version: link:../..
-
-  packages/moltbot:
-    dependencies:
-      openclaw:
-        specifier: workspace:*
-        version: link:../..
-
   ui:
     dependencies:
       '@lit-labs/signals':
@@ -1115,8 +1103,8 @@ packages:
     peerDependencies:
       hono: 4.11.10
 
-  '@huggingface/jinja@0.5.4':
-    resolution: {integrity: sha512-VoQJywjpjy2D88Oj0BTHRuS8JCbUgoOg5t1UGgbtGh2fRia9Dx/k6Wf8FqrEWIvWK9fAkfJeeLB9fcSpCNPCpw==}
+  '@huggingface/jinja@0.5.5':
+    resolution: {integrity: sha512-xRlzazC+QZwr6z4ixEqYHo9fgwhTZ3xNSdljlKfUFGZSdlvt166DljRELFUfFytlYOYvo3vTisA/AFOuOAzFQQ==}
     engines: {node: '>=18'}
 
   '@img/colour@1.0.0':
@@ -1255,14 +1243,6 @@ packages:
     engines: {node: ^18.17.0 || ^20.3.0 || >=21.0.0}
     cpu: [x64]
     os: [win32]
-
-  '@isaacs/balanced-match@4.0.1':
-    resolution: {integrity: sha512-yzMTt9lEb8Gv7zRioUilSglI0c0smZ9k5D65677DLWLtWJaXIS3CqcGyUFByYKlnUj6TkjLVs54fBl6+TiGQDQ==}
-    engines: {node: 20 || >=22}
-
-  '@isaacs/brace-expansion@5.0.1':
-    resolution: {integrity: sha512-WMz71T1JS624nWj2n2fnYAuPovhv7EUhk69R6i9dsVyzxt5eM3bjwvgk9L+APE1TRscGysAVMANkB0jh0LQZrQ==}
-    engines: {node: 20 || >=22}
 
   '@isaacs/cliui@8.0.2':
     resolution: {integrity: sha512-O8jcjabXaleOG9DQ0+ARXWZBTfnP4WNAqzuiJK7ll44AmxGKv/J2M4TPjxjY3znBCfvBXFzucm1twdyFybFqEA==}
@@ -2580,10 +2560,6 @@ packages:
   '@slack/socket-mode@2.0.5':
     resolution: {integrity: sha512-VaapvmrAifeFLAFaDPfGhEwwunTKsI6bQhYzxRXw7BSujZUae5sANO76WqlVsLXuhVtCVrBWPiS2snAQR2RHJQ==}
     engines: {node: '>= 18', npm: '>= 8.6.0'}
-
-  '@slack/types@2.19.0':
-    resolution: {integrity: sha512-7+QZ38HGcNh/b/7MpvPG6jnw7mliV6UmrquJLqgdxkzJgQEYUcEztvFWRU49z0x4vthF0ixL5lTK601AXrS8IA==}
-    engines: {node: '>= 12.13.0', npm: '>= 6.12.0'}
 
   '@slack/types@2.20.0':
     resolution: {integrity: sha512-PVF6P6nxzDMrzPC8fSCsnwaI+kF8YfEpxf3MqXmdyjyWTYsZQURpkK7WWUWvP5QpH55pB7zyYL9Qem/xSgc5VA==}
@@ -6709,7 +6685,7 @@ snapshots:
     dependencies:
       '@aws-sdk/types': 3.973.4
       '@smithy/types': 4.13.0
-      bowser: 2.14.1
+      bowser: 2.13.1
       tslib: 2.8.1
 
   '@aws-sdk/util-user-agent-node@3.973.0':
@@ -7120,7 +7096,7 @@ snapshots:
       hono: 4.11.10
     optional: true
 
-  '@huggingface/jinja@0.5.4': {}
+  '@huggingface/jinja@0.5.5': {}
 
   '@img/colour@1.0.0': {}
 
@@ -7218,12 +7194,6 @@ snapshots:
   '@img/sharp-win32-x64@0.34.5':
     optional: true
 
-  '@isaacs/balanced-match@4.0.1': {}
-
-  '@isaacs/brace-expansion@5.0.1':
-    dependencies:
-      '@isaacs/balanced-match': 4.0.1
-
   '@isaacs/cliui@8.0.2':
     dependencies:
       string-width: 5.1.2
@@ -7305,7 +7275,7 @@ snapshots:
 
   '@larksuiteoapi/node-sdk@1.59.0':
     dependencies:
-      axios: 1.13.5(debug@4.4.3)
+      axios: 1.13.5
       lodash.identity: 3.0.0
       lodash.merge: 4.6.2
       lodash.pickby: 4.6.0
@@ -7321,7 +7291,7 @@ snapshots:
     dependencies:
       '@types/node': 24.11.0
     optionalDependencies:
-      axios: 1.13.5(debug@4.4.3)
+      axios: 1.13.5
     transitivePeerDependencies:
       - debug
 
@@ -8418,7 +8388,7 @@ snapshots:
       '@slack/types': 2.20.0
       '@slack/web-api': 7.14.1
       '@types/express': 5.0.6
-      axios: 1.13.5(debug@4.4.3)
+      axios: 1.13.5
       express: 5.2.1
       path-to-regexp: 8.3.0
       raw-body: 3.0.2
@@ -8456,8 +8426,6 @@ snapshots:
       - debug
       - utf-8-validate
 
-  '@slack/types@2.19.0': {}
-
   '@slack/types@2.20.0': {}
 
   '@slack/web-api@7.14.1':
@@ -8466,7 +8434,7 @@ snapshots:
       '@slack/types': 2.20.0
       '@types/node': 25.3.3
       '@types/retry': 0.12.0
-      axios: 1.13.5(debug@4.4.3)
+      axios: 1.13.5
       eventemitter3: 5.0.4
       form-data: 2.5.4
       is-electron: 2.2.2
@@ -9344,7 +9312,7 @@ snapshots:
       '@hapi/boom': 9.1.4
       async-mutex: 0.5.0
       libsignal: '@whiskeysockets/libsignal-node@https://codeload.github.com/whiskeysockets/libsignal-node/tar.gz/1c30d7d7e76a3b0aa120b04dc6a26f5a12dccf67'
-      lru-cache: 11.2.6
+      lru-cache: 11.2.5
       music-metadata: 11.12.1
       p-queue: 9.1.0
       pino: 9.14.0
@@ -11022,7 +10990,7 @@ snapshots:
 
   node-llama-cpp@3.16.2(typescript@5.9.3):
     dependencies:
-      '@huggingface/jinja': 0.5.4
+      '@huggingface/jinja': 0.5.5
       async-retry: 1.3.3
       bytes: 3.1.2
       chalk: 5.6.2
@@ -11412,7 +11380,7 @@ snapshots:
 
   path-scurry@2.0.2:
     dependencies:
-      lru-cache: 11.2.6
+      lru-cache: 11.2.5
       minipass: 7.1.3
 
   path-to-regexp@0.1.12: {}
