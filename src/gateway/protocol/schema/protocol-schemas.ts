@@ -54,6 +54,8 @@ import {
   ConfigApplyParamsSchema,
   ConfigGetParamsSchema,
   ConfigPatchParamsSchema,
+  ConfigSchemaLookupParamsSchema,
+  ConfigSchemaLookupResultSchema,
   ConfigSchemaParamsSchema,
   ConfigSchemaResponseSchema,
   ConfigSetParamsSchema,
@@ -116,6 +118,7 @@ import {
   NodeInvokeResultParamsSchema,
   NodeInvokeRequestEventSchema,
   NodeListParamsSchema,
+  NodePendingAckParamsSchema,
   NodePairApproveParamsSchema,
   NodePairListParamsSchema,
   NodePairRejectParamsSchema,
@@ -124,6 +127,12 @@ import {
   NodeRenameParamsSchema,
 } from "./nodes.js";
 import { PushTestParamsSchema, PushTestResultSchema } from "./push.js";
+import {
+  SecretsReloadParamsSchema,
+  SecretsResolveAssignmentSchema,
+  SecretsResolveParamsSchema,
+  SecretsResolveResultSchema,
+} from "./secrets.js";
 import {
   SessionsCompactParamsSchema,
   SessionsDeleteParamsSchema,
@@ -172,6 +181,7 @@ export const ProtocolSchemas = {
   NodePairVerifyParams: NodePairVerifyParamsSchema,
   NodeRenameParams: NodeRenameParamsSchema,
   NodeListParams: NodeListParamsSchema,
+  NodePendingAckParams: NodePendingAckParamsSchema,
   NodeDescribeParams: NodeDescribeParamsSchema,
   NodeInvokeParams: NodeInvokeParamsSchema,
   NodeInvokeResultParams: NodeInvokeResultParamsSchema,
@@ -179,6 +189,10 @@ export const ProtocolSchemas = {
   NodeInvokeRequestEvent: NodeInvokeRequestEventSchema,
   PushTestParams: PushTestParamsSchema,
   PushTestResult: PushTestResultSchema,
+  SecretsReloadParams: SecretsReloadParamsSchema,
+  SecretsResolveParams: SecretsResolveParamsSchema,
+  SecretsResolveAssignment: SecretsResolveAssignmentSchema,
+  SecretsResolveResult: SecretsResolveResultSchema,
   SessionsListParams: SessionsListParamsSchema,
   SessionsPreviewParams: SessionsPreviewParamsSchema,
   SessionsResolveParams: SessionsResolveParamsSchema,
@@ -192,7 +206,9 @@ export const ProtocolSchemas = {
   ConfigApplyParams: ConfigApplyParamsSchema,
   ConfigPatchParams: ConfigPatchParamsSchema,
   ConfigSchemaParams: ConfigSchemaParamsSchema,
+  ConfigSchemaLookupParams: ConfigSchemaLookupParamsSchema,
   ConfigSchemaResponse: ConfigSchemaResponseSchema,
+  ConfigSchemaLookupResult: ConfigSchemaLookupResultSchema,
   WizardStartParams: WizardStartParamsSchema,
   WizardNextParams: WizardNextParamsSchema,
   WizardCancelParams: WizardCancelParamsSchema,

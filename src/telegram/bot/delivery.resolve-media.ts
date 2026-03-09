@@ -100,6 +100,9 @@ function resolveRequiredFetchImpl(proxyFetch?: typeof fetch): typeof fetch {
   return fetchImpl;
 }
 
+/** Default idle timeout for Telegram media downloads (30 seconds). */
+const TELEGRAM_DOWNLOAD_IDLE_TIMEOUT_MS = 30_000;
+
 async function downloadAndSaveTelegramFile(params: {
   filePath: string;
   token: string;
@@ -113,6 +116,7 @@ async function downloadAndSaveTelegramFile(params: {
     fetchImpl: params.fetchImpl,
     filePathHint: params.filePath,
     maxBytes: params.maxBytes,
+    readIdleTimeoutMs: TELEGRAM_DOWNLOAD_IDLE_TIMEOUT_MS,
     ssrfPolicy: TELEGRAM_MEDIA_SSRF_POLICY,
   });
   const originalName = params.telegramFileName ?? fetched.fileName ?? params.filePath;
@@ -156,8 +160,8 @@ async function resolveStickerMedia(params: {
   }
 
   try {
-    const file = await ctx.getFile();
-    if (!file.file_path) {
+    const file = await resolveTelegramFileWithRetry(ctx);
+    if (!file?.file_path) {
       logVerbose("telegram: getFile returned no file_path for sticker");
       return null;
     }

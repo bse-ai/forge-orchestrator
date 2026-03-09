@@ -148,7 +148,7 @@ Quick answers plus deeper troubleshooting for real-world setups (local dev, VPS,
   - [How do I switch models on the fly (without restarting)?](#how-do-i-switch-models-on-the-fly-without-restarting)
   - [Can I use GPT 5.2 for daily tasks and Codex 5.3 for coding](#can-i-use-gpt-52-for-daily-tasks-and-codex-53-for-coding)
   - [Why do I see "Model … is not allowed" and then no reply?](#why-do-i-see-model-is-not-allowed-and-then-no-reply)
-  - [Why do I see "Unknown model: minimax/MiniMax-M2.5"?](#why-do-i-see-unknown-model-minimaxminimaxm21)
+  - [Why do I see "Unknown model: minimax/MiniMax-M2.5"?](#why-do-i-see-unknown-model-minimaxminimaxm25)
   - [Can I use MiniMax as my default and OpenAI for complex tasks?](#can-i-use-minimax-as-my-default-and-openai-for-complex-tasks)
   - [Are opus / sonnet / gpt built-in shortcuts?](#are-opus-sonnet-gpt-builtin-shortcuts)
   - [How do I define/override model shortcuts (aliases)?](#how-do-i-defineoverride-model-shortcuts-aliases)
@@ -767,7 +767,7 @@ Yes - via pi-ai's **Amazon Bedrock (Converse)** provider with **manual config**.
 
 ### How does Codex auth work
 
-ForgeOrchestrator supports **OpenAI Code (Codex)** via OAuth (ChatGPT sign-in). The wizard can run the OAuth flow and will set the default model to `openai-codex/gpt-5.3-codex` when appropriate. See [Model providers](/concepts/model-providers) and [Wizard](/start/wizard).
+OpenClaw supports **OpenAI Code (Codex)** via OAuth (ChatGPT sign-in). The wizard can run the OAuth flow and will set the default model to `openai-codex/gpt-5.4` when appropriate. See [Model providers](/concepts/model-providers) and [Wizard](/start/wizard).
 
 ### Do you support OpenAI subscription auth Codex OAuth
 
@@ -1299,12 +1299,13 @@ It prefers OpenAI if an OpenAI key resolves, otherwise Gemini if a Gemini key
 resolves, then Voyage, then Mistral. If no remote key is available, memory
 search stays disabled until you configure it. If you have a local model path
 configured and present, OpenClaw
-prefers `local`.
+prefers `local`. Ollama is supported when you explicitly set
+`memorySearch.provider = "ollama"`.
 
 If you'd rather stay local, set `memorySearch.provider = "local"` (and optionally
 `memorySearch.fallback = "none"`). If you want Gemini embeddings, set
 `memorySearch.provider = "gemini"` and provide `GEMINI_API_KEY` (or
-`memorySearch.remote.apiKey`). We support **OpenAI, Gemini, Voyage, Mistral, or local** embedding
+`memorySearch.remote.apiKey`). We support **OpenAI, Gemini, Voyage, Mistral, Ollama, or local** embedding
 models - see [Memory](/concepts/memory) for the setup details.
 
 ### Does memory persist forever What are the limits
@@ -2155,8 +2156,8 @@ Use `/model status` to confirm which auth profile is active.
 
 Yes. Set one as default and switch as needed:
 
-- **Quick switch (per session):** `/model gpt-5.2` for daily tasks, `/model gpt-5.3-codex` for coding.
-- **Default + switch:** set `agents.defaults.model.primary` to `openai/gpt-5.2`, then switch to `openai-codex/gpt-5.3-codex` when coding (or the other way around).
+- **Quick switch (per session):** `/model gpt-5.2` for daily tasks, `/model openai-codex/gpt-5.4` for coding with Codex OAuth.
+- **Default + switch:** set `agents.defaults.model.primary` to `openai/gpt-5.2`, then switch to `openai-codex/gpt-5.4` when coding (or the other way around).
 - **Sub-agents:** route coding tasks to sub-agents with a different default model.
 
 See [Models](/concepts/models) and [Slash commands](/tools/slash-commands).
@@ -2173,7 +2174,7 @@ Model "provider/model" is not allowed. Use /model to list available models.
 That error is returned **instead of** a normal reply. Fix: add the model to
 `agents.defaults.models`, remove the allowlist, or pick a model from `/model list`.
 
-### Why do I see Unknown model minimaxMiniMaxM21
+### Why do I see Unknown model minimaxMiniMaxM25
 
 This means the **provider isn't configured** (no MiniMax provider config or auth
 profile was found), so the model can't be resolved. A fix for this detection is
@@ -2185,7 +2186,7 @@ Fix checklist:
 2. Make sure MiniMax is configured (wizard or JSON), or that a MiniMax API key
    exists in env/auth profiles so the provider can be injected.
 3. Use the exact model id (case-sensitive): `minimax/MiniMax-M2.5` or
-   `minimax/MiniMax-M2.5-Lightning`.
+   `minimax/MiniMax-M2.5-highspeed`.
 4. Run:
 
    ```bash
@@ -2237,11 +2238,12 @@ Docs: [Models](/concepts/models), [Multi-Agent Routing](/concepts/multi-agent), 
 Yes. ForgeOrchestrator ships a few default shorthands (only applied when the model exists in `agents.defaults.models`):
 
 - `opus` → `anthropic/claude-opus-4-6`
-- `sonnet` → `anthropic/claude-sonnet-4-5`
-- `gpt` → `openai/gpt-5.2`
+- `sonnet` → `anthropic/claude-sonnet-4-6`
+- `gpt` → `openai/gpt-5.4`
 - `gpt-mini` → `openai/gpt-5-mini`
-- `gemini` → `google/gemini-3-pro-preview`
+- `gemini` → `google/gemini-3.1-pro-preview`
 - `gemini-flash` → `google/gemini-3-flash-preview`
+- `gemini-flash-lite` → `google/gemini-3.1-flash-lite-preview`
 
 If you set your own alias with the same name, your value wins.
 
@@ -2288,8 +2290,8 @@ Z.AI (GLM models):
 {
   agents: {
     defaults: {
-      model: { primary: "zai/glm-4.7" },
-      models: { "zai/glm-4.7": {} },
+      model: { primary: "zai/glm-5" },
+      models: { "zai/glm-5": {} },
     },
   },
   env: { ZAI_API_KEY: "..." },
@@ -2502,7 +2504,7 @@ Your gateway is running with auth enabled (`gateway.auth.*`), but the UI is not 
 
 Facts (from code):
 
-- The Control UI stores the token in browser localStorage key `forge-orchestrator.control.settings.v1`.
+- The Control UI keeps the token in `sessionStorage` for the current browser tab session and selected gateway URL, so same-tab refreshes keep working without restoring long-lived localStorage token persistence.
 
 Fix:
 

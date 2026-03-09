@@ -264,20 +264,20 @@ describe("buildServiceEnvironment", () => {
     const env = buildServiceEnvironment({
       env: { HOME: "/home/user" },
       port: 18789,
-      token: "secret",
     });
     expect(env.HOME).toBe("/home/user");
     if (process.platform === "win32") {
-      expect(env.PATH).toBe("");
+      expect(env).not.toHaveProperty("PATH");
     } else {
       expect(env.PATH).toContain("/usr/bin");
     }
-    expect(env.FORGE_ORCH_GATEWAY_PORT).toBe("18789");
-    expect(env.FORGE_ORCH_GATEWAY_TOKEN).toBe("secret");
-    expect(env.FORGE_ORCH_SERVICE_MARKER).toBe("forge-orchestrator");
-    expect(env.FORGE_ORCH_SERVICE_KIND).toBe("gateway");
-    expect(typeof env.FORGE_ORCH_SERVICE_VERSION).toBe("string");
-    expect(env.FORGE_ORCH_SYSTEMD_UNIT).toBe("forge-orchestrator-gateway.service");
+    expect(env.OPENCLAW_GATEWAY_PORT).toBe("18789");
+    expect(env.OPENCLAW_GATEWAY_TOKEN).toBeUndefined();
+    expect(env.OPENCLAW_SERVICE_MARKER).toBe("openclaw");
+    expect(env.OPENCLAW_SERVICE_KIND).toBe("gateway");
+    expect(typeof env.OPENCLAW_SERVICE_VERSION).toBe("string");
+    expect(env.OPENCLAW_SYSTEMD_UNIT).toBe("openclaw-gateway.service");
+    expect(env.OPENCLAW_WINDOWS_TASK_NAME).toBe("OpenClaw Gateway");
     if (process.platform === "darwin") {
       expect(env.FORGE_ORCH_LAUNCHD_LABEL).toBe("ai.forge-orchestrator.gateway");
     }
@@ -304,7 +304,8 @@ describe("buildServiceEnvironment", () => {
       env: { HOME: "/home/user", FORGE_ORCH_PROFILE: "work" },
       port: 18789,
     });
-    expect(env.FORGE_ORCH_SYSTEMD_UNIT).toBe("forge-orchestrator-gateway-work.service");
+    expect(env.OPENCLAW_SYSTEMD_UNIT).toBe("openclaw-gateway-work.service");
+    expect(env.OPENCLAW_WINDOWS_TASK_NAME).toBe("OpenClaw Gateway (work)");
     if (process.platform === "darwin") {
       expect(env.FORGE_ORCH_LAUNCHD_LABEL).toBe("ai.forge-orchestrator.work");
     }
@@ -328,6 +329,20 @@ describe("buildServiceEnvironment", () => {
     expect(env.NO_PROXY).toBe("localhost,127.0.0.1");
     expect(env.http_proxy).toBe("http://proxy.local:7890");
     expect(env.all_proxy).toBe("socks5://proxy.local:1080");
+  });
+
+  it("omits PATH on Windows so Scheduled Tasks can inherit the current shell path", () => {
+    const env = buildServiceEnvironment({
+      env: {
+        HOME: "C:\\Users\\alice",
+        PATH: "C:\\Windows\\System32;C:\\Tools\\rg",
+      },
+      port: 18789,
+      platform: "win32",
+    });
+
+    expect(env).not.toHaveProperty("PATH");
+    expect(env.OPENCLAW_WINDOWS_TASK_NAME).toBe("OpenClaw Gateway");
   });
 });
 

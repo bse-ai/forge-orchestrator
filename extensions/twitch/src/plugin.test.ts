@@ -1,4 +1,4 @@
-import type { ForgeOrchestratorConfig } from "forge-orchestrator/plugin-sdk";
+import type { OpenClawConfig } from "openclaw/plugin-sdk/twitch";
 import { describe, expect, it } from "vitest";
 import { twitchPlugin } from "./plugin.js";
 

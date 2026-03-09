@@ -1,8 +1,8 @@
 import type {
   AnyAgentTool,
-  ForgeOrchestratorPluginApi,
-  ForgeOrchestratorPluginToolFactory,
-} from "../../src/plugins/types.js";
+  OpenClawPluginApi,
+  OpenClawPluginToolFactory,
+} from "openclaw/plugin-sdk/lobster";
 import { createLobsterTool } from "./src/lobster-tool.js";
 
 export default function register(api: ForgeOrchestratorPluginApi) {
